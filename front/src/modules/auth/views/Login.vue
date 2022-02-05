@@ -26,7 +26,7 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                v-if="!isLogin"
+                v-if="!isLogin || isForgot"
                 prepend-inner-icon="mdi-account"
                 name="name"
                 label="Nome"
@@ -54,22 +54,23 @@
                 :success="!$v.user.password.$invalid"
                 v-model.trim="$v.user.password.$model" -->
             </v-form>
-            <v-btn
-              block
-              depressed
-              color="secondary"
-              @click="isLogin = !isLogin"
-            >
+            <v-btn block depressed color="secondary" @click="newUser">
               {{ texts.button }}
             </v-btn>
           </v-card-text>
           <v-card-actions>
-            <v-btn v-show="isLogin" color="primary" text>
+            <v-btn
+              v-show="isLogin"
+              color="primary"
+              text
+              @click="forgotPassword"
+            >
               Esqueci a senha
             </v-btn>
+
             <v-spacer></v-spacer>
             <!-- :disabled="$v.$invalid" @click="submit"-->
-            <v-btn color="primary" large>
+            <v-btn color="primary" large @click="submit">
               {{ texts.toolbar }}
             </v-btn>
           </v-card-actions>
@@ -109,6 +110,7 @@ export default {
       email: "",
       password: "",
     },
+    isForgot: false,
   }),
 
   // validations() {
@@ -139,48 +141,61 @@ export default {
   // },
   computed: {
     texts() {
-      return this.isLogin
-        ? { toolbar: "Entrar", button: "Criar conta" }
-        : { toolbar: "Criar conta", button: "Já tenho uma conta" };
+      if (this.isLogin) return { toolbar: "Entrar", button: "Criar conta" };
+      if (this.isForgot)
+        return { toolbar: "Nova Senha", button: "Já tenho uma conta" };
+      return { toolbar: "Criar Conta", button: "Já tenho uma conta" };
     },
-    //   emailErrors() {
-    //     const errors = [];
-    //     const email = this.$v.user.email;
-    //     if (!email.$dirty) {
-    //       return errors;
-    //     }
-    //     !email.required && errors.push("Email é obrigatório!");
-    //     !email.email && errors.push("Insira um email valido!");
-    //     return errors;
-    //   },
-    //   nameErrors() {
-    //     const errors = [];
-    //     const name = this.$v.user.name;
-    //     if (!name.$dirty) {
-    //       return errors;
-    //     }
-    //     !name.required && errors.push("Nome é obrigatório!");
-    //     !name.minLength &&
-    //       errors.push(
-    //         `Insira pelo menos ${name.$params.minLength.min} caracteres!`
-    //       );
-    //     return errors;
-    //   },
-    //   passwordErrors() {
-    //     const errors = [];
-    //     const password = this.$v.user.password;
-    //     if (!password.$dirty) {
-    //       return errors;
-    //     }
-    //     !password.required && errors.push("Senha é obrigatória!");
-    //     !password.minLength &&
-    //       errors.push(
-    //         `Insira pelo menos ${password.$params.minLength.min} caracteres!`
-    //       );
-    //     return errors;
-    //   },
-    // },
-    // methods: {
+  },
+  //   emailErrors() {
+  //     const errors = [];
+  //     const email = this.$v.user.email;
+  //     if (!email.$dirty) {
+  //       return errors;
+  //     }
+  //     !email.required && errors.push("Email é obrigatório!");
+  //     !email.email && errors.push("Insira um email valido!");
+  //     return errors;
+  //   },
+  //   nameErrors() {
+  //     const errors = [];
+  //     const name = this.$v.user.name;
+  //     if (!name.$dirty) {
+  //       return errors;
+  //     }
+  //     !name.required && errors.push("Nome é obrigatório!");
+  //     !name.minLength &&
+  //       errors.push(
+  //         `Insira pelo menos ${name.$params.minLength.min} caracteres!`
+  //       );
+  //     return errors;
+  //   },
+  //   passwordErrors() {
+  //     const errors = [];
+  //     const password = this.$v.user.password;
+  //     if (!password.$dirty) {
+  //       return errors;
+  //     }
+  //     !password.required && errors.push("Senha é obrigatória!");
+  //     !password.minLength &&
+  //       errors.push(
+  //         `Insira pelo menos ${password.$params.minLength.min} caracteres!`
+  //       );
+  //     return errors;
+  //   },
+  // },
+  methods: {
+    forgotPassword() {
+      this.isForgot = !this.isForgot;
+      this.isLogin = !this.isLogin;
+    },
+    newUser() {
+      this.isForgot = false;
+      this.isLogin = !this.isLogin;
+    },
+    submit() {
+      this.$router.push("/dashboard");
+    },
     //   async submit() {
     //     this.isLoading = true;
     //     try {
@@ -195,7 +210,6 @@ export default {
     //     } finally {
     //       this.isLoading = false;
     //     }
-    //   },
   },
 };
 </script>
