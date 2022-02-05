@@ -5,7 +5,7 @@
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn icon @click="showLogoutDialog = true">
-        <v-icon>exit_to_app</v-icon>
+        <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
     </v-toolbar-items>
     <v-dialog v-model="showLogoutDialog" max-width="300px">
@@ -36,15 +36,16 @@ export default {
   },
   data: () => ({
     showLogoutDialog: false,
+    title: "",
   }),
   // computed: {
   //   ...mapState(["title"]),
   // },
   methods: {
-    // async logout() {
-    //   this.$router.push("/login");
-    //   await onLogout(apollo);
-    //  },
+    async logout() {
+      this.$router.push("/login");
+      // await onLogout(apollo);
+    },
   },
 };
 </script>

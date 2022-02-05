@@ -9,22 +9,24 @@
     <v-list>
       <v-list-item v-if="mini" @click.stop="mini = !mini">
         <v-list-item-action>
-          <v-icon>chevron_right</v-icon>
+          <v-icon>mdi-chevron-right</v-icon>
         </v-list-item-action>
       </v-list-item>
 
       <v-list-item tag="div">
-        <v-list-item-avatar>
-          <v-icon>person</v-icon>
-        </v-list-item-avatar>
+        <!-- <v-list-item-avatar> -->
+        <v-list-item-action>
+          <v-icon>mdi-account</v-icon>
+        </v-list-item-action>
+        <!-- </v-list-item-avatar> -->
 
         <v-list-item-content>
-          <v-list-item-title>{{ user.name }}</v-list-item-title>
+          <v-list-item-title>Teste</v-list-item-title>
         </v-list-item-content>
 
         <v-list-item-action>
           <v-btn icon @click.stop="mini = !mini">
-            <v-icon>chevron_left</v-icon>
+            <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -61,22 +63,77 @@ export default {
   },
   data: () => ({
     items: [
-      { title: "Home", icon: "dashboard", url: "/dashboard", exact: true },
+      // { title: "Home", icon: "mdi-home", url: "/dashboard", exact: true },
       {
-        title: "Receita",
-        icon: "add",
-        url: "/dashboard/records/add?type=credit",
+        title: "Configurações",
+        icon: "mdi-cog-outline",
+        url: "/dashboard/reports",
         exact: true,
       },
       {
         title: "Despesa",
-        icon: "remove",
+        icon: "mdi-minus",
         url: "/dashboard/records/add?type=debit",
         exact: true,
       },
       {
+        title: "Culturas",
+        icon: "mdi-flower-tulip",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Custo de Produção",
+        icon: "mdi-cash-multiple",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+
+      {
+        title: "Etapas da Cultura",
+        icon: "mdi-sitemap-outline",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Insumos",
+        icon: "mdi-barley",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Serviços",
+        icon: "mdi-account-tie",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Margem Bruta",
+        icon: "mdi-finance",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Vendas",
+        icon: "mdi-account-cash-outline",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Clientes",
+        icon: "mdi-account-group-outline",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
+        title: "Controle de Estoque",
+        icon: "mdi-card-bulleted-outline",
+        url: "/dashboard/reports",
+        exact: true,
+      },
+      {
         title: "Relatórios",
-        icon: "assessment",
+        icon: "mdi-chart-bar-stacked",
         url: "/dashboard/reports",
         exact: true,
       },
