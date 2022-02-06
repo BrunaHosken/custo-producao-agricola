@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="24" outlined>
     <v-card-title class="headline"> Contato </v-card-title>
     <v-card-text>
       <p>
@@ -15,7 +15,7 @@
       ></v-textarea>
     </v-card-text>
 
-    <v-card-actions>
+    <v-card-actions class="mb-5 mr-4">
       <v-spacer></v-spacer>
       <v-btn color="orange accent-4k" @click="showClearDialog = true">
         Limpar

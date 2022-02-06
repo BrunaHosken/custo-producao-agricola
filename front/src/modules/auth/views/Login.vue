@@ -27,6 +27,7 @@
             <v-form>
               <v-text-field
                 v-if="!isLogin || isForgot"
+                v-model="user.name"
                 prepend-inner-icon="mdi-account"
                 name="name"
                 label="Nome"
@@ -36,6 +37,7 @@
                 :success="!$v.user.name.$invalid"
                 v-model.trim="$v.user.name.$model" -->
               <v-text-field
+                v-model="user.email"
                 prepend-inner-icon="mdi-email"
                 name="email"
                 label="Email"
@@ -45,6 +47,7 @@
                 :success="!$v.user.email.$invalid"
                 v-model.trim="$v.user.email.$model" -->
               <v-text-field
+                v-model="user.password"
                 prepend-inner-icon="mdi-lock"
                 name="password"
                 label="Senha"
@@ -188,12 +191,15 @@ export default {
     forgotPassword() {
       this.isForgot = !this.isForgot;
       this.isLogin = !this.isLogin;
+      console.log(this.user);
     },
     newUser() {
       this.isForgot = false;
       this.isLogin = !this.isLogin;
+      console.log(this.user);
     },
     submit() {
+      console.log(this.user);
       this.$router.push("/dashboard");
     },
     //   async submit() {
