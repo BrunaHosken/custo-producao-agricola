@@ -70,6 +70,10 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </p>
+        <p>
+          Dica: para mudar o tema do site basta ir no
+          <v-icon>mdi-menu</v-icon> Menu > Configurações > Tema do Site
+        </p>
       </v-card-text>
     </v-card>
     <router-view />
