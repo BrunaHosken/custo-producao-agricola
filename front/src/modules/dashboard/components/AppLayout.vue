@@ -2,7 +2,6 @@
   <div>
     <AppToolbar v-model="drawer" />
     <AppMenu v-model="drawer" />
-
     <v-container grid-list-md>
       <v-layout>
         <v-flex xs12>
@@ -10,7 +9,7 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <AppFloatingButton />
+    <AppFloatingButton v-show="!isShow" />
   </div>
 </template>
 
@@ -29,5 +28,14 @@ export default {
   data: () => ({
     drawer: false,
   }),
+  computed: {
+    isShow() {
+      return (
+        this.$route.path === "/dashboard" ||
+        this.$route.path === "/dashboard/contatos" ||
+        this.$route.path === "/dashboard/configuracoes"
+      );
+    },
+  },
 };
 </script>
