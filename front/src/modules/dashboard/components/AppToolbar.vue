@@ -4,7 +4,7 @@
     <v-toolbar-title>{{ title || "Dashboard" }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items>
-      <v-btn icon @click="showLogoutDialog = true">
+      <v-btn icon @click="showLogoutDialog = true" title="Sair">
         <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
     </v-toolbar-items>
