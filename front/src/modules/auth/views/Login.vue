@@ -72,7 +72,7 @@
             </v-btn>
 
             <v-spacer></v-spacer>
-            <!-- :disabled="$v.$invalid" @click="submit"-->
+
             <v-btn
               :disabled="$v.$invalid"
               color="primary"
@@ -86,13 +86,9 @@
             {{ error }}
             <template v-slot:action="{ attrs }">
               <v-btn color="red" text v-bind="attrs">
-                <!-- @click="showSnackBar = false" -->
                 <v-icon>close</v-icon>
               </v-btn>
             </template>
-            <!-- <v-btn color="red" text icon @click="showSnackBar = false">
-              CLOSE
-            </v-btn> -->
           </v-snackbar>
         </v-card>
       </v-flex>
