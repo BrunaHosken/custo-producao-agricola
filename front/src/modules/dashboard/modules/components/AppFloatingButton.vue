@@ -29,7 +29,7 @@
         @click="showDeleteDialog = true"
       >
         <!-- @click="delete" -->
-        <v-icon>mdi-minus</v-icon>
+        <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
 
       <v-btn fab small color="warning" title="Editar" :disabled="disabled">
@@ -39,7 +39,7 @@
 
       <v-btn fab small color="success" title="Cadastrar">
         <!-- @click="new" -->
-        <v-icon>mdi-plus</v-icon>
+        <v-icon>mdi-plus-circle-outline</v-icon>
       </v-btn>
     </v-speed-dial>
     <Dialog

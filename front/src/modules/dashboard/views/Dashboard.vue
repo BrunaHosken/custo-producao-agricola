@@ -38,7 +38,7 @@
         <p>
           Para adicionar um novo registro, abra o menu e clique em
           <v-btn fab small color="success">
-            <v-icon>mdi-close-circle-outline</v-icon>
+            <v-icon>mdi-plus-circle-outline</v-icon>
           </v-btn>
           . Uma nova tela será aberta para o cadastro do novo registro.
         </p>
