@@ -92,7 +92,7 @@ export default {
     },
     save() {
       console.log(this.form.description);
-
+      this.$v.$reset();
       this.clear();
     },
   },

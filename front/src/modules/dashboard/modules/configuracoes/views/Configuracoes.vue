@@ -12,7 +12,7 @@
             Dados do usuário
           </v-list-item-title>
           <v-list-item-subtitle>
-            <p>Nome:{{ user.nome }}</p>
+            <p>Nome: {{ user.nome }}</p>
             <p>Email: {{ user.email }}</p>
           </v-list-item-subtitle>
         </div>
@@ -36,11 +36,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            v-show="!editUser"
-            color="warning"
-            @click="editUser = !editUser"
-          >
+          <v-btn v-show="!editUser" color="warning" @click="buttonEditUser">
             Modificar Usuário
           </v-btn>
 
@@ -59,21 +55,27 @@
           </v-list-item-title>
           <v-list-item-subtitle class="mb-2">
             <v-text-field
-              v-model.lazy="user.nome"
+              :error-messages="nameErrors"
+              :success="!$v.user.nome.$invalid"
+              v-model.trim="$v.user.nome.$model"
               name="name"
               label="Nome"
               type="text"
             ></v-text-field>
 
             <v-text-field
-              v-model.lazy="user.email"
+              :error-messages="emailErrors"
+              :success="!$v.user.email.$invalid"
+              v-model.trim="$v.user.email.$model"
               name="email"
               label="Email"
               type="email"
             ></v-text-field>
 
             <v-text-field
-              v-model="user.senha"
+              :error-messages="senhaErrors"
+              :success="!$v.user.senha.$invalid"
+              v-model.trim="$v.user.senha.$model"
               name="password"
               label="Senha"
               type="password"
@@ -82,11 +84,7 @@
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            v-show="editUser"
-            color="secondary"
-            @click="editUser = !editUser"
-          >
+          <v-btn v-show="editUser" color="secondary" @click="cancel">
             Cancelar
           </v-btn>
           <v-btn
@@ -121,6 +119,8 @@
 
 <script>
 import Dialog from "./../../../components/Dialog.vue";
+
+import { required, minLength, email } from "vuelidate/lib/validators";
 export default {
   name: "Configuracoes",
   components: {
@@ -138,25 +138,94 @@ export default {
       showDeleteDialog: false,
     };
   },
+  validations() {
+    return {
+      user: {
+        nome: {
+          required,
+          minLength: minLength(2),
+        },
+        email: {
+          required,
+          email,
+        },
+        senha: {
+          required,
+          minLength: minLength(6),
+        },
+      },
+    };
+  },
 
-  computed: {},
-  methods: {
-    save() {
-      console.log(this.user);
-      this.editUser = false;
+  computed: {
+    nameErrors() {
+      const errors = [];
+      const nome = this.$v.user.nome;
+      if (!nome.$dirty) {
+        return errors;
+      }
+      !nome.required && errors.push("Nome é obrigatório!");
+      !nome.minLength &&
+        errors.push(
+          `Insira pelo menos ${nome.$params.minLength.min} caracteres!`
+        );
+      return errors;
     },
-
+    emailErrors() {
+      const errors = [];
+      const email = this.$v.user.email;
+      if (!email.$dirty) {
+        return errors;
+      }
+      !email.required && errors.push("Email é obrigatório!");
+      !email.email && errors.push("Insira um email valido!");
+      return errors;
+    },
+    senhaErrors() {
+      const errors = [];
+      const senha = this.$v.user.senha;
+      if (!senha.$dirty) {
+        return errors;
+      }
+      !senha.required && errors.push("Senha é obrigatória!");
+      !senha.minLength &&
+        errors.push(
+          `Insira pelo menos ${senha.$params.minLength.min} caracteres!`
+        );
+      return errors;
+    },
+  },
+  methods: {
+    buttonEditUser() {
+      this.editUser = true;
+      this.user.senha = "";
+    },
+    save() {
+      this.editUser = false;
+      this.$v.$reset();
+    },
+    clear() {
+      this.user = {
+        nome: "",
+        email: "",
+        senha: "",
+      };
+    },
+    cancel() {
+      this.editUser = false;
+      this.user = {
+        nome: "Teste",
+        email: "teste@email.com",
+        senha: "",
+      };
+    },
     option(data) {
       if (data == "nao") {
         if (this.showClearDialog) this.showClearDialog = false;
         this.showDeleteDialog = false;
       } else {
         if (this.showClearDialog) {
-          this.user = {
-            nome: "",
-            email: "",
-            senha: "",
-          };
+          this.clear();
           this.showClearDialog = false;
         } else {
           console.log("conta deletada");
