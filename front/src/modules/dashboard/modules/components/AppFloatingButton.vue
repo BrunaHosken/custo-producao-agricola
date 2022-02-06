@@ -25,8 +25,8 @@
         small
         color="red accent-2"
         title="Remover"
-        :disabled="!disabled"
-        @click="deleteDialog"
+        :disabled="disabled"
+        @click="showDeleteDialog = true"
       >
         <!-- @click="delete" -->
         <v-icon>mdi-minus</v-icon>
@@ -42,24 +42,21 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-speed-dial>
-    <v-dialog v-model="showDeleteDialog" max-width="300px">
-      <v-card>
-        <v-card-title>
-          <h3 class="subheading">Deseja realmente sair?</h3>
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text small @click="showDeleteDialog = false">Não</v-btn>
-          <v-btn text small @click="deleteItem">Sim</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <Dialog
+      message="Deseja realmente excluir o registro?"
+      :showDialog="showDeleteDialog"
+      @option="option"
+    />
   </div>
 </template>
 
 <script>
+import Dialog from "./../../components/Dialog.vue";
 export default {
   name: "AppFloatingButton",
+  components: {
+    Dialog,
+  },
   props: {
     disabled: {
       type: Boolean,
@@ -74,13 +71,15 @@ export default {
   },
 
   methods: {
-    deleteDialog() {
-      this.showDeleteDialog = true;
+    option(data) {
+      if (data == "nao") {
+        this.showDeleteDialog = false;
+      } else {
+        console.log("deletou");
+        this.showDeleteDialog = false;
+      }
     },
-    deleteItem() {
-      console.log("deletou");
-      this.showDeleteDialog = false;
-    },
+
     // addRecord(type) {
     //   this.$router
     //     .push({
