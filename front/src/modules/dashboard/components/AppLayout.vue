@@ -33,7 +33,10 @@ export default {
       return (
         this.$route.path === "/dashboard" ||
         this.$route.path === "/dashboard/contatos" ||
-        this.$route.path === "/dashboard/configuracoes"
+        this.$route.path === "/dashboard/configuracoes" ||
+        this.$route.path === "/dashboard/margem-bruta" ||
+        this.$route.path === "/dashboard/controle-estoque" ||
+        this.$route.path === "/dashboard/relatorios"
       );
     },
   },
