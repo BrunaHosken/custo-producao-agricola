@@ -26,7 +26,7 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                v-if="!isLogin || isForgot"
+                v-if="!isLogin && !isForgot"
                 v-model="user.name"
                 prepend-inner-icon="mdi-account"
                 name="name"
@@ -63,7 +63,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
-              v-show="isLogin"
+              v-show="isLogin && !isForgot"
               color="primary"
               text
               @click="forgotPassword"
@@ -146,7 +146,7 @@ export default {
   computed: {
     texts() {
       if (this.isLogin) return { toolbar: "Entrar", button: "Criar conta" };
-      if (this.isForgot)
+      if (this.isForgot && !this.isLogin)
         return { toolbar: "Nova Senha", button: "Já tenho uma conta" };
       return { toolbar: "Criar Conta", button: "Já tenho uma conta" };
     },
@@ -192,12 +192,10 @@ export default {
     forgotPassword() {
       this.isForgot = !this.isForgot;
       this.isLogin = !this.isLogin;
-      console.log(this.user);
     },
     newUser() {
       this.isForgot = false;
       this.isLogin = !this.isLogin;
-      console.log(this.user);
     },
     submit() {
       console.log(this.user);

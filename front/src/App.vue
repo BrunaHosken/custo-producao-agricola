@@ -24,7 +24,8 @@ export default {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: #7c6f6f;
+
   border-radius: 5rem;
 }
 

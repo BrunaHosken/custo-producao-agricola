@@ -19,7 +19,7 @@ const vuetify = new Vuetify({
       dark: {
         primary: "#007BFF",
         secondary: "#424242",
-        accent: "#82B1FF",
+        accent: "#46BDC6",
         error: "#FF5252",
         info: "#2196F3",
         success: "#4CAF50",
