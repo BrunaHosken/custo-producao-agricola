@@ -23,15 +23,26 @@
               </p>
               <p>Valor vendido: {{ formatCurrency(card.valorVenda) }}</p>
               <p>Custo unitário: {{ formatCurrency(card.custo) }}</p>
-              <p>Receita Bruta: {{ formatCurrency(receitaBruta) }}</p>
-              <p>Custo produção: {{ formatCurrency(custoProducao) }}</p>
               <p>
-                Margem bruta semanal: {{ formatCurrency(margemBrutaSemanal) }}
+                Receita Bruta:
+                {{ formatCurrency(receitaBruta(card.item, card.index)) }}
               </p>
               <p>
-                Margem bruta mensal: {{ formatCurrency(margemBrutaMensal) }}
+                Custo produção:
+                {{ formatCurrency(custoProducao(card.item, card.index)) }}
               </p>
-              <p>Margem bruta anual: {{ formatCurrency(margemBrutaAnual) }}</p>
+              <p>
+                Margem bruta semanal:
+                {{ formatCurrency(margemBrutaSemanal(card.item, card.index)) }}
+              </p>
+              <p>
+                Margem bruta mensal:
+                {{ formatCurrency(margemBrutaMensal(card.item, card.index)) }}
+              </p>
+              <p>
+                Margem bruta anual:
+                {{ formatCurrency(margemBrutaAnual(card.item, card.index)) }}
+              </p>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -62,21 +73,22 @@ export default {
       ],
     };
   },
-  computed: {
-    receitaBruta(data) {
-      return data.cards[0].vendido * data.cards[0].valorVenda;
+  methods: {
+    receitaBruta(card, index) {
+      console.log(this.cards[index]);
+      return this.cards[index].vendido * this.cards[index].valorVenda;
     },
-    custoProducao(data) {
-      return data.cards[0].vendido * data.cards[0].custo;
+    custoProducao(card, index) {
+      return this.cards[index].vendido * this.cards[index].custo;
     },
-    margemBrutaSemanal() {
-      return this.receitaBruta - this.custoProducao;
+    margemBrutaSemanal(card, index) {
+      return this.receitaBruta(card, index) - this.custoProducao(card, index);
     },
-    margemBrutaMensal() {
-      return this.margemBrutaSemanal * 4;
+    margemBrutaMensal(card, index) {
+      return this.margemBrutaSemanal(card, index) * 4;
     },
-    margemBrutaAnual() {
-      return this.margemBrutaMensal * 12;
+    margemBrutaAnual(card, index) {
+      return this.margemBrutaMensal(card, index) * 12;
     },
   },
 };
