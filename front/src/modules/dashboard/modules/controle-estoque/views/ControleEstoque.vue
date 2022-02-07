@@ -1,40 +1,51 @@
 <template>
-  <v-card elevation="24" outlined>
-    <v-card-title>
-      Controle de Estoque do Produto Terminado
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
+  <v-layout row wrap>
+    <v-flex xs12>
+      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+    </v-flex>
+    <v-flex xs12>
+      <v-card elevation="24" outlined>
+        <v-card-title>
+          Controle de Estoque do Produto Terminado
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
 
-    <v-data-table
-      :headers="headers"
-      :items="produtos"
-      :search="search"
-      :loading="false"
-      loading-text="Loading... Please wait"
-    >
-      <template v-slot:[`item.estoque`]="{ item }">
-        <v-chip :color="getColor(item)" dark>
-          {{ produtos.estoque }}
-        </v-chip>
-      </template>
-    </v-data-table>
-  </v-card>
+        <v-data-table
+          :headers="headers"
+          :items="produtos"
+          :search="search"
+          :loading="false"
+          loading-text="Loading... Please wait"
+        >
+          <template v-slot:[`item.estoque`]="{ item }">
+            <v-chip :color="getColor(item)" dark>
+              {{ produtos.estoque }}
+            </v-chip>
+          </template>
+        </v-data-table>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
 // import moment from "moment";
+
+import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 export default {
   name: "ControleEstoque",
   mixins: [formatCurrentMixin],
-
+  components: {
+    ToolbarByMonth,
+  },
   data() {
     return {
       search: "",

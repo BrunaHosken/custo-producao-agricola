@@ -1,5 +1,8 @@
 <template>
   <v-layout row wrap>
+    <v-flex xs12>
+      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+    </v-flex>
     <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
       <v-card elevation="24" outlined>
         <v-card-text>
@@ -60,10 +63,11 @@
 <script>
 import Chart from "chart.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
+import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 export default {
   name: "Relatorios",
   mixins: [formatCurrentMixin],
-  components: {},
+  components: { ToolbarByMonth },
   data: () => ({
     charts: [
       { title: "Tipo de Consumo Fixo", refId: "chartFixesIncomes" },
