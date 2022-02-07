@@ -8,15 +8,15 @@
           v-bind="{ [`xs${card.flex}`]: true }"
           pa-4
         >
-          <v-card elevation="24" outlined>
-            <v-card-title class="headline">
+          <v-card elevation="24" outlined class="hover-card">
+            <v-card-title class="headline justify-center">
               Cultura: {{ card.cultura }}
             </v-card-title>
-            <v-card-subtitle class="headline">
+            <v-card-subtitle class="headline text-center">
               Data Criação: {{ card.day }}</v-card-subtitle
             >
             <hr />
-            <v-card-text>
+            <v-card-text class="text-center">
               <p>
                 Total vendido: {{ card.vendido.toLocaleString() }}
                 {{ card.unidade }}
@@ -93,3 +93,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.hover-card:hover {
+  background: #616161;
+}
+</style>
