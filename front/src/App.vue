@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app class="app" dark>
     <v-content>
       <router-view />
     </v-content>
@@ -12,6 +12,9 @@ export default {
 };
 </script>
 <style>
+.app {
+  overflow-y: hidden;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 5px;

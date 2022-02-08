@@ -14,7 +14,7 @@
     <v-flex xs12>
       <v-card elevation="24" outlined>
         <v-card-title>
-          Controle de Estoque do Produto Terminado
+          Margem Bruta e Despesas
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"

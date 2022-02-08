@@ -66,6 +66,7 @@
               v-show="isLogin && !isForgot"
               color="primary"
               text
+              class="ml-2"
               @click="forgotPassword"
             >
               Esqueci a senha
@@ -78,6 +79,7 @@
               color="primary"
               large
               @click="submit"
+              class="mr-2 mb-2"
             >
               {{ texts.toolbar }}
             </v-btn>
