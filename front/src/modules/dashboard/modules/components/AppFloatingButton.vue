@@ -28,7 +28,6 @@
         :disabled="itens.length === 0"
         @click="selectedItensDelete"
       >
-        <!-- @click="delete" -->
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
 
@@ -40,7 +39,6 @@
         :disabled="itens.length !== 1"
         @click="selectedItensEdit"
       >
-        <!-- @click="edit" -->
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
 
@@ -88,11 +86,28 @@ export default {
       }
     },
     newRegister() {
-      console.log("novo");
+      console.log(this.$route.path);
+      switch (this.$route.path) {
+        case "/dashboard/despesas":
+          this.$router.push("/dashboard/despesas/new");
+          break;
+
+        default:
+          break;
+      }
+      // return (
+      //   this.$route.path === "/dashboard" ||
+      //   this.$route.path === "/dashboard/contatos" ||
+      //   this.$route.path === "/dashboard/configuracoes" ||
+      //   this.$route.path === "/dashboard/margem-bruta" ||
+      //   this.$route.path === "/dashboard/controle-estoque" ||
+      //   this.$route.path === "/dashboard/relatorios"
+      // )
     },
     selectedItensDelete() {
       this.showDeleteDialog = true;
       console.log("Deletou", this.itens);
+      this.$emit("deletar", this.itens);
 
       // console.log(
       //   this.itens.reduce((a, b) => {
@@ -100,7 +115,9 @@ export default {
       //   }, 0)
       // );
     },
-    selectedItensEdit() {},
+    selectedItensEdit() {
+      this.$emit("edicao", this.itens);
+    },
     // addRecord(type) {
     //   this.$router
     //     .push({
