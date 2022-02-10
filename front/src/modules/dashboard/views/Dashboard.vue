@@ -52,8 +52,8 @@
           . Uma nova tela com os dados do item para edição será aberta.
         </p>
         <p>
-          Para remover um novo registro, clique no item desejado, abra o menu e
-          clique em
+          Para remover um novo registro, clique nos itens desejados, abra o menu
+          e clique em
           <v-btn fab small color="red accent-2">
             <v-icon>mdi-close-circle-outline</v-icon>
           </v-btn>

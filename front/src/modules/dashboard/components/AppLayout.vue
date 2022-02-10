@@ -9,21 +9,18 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <AppFloatingButton v-show="!isShow" />
   </div>
 </template>
 
 <script>
 import AppMenu from "./AppMenu.vue";
 import AppToolbar from "./AppToolbar.vue";
-import AppFloatingButton from "./../modules/components/AppFloatingButton.vue";
 
 export default {
   name: "AppLayout",
   components: {
     AppToolbar,
     AppMenu,
-    AppFloatingButton,
   },
   data: () => ({
     drawer: false,

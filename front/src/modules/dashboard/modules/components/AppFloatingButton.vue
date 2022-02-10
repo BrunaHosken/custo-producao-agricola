@@ -25,19 +25,26 @@
         small
         color="red accent-2"
         title="Remover"
-        :disabled="disabled"
-        @click="showDeleteDialog = true"
+        :disabled="itens.length === 0"
+        @click="selectedItensDelete"
       >
         <!-- @click="delete" -->
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
 
-      <v-btn fab small color="warning" title="Editar" :disabled="disabled">
+      <v-btn
+        fab
+        small
+        color="warning"
+        title="Editar"
+        :disabled="itens.length !== 1"
+        @click="selectedItensEdit"
+      >
         <!-- @click="edit" -->
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
 
-      <v-btn fab small color="success" title="Cadastrar">
+      <v-btn fab small color="success" title="Cadastrar" @click="newRegister">
         <!-- @click="new" -->
         <v-icon>mdi-plus-circle-outline</v-icon>
       </v-btn>
@@ -62,6 +69,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    itens: [],
   },
   data() {
     return {
@@ -79,7 +87,20 @@ export default {
         this.showDeleteDialog = false;
       }
     },
+    newRegister() {
+      console.log("novo");
+    },
+    selectedItensDelete() {
+      this.showDeleteDialog = true;
+      console.log("Deletou", this.itens);
 
+      // console.log(
+      //   this.itens.reduce((a, b) => {
+      //     return b.index;
+      //   }, 0)
+      // );
+    },
+    selectedItensEdit() {},
     // addRecord(type) {
     //   this.$router
     //     .push({
