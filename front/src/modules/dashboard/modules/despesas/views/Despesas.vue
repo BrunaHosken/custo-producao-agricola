@@ -56,7 +56,12 @@
         </v-data-table>
       </v-card>
     </v-flex>
-    <AppFloatingButton v-show="true" :itens="selected" @edicao="edicaoItens" />
+    <AppFloatingButton
+      v-show="true"
+      :itensLength="selected.length"
+      @edicao="edicaoItens"
+      @deletou="deletouItens"
+    />
   </v-layout>
 </template>
 
@@ -129,6 +134,8 @@ export default {
       total: 0,
       totalAnual: 0,
       produtosEdicao: [],
+      editou: false,
+      deletou: false,
     };
   },
   computed: {
@@ -141,7 +148,12 @@ export default {
 
   methods: {
     edicaoItens(item) {
-      this.produtosEdicao = item;
+      this.editou = item;
+      console.log(this.editou);
+    },
+    deletouItens(item) {
+      this.deletou = item;
+      console.log(this.deletou);
     },
     calculaValorAnual(item) {
       return item.tipo === "Fixo" ? item.valor * 12 : 0;

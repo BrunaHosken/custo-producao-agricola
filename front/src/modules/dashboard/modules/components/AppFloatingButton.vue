@@ -13,7 +13,7 @@
           v-model="fab"
           fab
           :color="fab ? 'red accent-2' : 'primary'"
-          :title="fab ? 'Cancelar' : 'Opções'"
+          :title="fab ? 'Cancelar' : itensLength"
         >
           <v-icon v-if="fab">mdi-close</v-icon>
           <v-icon v-else>mdi-dots-vertical</v-icon>
@@ -25,7 +25,7 @@
         small
         color="red accent-2"
         title="Remover"
-        :disabled="itens.length === 0"
+        :disabled="itensLength === 0"
         @click="selectedItensDelete"
       >
         <v-icon>mdi-close-circle-outline</v-icon>
@@ -36,7 +36,7 @@
         small
         color="warning"
         title="Editar"
-        :disabled="itens.length !== 1"
+        :disabled="itensLength !== 1"
         @click="selectedItensEdit"
       >
         <v-icon>mdi-pencil-outline</v-icon>
@@ -67,22 +67,30 @@ export default {
       type: Boolean,
       default: true,
     },
-    itens: [],
+    itensLength: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       fab: false,
       showDeleteDialog: false,
+      deletou: false,
+      editou: false,
     };
   },
 
   methods: {
     option(data) {
       if (data == "nao") {
+        this.deletou = false;
         this.showDeleteDialog = false;
       } else {
         console.log("deletou");
+        this.deletou = true;
         this.showDeleteDialog = false;
+        this.$emit("deletou", this.deletou);
       }
     },
     newRegister() {
@@ -95,28 +103,13 @@ export default {
         default:
           break;
       }
-      // return (
-      //   this.$route.path === "/dashboard" ||
-      //   this.$route.path === "/dashboard/contatos" ||
-      //   this.$route.path === "/dashboard/configuracoes" ||
-      //   this.$route.path === "/dashboard/margem-bruta" ||
-      //   this.$route.path === "/dashboard/controle-estoque" ||
-      //   this.$route.path === "/dashboard/relatorios"
-      // )
     },
     selectedItensDelete() {
       this.showDeleteDialog = true;
-      console.log("Deletou", this.itens);
-      this.$emit("deletar", this.itens);
-
-      // console.log(
-      //   this.itens.reduce((a, b) => {
-      //     return b.index;
-      //   }, 0)
-      // );
     },
     selectedItensEdit() {
-      this.$emit("edicao", this.itens);
+      this.editou = true;
+      this.$emit("edicao", this.editou);
     },
     // addRecord(type) {
     //   this.$router
