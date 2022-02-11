@@ -56,6 +56,69 @@
         </v-data-table>
       </v-card>
     </v-flex>
+
+    <v-dialog v-model="editou" persistent>
+      <v-container fill-height>
+        <v-layout justify-center align-center>
+          <v-flex xs10>
+            <v-card class="elevation-24" outlined>
+              <v-toolbar color="primary" dark>
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-h5 mb-1">
+                      Editar Despesa
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-btn icon dark @click="editou = false">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-toolbar>
+
+              <v-card-text>
+                <v-form>
+                  <v-container>
+                    <v-row class="mt-2">
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          name="date"
+                          label="Data da Despesa"
+                          prepend-inner-icon="mdi-calendar"
+                          type="text"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+
+                      <v-col cols="12" md="6">
+                        <v-select label="Tipo de Despesa" outlined></v-select>
+                      </v-col>
+                    </v-row>
+
+                    <v-row class="mt-0">
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          label="Descrição da Despesa"
+                          required
+                        ></v-text-field>
+                      </v-col>
+
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          label="Valor da Despesa"
+                          value="0"
+                          prefix="R$"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-dialog>
+
     <AppFloatingButton
       v-show="true"
       :itensLength="selected.length"
@@ -77,6 +140,7 @@ export default {
   name: "Despesas",
   components: {
     ToolbarByMonth,
+
     AppFloatingButton,
     TotalBalance,
   },
