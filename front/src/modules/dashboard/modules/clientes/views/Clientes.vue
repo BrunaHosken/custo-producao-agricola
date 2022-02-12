@@ -46,6 +46,7 @@
                       :success="!$v.formEdit.nome.$invalid"
                       v-model.trim="$v.formEdit.nome.$model"
                       label="Nome do cliente"
+                      prepend-inner-icon="mdi-account"
                       required
                     ></v-text-field>
                   </v-col>

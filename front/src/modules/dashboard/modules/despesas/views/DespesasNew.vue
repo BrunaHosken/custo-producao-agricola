@@ -62,6 +62,7 @@
                       v-model="form.tipo"
                       :items="items"
                       label="Tipo de Despesa"
+                      prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
                     ></v-select>
                   </v-col>
@@ -74,6 +75,7 @@
                       :success="!$v.form.descricao.$invalid"
                       v-model.trim="$v.form.descricao.$model"
                       label="Descrição da Despesa"
+                      prepend-inner-icon="mdi-book-variant"
                       required
                     ></v-text-field>
                   </v-col>
@@ -85,6 +87,7 @@
                       v-model.trim="$v.form.valor.$model"
                       label="Valor da Despesa"
                       :value="form.valor"
+                      prepend-inner-icon="mdi-cash-multiple"
                       prefix="R$"
                     ></v-text-field>
                   </v-col>

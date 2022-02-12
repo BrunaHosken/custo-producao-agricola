@@ -59,6 +59,7 @@
                       :success="!$v.formEditou.descricao.$invalid"
                       v-model.trim="$v.formEditou.descricao.$model"
                       label="Descrição do Serviço"
+                      prepend-inner-icon="mdi-book-variant"
                       required
                     ></v-text-field>
                   </v-col>
@@ -69,6 +70,7 @@
                       :success="!$v.formEditou.valor.$invalid"
                       v-model.trim="$v.formEditou.valor.$model"
                       label="Valor por dia do empregado"
+                      prepend-inner-icon="mdi-account-cash-outline"
                       :value="formEditou.valor"
                       prefix="R$"
                     ></v-text-field>

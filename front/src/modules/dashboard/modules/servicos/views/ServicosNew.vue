@@ -23,6 +23,7 @@
                       :success="!$v.form.descricao.$invalid"
                       v-model.trim="$v.form.descricao.$model"
                       label="Descrição do Serviço"
+                      prepend-inner-icon="mdi-book-variant"
                       required
                     ></v-text-field>
                   </v-col>
@@ -33,6 +34,7 @@
                       :success="!$v.form.valor.$invalid"
                       v-model.trim="$v.form.valor.$model"
                       label="Valor por dia do empregado"
+                      prepend-inner-icon="mdi-account-cash-outline"
                       :value="form.valor"
                       prefix="R$"
                     ></v-text-field>

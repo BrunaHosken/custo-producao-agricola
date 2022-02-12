@@ -92,6 +92,7 @@
                     <v-select
                       v-model="formEditou.tipo"
                       label="Tipo de Despesa"
+                      prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
                       :items="items"
                     ></v-select>
@@ -105,6 +106,7 @@
                       :success="!$v.formEditou.descricao.$invalid"
                       v-model.trim="$v.formEditou.descricao.$model"
                       label="Descrição da Despesa"
+                      prepend-inner-icon="mdi-book-variant"
                       required
                     ></v-text-field>
                   </v-col>
@@ -115,6 +117,7 @@
                       :success="!$v.formEditou.valor.$invalid"
                       v-model.trim="$v.formEditou.valor.$model"
                       label="Valor da Despesa"
+                      prepend-inner-icon="mdi-cash-multiple"
                       :value="formEditou.valor"
                       prefix="R$"
                     ></v-text-field>
