@@ -45,19 +45,33 @@ export default {
           return "Configurações";
         case "/dashboard/despesas":
           return "Despesas";
+        case "/dashboard/despesas/new":
+          return "Despesas";
         case "/dashboard/culturas":
+          return "Culturas";
+        case "/dashboard/culturas/new":
           return "Culturas";
         case "/dashboard/custo-producao":
           return "Custo de Produção";
+        case "/dashboard/custo-producao/new":
+          return "Custo de Produção";
         case "/dashboard/etapas-culturas":
+          return "Etapas da Cultura";
+        case "/dashboard/etapas-culturas/new":
           return "Etapas da Cultura";
         case "/dashboard/insumos":
           return "Insumos";
+        case "/dashboard/insumos/new":
+          return "Insumos";
         case "/dashboard/servicos":
+          return "Serviços";
+        case "/dashboard/servicos/new":
           return "Serviços";
         case "/dashboard/margem-bruta":
           return "Margem Bruta";
         case "/dashboard/vendas":
+          return "Vendas";
+        case "/dashboard/vendas/new":
           return "Vendas";
         case "/dashboard/clientes":
           return "Clientes";

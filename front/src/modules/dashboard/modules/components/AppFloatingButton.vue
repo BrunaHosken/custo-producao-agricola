@@ -103,6 +103,9 @@ export default {
         case "/dashboard/servicos":
           this.$router.push("/dashboard/servicos/new");
           break;
+        case "/dashboard/insumos":
+          this.$router.push("/dashboard/insumos/new");
+          break;
 
         default:
           break;
