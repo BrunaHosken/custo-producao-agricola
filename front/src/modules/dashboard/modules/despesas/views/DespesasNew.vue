@@ -168,9 +168,6 @@ export default {
     formattedDate() {
       return moment(this.form.date).format("DD/MM/YYYY");
     },
-    greaterThanZero() {
-      return this.form.valor > 0;
-    },
     descriptionErrors() {
       const errors = [];
       const description = this.$v.form.descricao;

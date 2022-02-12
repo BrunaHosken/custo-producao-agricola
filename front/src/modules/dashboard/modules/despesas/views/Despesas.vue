@@ -101,7 +101,9 @@
                 <v-row class="mt-0">
                   <v-col cols="12" md="6">
                     <v-text-field
-                      v-model="formEditou.descricao"
+                      :error-messages="descriptionErrors"
+                      :success="!$v.formEditou.descricao.$invalid"
+                      v-model.trim="$v.formEditou.descricao.$model"
                       label="Descrição da Despesa"
                       required
                     ></v-text-field>
@@ -109,9 +111,11 @@
 
                   <v-col cols="12" md="6">
                     <v-text-field
-                      v-model="formEditou.valor"
+                      :error-messages="valueErrors"
+                      :success="!$v.formEditou.valor.$invalid"
+                      v-model.trim="$v.formEditou.valor.$model"
                       label="Valor da Despesa"
-                      value="0"
+                      :value="formEditou.valor"
                       prefix="R$"
                     ></v-text-field>
                   </v-col>
@@ -124,7 +128,14 @@
             <v-btn color="secundary" class="mr-4" @click="cancelar">
               Cancelar
             </v-btn>
-            <v-btn color="success" class="mr-4" @click="salvar"> Salvar </v-btn>
+            <v-btn
+              color="success"
+              class="mr-4"
+              :disabled="$v.$invalid"
+              @click="salvar"
+            >
+              Salvar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -143,6 +154,7 @@
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import moment from "moment";
 
+import { required, minLength, minValue } from "vuelidate/lib/validators";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import TotalBalance from "./../../components/TotalBalance.vue";
@@ -221,7 +233,44 @@ export default {
       items: ["Fixo", "Variavel"],
     };
   },
+  validations() {
+    return {
+      formEditou: {
+        descricao: {
+          required,
+          minLength: minLength(2),
+        },
+        valor: {
+          required,
+          minValue: minValue(0.0000001),
+        },
+      },
+    };
+  },
   computed: {
+    descriptionErrors() {
+      const errors = [];
+      const description = this.$v.formEditou.descricao;
+      if (!description.$dirty) {
+        return errors;
+      }
+      !description.required && errors.push("Descrição é obrigatória!");
+      !description.minLength &&
+        errors.push(
+          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
+        );
+      return errors;
+    },
+    valueErrors() {
+      const errors = [];
+      const value = this.$v.formEditou.valor;
+      if (!value.$dirty) {
+        return errors;
+      }
+      !value.required && errors.push("Valor da despesa é obrigatória!");
+      !value.minValue && errors.push(`Insira um valor acima de 0`);
+      return errors;
+    },
     value() {
       return this.produtos.reduce((a, b) => {
         return a + b.valor;
