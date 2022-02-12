@@ -57,66 +57,77 @@
       </v-card>
     </v-flex>
 
-    <v-dialog v-model="editou" persistent>
-      <v-container fill-height>
-        <v-layout justify-center align-center>
-          <v-flex xs10>
-            <v-card class="elevation-24" outlined>
-              <v-toolbar color="primary" dark>
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title class="text-h5 mb-1">
-                      Editar Despesa
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-btn icon dark @click="editou = false">
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-toolbar>
+    <v-dialog v-model="editou" persistent max-width="600px">
+      <v-flex xs12>
+        <v-card class="elevation-24" outlined>
+          <v-toolbar color="primary" dark>
+            <v-list-item two-line>
+              <v-list-item-content>
+                <v-list-item-title class="text-h5 mb-1">
+                  Editar Despesa
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-btn icon dark @click="editou = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar>
 
-              <v-card-text>
-                <v-form>
-                  <v-container>
-                    <v-row class="mt-2">
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          name="date"
-                          label="Data da Despesa"
-                          prepend-inner-icon="mdi-calendar"
-                          type="text"
-                          readonly
-                        ></v-text-field>
-                      </v-col>
+          <v-card-text>
+            <v-form>
+              <v-container>
+                <v-row class="mt-2">
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="formEditou.date"
+                      name="date"
+                      label="Data da Despesa"
+                      prepend-inner-icon="mdi-calendar"
+                      type="text"
+                      readonly
+                    ></v-text-field>
+                  </v-col>
 
-                      <v-col cols="12" md="6">
-                        <v-select label="Tipo de Despesa" outlined></v-select>
-                      </v-col>
-                    </v-row>
+                  <v-col cols="12" md="6">
+                    <v-select
+                      v-model="formEditou.tipo"
+                      label="Tipo de Despesa"
+                      outlined
+                      :items="items"
+                    ></v-select>
+                  </v-col>
+                </v-row>
 
-                    <v-row class="mt-0">
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          label="Descrição da Despesa"
-                          required
-                        ></v-text-field>
-                      </v-col>
+                <v-row class="mt-0">
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="formEditou.descricao"
+                      label="Descrição da Despesa"
+                      required
+                    ></v-text-field>
+                  </v-col>
 
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          label="Valor da Despesa"
-                          value="0"
-                          prefix="R$"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-form>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="formEditou.valor"
+                      label="Valor da Despesa"
+                      value="0"
+                      prefix="R$"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-form>
+          </v-card-text>
+          <v-card-actions class="mb-4">
+            <v-spacer></v-spacer>
+            <v-btn color="secundary" class="mr-4" @click="cancelar">
+              Cancelar
+            </v-btn>
+            <v-btn color="success" class="mr-4" @click="salvar"> Salvar </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
     </v-dialog>
 
     <AppFloatingButton
@@ -147,6 +158,13 @@ export default {
   mixins: [formatCurrentMixin],
   data() {
     return {
+      formEditou: {
+        date: "",
+        descricao: "",
+        valor: 0,
+        tipo: "",
+      },
+
       search: "",
       selected: [],
       headers: [
@@ -200,6 +218,7 @@ export default {
       produtosEdicao: [],
       editou: false,
       deletou: false,
+      items: ["Fixo", "Variavel"],
     };
   },
   computed: {
@@ -213,7 +232,13 @@ export default {
   methods: {
     edicaoItens(item) {
       this.editou = item;
-      console.log(this.editou);
+      this.formEditou = {
+        index: this.selected[0].index,
+        date: this.selected[0].data,
+        descricao: this.selected[0].name,
+        valor: this.selected[0].valor,
+        tipo: this.selected[0].tipo,
+      };
     },
     deletouItens(item) {
       this.deletou = item;
@@ -244,6 +269,13 @@ export default {
       return this.produtos.reduce((a, b) => {
         return b.tipo === "Fixo" ? a + b.valor * 12 : a;
       }, 0);
+    },
+    cancelar() {
+      this.editou = false;
+    },
+    salvar() {
+      this.editou = false;
+      console.log(this.formEditou);
     },
   },
 };
