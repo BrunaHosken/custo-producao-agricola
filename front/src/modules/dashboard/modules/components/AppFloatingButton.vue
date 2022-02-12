@@ -94,7 +94,8 @@ export default {
       }
     },
     newRegister() {
-      console.log(this.$route.path);
+      const novo = true;
+      this.$emit("register", novo);
       switch (this.$route.path) {
         case "/dashboard/despesas":
           this.$router.push("/dashboard/despesas/new");
