@@ -99,6 +99,9 @@ export default {
         case "/dashboard/despesas":
           this.$router.push("/dashboard/despesas/new");
           break;
+        case "/dashboard/servicos":
+          this.$router.push("/dashboard/servicos/new");
+          break;
 
         default:
           break;
