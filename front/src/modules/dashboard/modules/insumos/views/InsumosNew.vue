@@ -120,7 +120,7 @@ export default {
         "Toneladas",
         "Quilograma/Litro",
         "Maço",
-        "Unitário",
+        "Quilograma",
         "Litros",
         "Quilowatt",
       ],
