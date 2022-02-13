@@ -2,23 +2,13 @@
   <v-layout row wrap>
     <v-flex xs12>
       <v-card>
-        <v-card-title>
-          Culturas
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            hide-details
-          ></v-text-field>
-        </v-card-title>
+        <v-card-title> Culturas </v-card-title>
         <v-data-table
           v-model="selected"
           :headers="headers"
           :items="produtos"
           show-select
           item-key="name"
-          :search="search"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
@@ -135,7 +125,6 @@ export default {
         tipo: "Maço",
       },
 
-      search: "",
       selected: [],
       headers: [
         {
