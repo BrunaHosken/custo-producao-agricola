@@ -1,13 +1,9 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
-      <TotalBalance class="mt-5 mb-3" :value="value" />
-    </v-flex>
-    <v-flex xs12>
       <v-card>
         <v-card-title>
-          Despesas do Mês
+          Insumos
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -27,31 +23,8 @@
           loading="false"
           loading-text="Loading... Please wait"
         >
-          <template v-slot:[`item.valor`]="{ item }">
-            {{ formatCurrency(item.valor) }}
-          </template>
-          <template v-slot:[`item.valorAnual`]="{ item }">
-            {{ formatCurrency(calculaValorAnual(item)) }}
-          </template>
-          <template v-slot:[`body.append`]>
-            <tr>
-              <td colspan="12">
-                <h3 class="mt-2">
-                  Total do Mês (Despesas Fixas):
-                  {{ formatCurrency(calculaTotalMêsFixo(produtos)) }}
-                </h3>
-
-                <h3>
-                  Total do Mês (Despesas Variaveis):
-                  {{ formatCurrency(calculaTotalMêsVariavel(produtos)) }}
-                </h3>
-
-                <h3 class="mb-2">
-                  Total do Ano:
-                  {{ formatCurrency(calculaTotalAnual(produtos)) }}
-                </h3>
-              </td>
-            </tr>
+          <template v-slot:[`item.preco`]="{ item }">
+            {{ formatCurrency(item.preco) }}
           </template>
         </v-data-table>
       </v-card>
@@ -79,12 +52,12 @@
                 <v-row class="mt-2">
                   <v-col cols="12" md="6">
                     <v-text-field
-                      v-model="formEditou.date"
-                      name="date"
-                      label="Data da Despesa"
-                      prepend-inner-icon="mdi-calendar"
-                      type="text"
-                      readonly
+                      :error-messages="descriptionErrors"
+                      :success="!$v.formEditou.descricao.$invalid"
+                      v-model.trim="$v.formEditou.descricao.$model"
+                      label="Descrição do Insumo"
+                      prepend-inner-icon="mdi-book-variant"
+                      required
                     ></v-text-field>
                   </v-col>
 
@@ -101,14 +74,13 @@
 
                 <v-row class="mt-0">
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      :error-messages="descriptionErrors"
-                      :success="!$v.formEditou.descricao.$invalid"
-                      v-model.trim="$v.formEditou.descricao.$model"
-                      label="Descrição da Despesa"
-                      prepend-inner-icon="mdi-book-variant"
-                      required
-                    ></v-text-field>
+                    <v-select
+                      v-model="formEditou.unidade"
+                      :items="unidades"
+                      label="Unidade do Insumo"
+                      prepend-inner-icon="mdi-format-list-numbered"
+                      outlined
+                    ></v-select>
                   </v-col>
 
                   <v-col cols="12" md="6">
@@ -154,78 +126,69 @@
 </template>
 
 <script>
-import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import moment from "moment";
-
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
-import TotalBalance from "./../../components/TotalBalance.vue";
 
 export default {
   name: "Insumos",
   components: {
-    ToolbarByMonth,
-
     AppFloatingButton,
-    TotalBalance,
   },
   mixins: [formatCurrentMixin],
   data() {
     return {
       formEditou: {
-        date: "",
+        index: 0,
         descricao: "",
         valor: 0,
-        tipo: "",
+        tipo: "Sementes ou Mudas",
+        unidade: "Milheiro",
       },
 
       search: "",
       selected: [],
       headers: [
         {
-          text: "Despesa",
+          text: "Insumo",
           align: "start",
           sortable: false,
           value: "name",
         },
         { text: "Tipo", value: "tipo" },
-        { text: "Data da Despesa", value: "data" },
-        { text: "Valor", value: "valor" },
-        { text: "Valor Anual", value: "valorAnual" },
+        { text: "Unidade", value: "unidade" },
+
+        { text: "Preço Unitário", value: "preco" },
       ],
       produtos: [
         {
           index: 1,
-          name: "Manutenção Familiar",
-          tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
-          valor: 1400,
-          valorAnual: 0,
+          name: "Mudas",
+          tipo: "Sementes ou Mudas",
+          unidade: "Milheiro",
+          preco: 35,
         },
         {
           index: 2,
-          name: "Taxa e impostos",
-          tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
-          valor: 400,
-          valorAnual: 0,
+          name: "Calcário",
+          tipo: "Adubos ou Corretivos",
+          unidade: "Toneladas",
+          preco: 100,
         },
         {
           index: 3,
-          name: "Mão de Obra",
-          tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
-          valor: 900,
-          valorAnual: 0,
+          name: "Fungicidas",
+          tipo: "Defensivos",
+          unidade: "Quilograma/Litro",
+          preco: 45,
         },
         {
           index: 4,
-          name: "Mão de Obra v",
-          tipo: "Variavel",
-          data: moment().format("DD/MM/YYYY"),
-          valor: 900,
-          valorAnual: 0,
+          name: "Frete",
+          tipo: "Materiais",
+          unidade: "maço",
+          preco: 0.5,
         },
       ],
       total: 0,
@@ -233,7 +196,21 @@ export default {
       produtosEdicao: [],
       editou: false,
       deletou: false,
-      items: ["Fixo", "Variavel"],
+      items: [
+        "Sementes ou Mudas",
+        "Adubos ou Corretivos",
+        "Defensivos",
+        "Materiais",
+      ],
+      unidades: [
+        "Milheiro",
+        "Toneladas",
+        "Quilograma/Litro",
+        "Maço",
+        "Unitário",
+        "Litros",
+        "Quilowatt",
+      ],
     };
   },
   validations() {
@@ -284,12 +261,14 @@ export default {
   methods: {
     edicaoItens(item) {
       this.editou = item;
+      console.log(this.formEditou);
+      console.log(this.selected);
       this.formEditou = {
         index: this.selected[0].index,
-        date: this.selected[0].data,
         descricao: this.selected[0].name,
-        valor: this.selected[0].valor,
+        valor: this.selected[0].preco,
         tipo: this.selected[0].tipo,
+        unidade: this.selected[0].unidade,
       };
     },
     deletouItens(item) {
