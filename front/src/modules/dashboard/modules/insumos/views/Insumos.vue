@@ -37,7 +37,7 @@
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title class="text-h5 mb-1">
-                  Editar Despesa
+                  Editar Insumo
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -64,7 +64,7 @@
                   <v-col cols="12" md="6">
                     <v-select
                       v-model="formEditou.tipo"
-                      label="Tipo de Despesa"
+                      label="Tipo de Insumo"
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
                       :items="items"
@@ -88,7 +88,7 @@
                       :error-messages="valueErrors"
                       :success="!$v.formEditou.valor.$invalid"
                       v-model.trim="$v.formEditou.valor.$model"
-                      label="Valor da Despesa"
+                      label="Valor do Insumo"
                       prepend-inner-icon="mdi-cash-multiple"
                       :value="formEditou.valor"
                       prefix="R$"

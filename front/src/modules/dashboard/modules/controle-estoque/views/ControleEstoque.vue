@@ -24,6 +24,12 @@
           :loading="false"
           loading-text="Loading... Please wait"
         >
+          <template v-slot:[`item.colhida`]="{ item }">
+            {{ item.colhida.toLocaleString() }}
+          </template>
+          <template v-slot:[`item.vendida`]="{ item }">
+            {{ item.vendida.toLocaleString() }}
+          </template>
           <template v-slot:[`item.estoque`]="{ item }">
             <v-chip :color="getColor(item)" dark>
               {{ produtos.estoque }}

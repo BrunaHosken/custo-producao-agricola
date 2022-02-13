@@ -164,6 +164,11 @@ export default {
   methods: {
     novoItem() {
       this.cliente = true;
+      this.editou = false;
+      this.formEdit = {
+        index: 0,
+        nome: "",
+      };
     },
     edicaoItens(item) {
       this.cliente = item;
@@ -181,6 +186,11 @@ export default {
 
     cancelar() {
       this.cliente = false;
+      this.editou = false;
+      this.formEdit = {
+        index: 0,
+        nome: "",
+      };
     },
     salvar() {
       this.cliente = false;
