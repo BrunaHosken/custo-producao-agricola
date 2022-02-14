@@ -109,6 +109,9 @@ export default {
         case "/dashboard/culturas":
           this.$router.push("/dashboard/culturas/new");
           break;
+        case "/dashboard/vendas":
+          this.$router.push("/dashboard/vendas/new");
+          break;
 
         default:
           break;
