@@ -1,7 +1,15 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card>
+      <v-card v-if="produtos.length === 0">
+        <v-card-title>
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhum Cliente criado.
+        </v-card-title>
+      </v-card>
+      <v-card v-else elevation="24" outlined>
         <v-card-title>
           Clientes
           <v-spacer></v-spacer>

@@ -1,7 +1,15 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card>
+      <v-card v-if="produtos.length === 0">
+        <v-card-title>
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhuma Cultura criada.
+        </v-card-title>
+      </v-card>
+      <v-card v-else elevation="24" outlined>
         <v-card-title> Culturas </v-card-title>
         <v-data-table
           v-model="selected"

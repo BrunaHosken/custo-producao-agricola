@@ -1,12 +1,17 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
-    </v-flex>
-    <v-flex xs12>
-      <v-card>
+      <v-card v-if="produtos.length === 0">
         <v-card-title>
-          Despesas do Mês
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhum Serviço criado.
+        </v-card-title>
+      </v-card>
+      <v-card v-else elevation="24" outlined>
+        <v-card-title>
+          Serviços
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -107,8 +112,6 @@
 </template>
 
 <script>
-import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
-
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
@@ -116,8 +119,6 @@ import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 export default {
   name: "Servicos",
   components: {
-    ToolbarByMonth,
-
     AppFloatingButton,
   },
   mixins: [formatCurrentMixin],

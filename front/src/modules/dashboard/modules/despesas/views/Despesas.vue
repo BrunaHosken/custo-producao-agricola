@@ -5,7 +5,15 @@
       <TotalBalance class="mt-5 mb-3" :value="value" />
     </v-flex>
     <v-flex xs12>
-      <v-card>
+      <v-card v-if="produtos.length === 0">
+        <v-card-title>
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhuma Despesa criada.
+        </v-card-title>
+      </v-card>
+      <v-card v-else elevation="24" outlined>
         <v-card-title>
           Despesas do Mês
           <v-spacer></v-spacer>
