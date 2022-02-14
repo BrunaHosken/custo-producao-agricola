@@ -4,7 +4,17 @@
       <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
     </v-flex>
     <v-flex xs12>
-      <v-card elevation="24" outlined>
+      <v-card v-if="produtos.length === 0">
+        <v-card-title>
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhum Controle de Estoque criado. <br />
+          Crie um Custo de Produção e depois uma Venda para poder visualizar
+          este conteúdo!</v-card-title
+        >
+      </v-card>
+      <v-card v-else elevation="24" outlined>
         <v-card-title>
           Controle de Estoque do Produto Terminado
           <v-spacer></v-spacer>

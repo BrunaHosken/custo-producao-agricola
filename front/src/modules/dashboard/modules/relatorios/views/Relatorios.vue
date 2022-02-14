@@ -1,62 +1,78 @@
 <template>
-  <v-layout row wrap>
-    <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
-    </v-flex>
-    <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
-      <v-card elevation="24" outlined>
-        <v-card-text>
-          <h2 class="font-weight-light mb-4">{{ chart.title }}</h2>
-          <canvas :ref="chart.refId"></canvas>
-        </v-card-text>
-      </v-card>
-    </v-flex>
-    <v-flex xs12>
-      <v-card elevation="24" outlined>
-        <v-card-title>
-          Margem Bruta e Despesas
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-        </v-card-title>
+  <v-layout>
+    <v-layout v-show="produtos.length === 0" row wrap>
+      <v-flex xs12>
+        <v-card>
+          <v-card-title>
+            <v-icon size="50" color="warning" class="mr-2"
+              >mdi-alert-circle</v-icon
+            >
+            Nenhum Relatório criado. <br />
+            Certifique-se de terem sido criados pelo menos um Custo de Produção,
+            uma Venda e uma Despesa!</v-card-title
+          >
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <v-layout v-show="produtos.length > 0" row wrap>
+      <v-flex xs12>
+        <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+      </v-flex>
+      <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
+        <v-card elevation="24" outlined>
+          <v-card-text>
+            <h2 class="font-weight-light mb-4">{{ chart.title }}</h2>
+            <canvas :ref="chart.refId"></canvas>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+      <v-flex xs12>
+        <v-card elevation="24" outlined>
+          <v-card-title>
+            Margem Bruta e Despesas
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
 
-        <v-data-table
-          :headers="headers"
-          :items="produtos"
-          :search="search"
-          :loading="false"
-          item-key="text"
-          loading-text="Loading... Please wait"
-        >
-          <template v-slot:[`item.lucro`]="{ item }">
-            {{ formatCurrency(item.lucro) }}
-          </template>
-          <template v-slot:[`item.custoProducao`]="{ item }">
-            {{ formatCurrency(item.custoProducao) }}
-          </template>
-          <template v-slot:[`item.venda`]="{ item }">
-            {{ formatCurrency(item.venda) }}
-          </template>
-          <template v-slot:[`item.lucroMaco`]="{ item }">
-            {{ formatCurrency(item.lucroMaco) }}
-          </template>
-          <template v-slot:[`item.despesas`]="{ item }">
-            {{ formatCurrency(item.despesas) }}
-          </template>
+          <v-data-table
+            :headers="headers"
+            :items="produtos"
+            :search="search"
+            :loading="false"
+            item-key="text"
+            loading-text="Loading... Please wait"
+          >
+            <template v-slot:[`item.lucro`]="{ item }">
+              {{ formatCurrency(item.lucro) }}
+            </template>
+            <template v-slot:[`item.custoProducao`]="{ item }">
+              {{ formatCurrency(item.custoProducao) }}
+            </template>
+            <template v-slot:[`item.venda`]="{ item }">
+              {{ formatCurrency(item.venda) }}
+            </template>
+            <template v-slot:[`item.lucroMaco`]="{ item }">
+              {{ formatCurrency(item.lucroMaco) }}
+            </template>
+            <template v-slot:[`item.despesas`]="{ item }">
+              {{ formatCurrency(item.despesas) }}
+            </template>
 
-          <template v-slot:[`item.total`]="{ item }">
-            <v-chip :color="getColor(item)" dark>
-              {{ formatCurrency(produtos.total) }}
-            </v-chip>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-flex>
+            <template v-slot:[`item.total`]="{ item }">
+              <v-chip :color="getColor(item)" dark>
+                {{ formatCurrency(produtos.total) }}
+              </v-chip>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </v-layout>
 </template>
 
@@ -121,15 +137,15 @@ export default {
       },
     ],
     produtos: [
-      {
-        name: "Crisântemo",
-        lucro: 246960,
-        custoProducao: 2.59,
-        venda: 7,
-        lucroMaco: 88.2,
-        despesas: 2700,
-        total: 0,
-      },
+      // {
+      //   name: "Crisântemo",
+      //   lucro: 246960,
+      //   custoProducao: 2.59,
+      //   venda: 7,
+      //   lucroMaco: 88.2,
+      //   despesas: 2700,
+      //   total: 0,
+      // },
     ],
   }),
   computed: {},
@@ -147,7 +163,6 @@ export default {
       return estoque;
     },
     getColor(data) {
-      console.log(data);
       const total = this.qtdEstoque(data);
       if (total === 0) return "error";
       else return "success";

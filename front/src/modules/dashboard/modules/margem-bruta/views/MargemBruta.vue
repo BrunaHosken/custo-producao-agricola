@@ -5,7 +5,15 @@
     </v-flex>
     <v-flex xs12>
       <v-card elevation="24" outlined>
-        <v-container fluid grid-list-md>
+        <v-card-title v-if="cards.length === 0">
+          <v-icon size="50" color="warning" class="mr-2"
+            >mdi-alert-circle</v-icon
+          >
+          Nenhuma Margem Bruta criada. <br />
+          Crie um Custo de Produção e depois uma Venda para poder visualizar
+          este conteúdo!</v-card-title
+        >
+        <v-container v-else fluid grid-list-md>
           <v-layout row wrap>
             <v-flex
               v-for="card in cards"
