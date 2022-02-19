@@ -20,7 +20,7 @@
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="Pesquisar"
             hide-details
           ></v-text-field>
         </v-card-title>
@@ -35,6 +35,9 @@
           loading="false"
           loading-text="Loading... Please wait"
         >
+          <template v-slot:[`item.data`]="{ item }">
+            {{ formatDateTable(item.data) }}
+          </template>
           <template v-slot:[`item.valor`]="{ item }">
             {{ formatCurrency(item.valor) }}
           </template>
@@ -86,14 +89,43 @@
               <v-container>
                 <v-row class="mt-2">
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="formEditou.date"
-                      name="date"
-                      label="Data da Despesa"
-                      prepend-inner-icon="mdi-calendar"
-                      type="text"
-                      readonly
-                    ></v-text-field>
+                    <v-dialog
+                      ref="dateDialog"
+                      :return-value.sync="formEditou.date"
+                      v-model="showDateDialog"
+                      persistent
+                      lazy
+                      width="290px"
+                      fullwidth
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          name="date"
+                          label="Data da Venda"
+                          prepend-inner-icon="mdi-calendar"
+                          type="text"
+                          readonly
+                          :value="formattedDate"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+
+                      <v-date-picker
+                        locale="pt-br"
+                        scrollable
+                        color="primary"
+                        v-model="dateDialogValue"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn text @click="cancelDateDialog"> Cancelar </v-btn>
+                        <v-btn
+                          text
+                          @click="$refs.dateDialog.save(dateDialogValue)"
+                        >
+                          Ok
+                        </v-btn>
+                      </v-date-picker>
+                    </v-dialog>
                   </v-col>
 
                   <v-col cols="12" md="6">
@@ -182,12 +214,13 @@ export default {
   data() {
     return {
       formEditou: {
-        date: "",
+        date: moment().format("DD-MM-YYYY"),
         descricao: "",
         valor: 0,
         tipo: "",
       },
-
+      showDateDialog: false,
+      dateDialogValue: moment().format("DD-MM-YYYY"),
       search: "",
       selected: [],
       headers: [
@@ -207,7 +240,7 @@ export default {
           index: 1,
           name: "Manutenção Familiar",
           tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           valor: 1400,
           valorAnual: 0,
         },
@@ -215,7 +248,7 @@ export default {
           index: 2,
           name: "Taxa e impostos",
           tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           valor: 400,
           valorAnual: 0,
         },
@@ -223,7 +256,7 @@ export default {
           index: 3,
           name: "Mão de Obra",
           tipo: "Fixo",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           valor: 900,
           valorAnual: 0,
         },
@@ -231,7 +264,7 @@ export default {
           index: 4,
           name: "Mão de Obra v",
           tipo: "Variavel",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           valor: 900,
           valorAnual: 0,
         },
@@ -259,6 +292,9 @@ export default {
     };
   },
   computed: {
+    formattedDate() {
+      return moment(this.formEditou.date).format("DD/MM/YYYY");
+    },
     descriptionErrors() {
       const errors = [];
       const description = this.$v.formEditou.descricao;
@@ -290,6 +326,13 @@ export default {
   },
 
   methods: {
+    formatDateTable(value) {
+      return moment(value).format("DD/MM/YYYY");
+    },
+    cancelDateDialog() {
+      this.showDateDialog = false;
+      this.dateDialogValue = this.formEditou.date;
+    },
     edicaoItens(item) {
       this.editou = item;
       this.formEditou = {

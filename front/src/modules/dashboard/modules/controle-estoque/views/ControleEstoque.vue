@@ -21,7 +21,7 @@
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="Pesquisar"
             single-line
             hide-details
           ></v-text-field>
