@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Editar Cultura
+                Editar Insumo
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -22,8 +22,8 @@
                 <v-col cols="12" md="6">
                   <v-text-field
                     :error-messages="descriptionErrors"
-                    :success="!$v.form.name.$invalid"
-                    v-model.trim="$v.form.name.$model"
+                    :success="!$v.form.descricao.$invalid"
+                    v-model.trim="$v.form.descricao.$model"
                     label="Descrição do Insumo"
                     prepend-inner-icon="mdi-book-variant"
                     required
@@ -31,14 +31,13 @@
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field
-                    :error-messages="valueErrors"
-                    :success="!$v.form.quantidade.$invalid"
-                    v-model.trim="$v.form.quantidade.$model"
-                    label="Quantidade estimada por Hectare"
-                    :value="form.quantidade"
-                    prepend-inner-icon="mdi-numeric"
-                  ></v-text-field>
+                  <v-select
+                    v-model="form.tipo"
+                    label="Tipo de Insumo"
+                    prepend-inner-icon="mdi-format-list-bulleted-type"
+                    outlined
+                    :items="items"
+                  ></v-select>
                 </v-col>
               </v-row>
 
@@ -47,10 +46,22 @@
                   <v-select
                     v-model="form.unidade"
                     :items="unidades"
-                    label="Unidade da Cultura"
+                    label="Unidade do Insumo"
                     prepend-inner-icon="mdi-format-list-numbered"
                     outlined
                   ></v-select>
+                </v-col>
+
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    :error-messages="valueErrors"
+                    :success="!$v.form.valor.$invalid"
+                    v-model.trim="$v.form.valor.$model"
+                    label="Valor do Insumo"
+                    prepend-inner-icon="mdi-cash-multiple"
+                    :value="form.valor"
+                    prefix="R$"
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -78,7 +89,7 @@
 <script>
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 export default {
-  name: "CulturasEdit",
+  name: "InsumosEdit",
   props: {
     showDialog: {
       type: Boolean,
@@ -91,24 +102,39 @@ export default {
   },
   data() {
     return {
-      unidades: ["Maço", "Dúzia"],
       editouCultura: false,
       form: {
         index: 0,
-        name: "",
-        quantidade: 0,
-        unidade: "",
+        descricao: "",
+        valor: 0,
+        tipo: "Sementes ou Mudas",
+        unidade: "Milheiro",
       },
+      items: [
+        "Sementes ou Mudas",
+        "Adubos ou Corretivos",
+        "Defensivos",
+        "Materiais",
+      ],
+      unidades: [
+        "Milheiro",
+        "Toneladas",
+        "Quilograma/Litro",
+        "Maço",
+        "Quilograma",
+        "Litros",
+        "Quilowatt",
+      ],
     };
   },
   validations() {
     return {
       form: {
-        name: {
+        descricao: {
           required,
           minLength: minLength(2),
         },
-        quantidade: {
+        valor: {
           required,
           minValue: minValue(0.0000001),
         },
@@ -117,11 +143,13 @@ export default {
   },
   watch: {
     formEditou(pValue) {
+      console.log(pValue);
       if (pValue && pValue.length > 0) {
         this.form = {
           index: pValue[0].index,
-          name: pValue[0].name,
-          quantidade: pValue[0].quantidade,
+          descricao: pValue[0].name,
+          valor: pValue[0].preco,
+          tipo: pValue[0].tipo,
           unidade: pValue[0].unidade,
         };
       }
@@ -130,7 +158,7 @@ export default {
   computed: {
     descriptionErrors() {
       const errors = [];
-      const description = this.$v.form.name;
+      const description = this.$v.form.descricao;
       if (!description.$dirty) {
         return errors;
       }
@@ -145,11 +173,11 @@ export default {
 
     valueErrors() {
       const errors = [];
-      const quantity = this.$v.form.quantidade;
+      const quantity = this.$v.form.valor;
       if (!quantity.$dirty) {
         return errors;
       }
-      !quantity.required && errors.push("Quantidade é obrigatória!");
+      !quantity.required && errors.push("Valor é obrigatório!");
       !quantity.minValue && errors.push(`Insira um Quantidade acima de 0`);
       return errors;
     },
