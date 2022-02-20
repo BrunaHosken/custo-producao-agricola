@@ -1,6 +1,8 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
+      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+      <TotalBalance class="mt-5 mb-3" :value="value" />
       <v-card v-if="produtos.length === 0">
         <v-card-title>
           <v-icon size="50" color="warning" class="mr-2"
@@ -67,12 +69,16 @@ import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import VendasEdit from "./VendasEdit.vue";
+import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
+import TotalBalance from "./../../components/TotalBalance.vue";
 
 export default {
   name: "Vendas",
   components: {
     AppFloatingButton,
     VendasEdit,
+    ToolbarByMonth,
+    TotalBalance,
   },
   mixins: [formatCurrentMixin],
   data() {
@@ -143,7 +149,13 @@ export default {
       deletou: false,
     };
   },
-
+  computed: {
+    value() {
+      return this.produtos.reduce((a, b) => {
+        return a + b.preco * b.vendida;
+      }, 0);
+    },
+  },
   methods: {
     close(item) {
       this.editou = item;

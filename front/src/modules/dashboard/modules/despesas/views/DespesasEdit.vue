@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Editar Venda
+                Editar Despesa
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -60,64 +60,38 @@
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-autocomplete
-                    v-model="form.descricao"
-                    :loading="loadingCultura"
-                    :items="cultura"
-                    :search-input.sync="searchCultura"
-                    outlined
-                    label="Produto"
+                  <v-select
+                    v-model="form.tipo"
+                    label="Tipo de Despesa"
                     prepend-inner-icon="mdi-format-list-bulleted-type"
-                  ></v-autocomplete>
+                    outlined
+                    :items="items"
+                  ></v-select>
                 </v-col>
               </v-row>
 
               <v-row class="mt-0">
-                <v-col cols="12" md="6">
-                  <v-autocomplete
-                    v-model="form.cliente"
-                    :loading="loadingCliente"
-                    :items="clientes"
-                    :search-input.sync="searchCliente"
-                    outlined
-                    prepend-inner-icon="mdi-account"
-                    label="Cliente"
-                  ></v-autocomplete>
-                </v-col>
-
                 <v-col cols="12" md="6">
                   <v-text-field
-                    :error-messages="quantityErrors"
-                    :success="!$v.form.quantidade.$invalid"
-                    v-model.trim="$v.form.quantidade.$model"
-                    label="Quantidade vendida"
-                    :value="form.quantidade"
-                    prepend-inner-icon="mdi-numeric"
+                    :error-messages="descriptionErrors"
+                    :success="!$v.form.descricao.$invalid"
+                    v-model.trim="$v.form.descricao.$model"
+                    label="Descrição da Despesa"
+                    prepend-inner-icon="mdi-book-variant"
+                    required
                   ></v-text-field>
                 </v-col>
-              </v-row>
 
-              <v-row class="mt-0">
                 <v-col cols="12" md="6">
                   <v-text-field
                     :error-messages="valueErrors"
                     :success="!$v.form.valor.$invalid"
                     v-model.trim="$v.form.valor.$model"
-                    label="Preço unitario"
-                    :value="form.valor"
+                    label="Valor da Despesa"
                     prepend-inner-icon="mdi-cash-multiple"
+                    :value="form.valor"
                     prefix="R$"
                   ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-select
-                    v-model="form.unidade"
-                    :items="unidades"
-                    label="Unidade"
-                    prepend-inner-icon="mdi-format-list-numbered"
-                    outlined
-                  ></v-select>
                 </v-col>
               </v-row>
             </v-container>
@@ -145,9 +119,9 @@
 <script>
 import moment from "moment";
 
-import { required, minValue } from "vuelidate/lib/validators";
+import { required, minValue, minLength } from "vuelidate/lib/validators";
 export default {
-  name: "VendasEdit",
+  name: "DespesasEdit",
   props: {
     showDialog: {
       type: Boolean,
@@ -158,37 +132,27 @@ export default {
       default: () => {},
     },
   },
-
   data() {
     return {
       form: {
-        date: moment().format("YYYY-MM-DD"),
-        descricao: "Crisântemo",
-        valor: 0,
-        cliente: "Feira",
-        unidade: "Maço",
-        quantidade: 0,
         index: 0,
+        date: moment().format("DD-MM-YYYY"),
+        descricao: "",
+        valor: 0,
+        tipo: "",
       },
-      items: ["Fixo", "Variavel"],
-      cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
-      clientes: ["Feira", "Floricultura do Seu João"],
-      loadingCultura: false,
-      loadingCliente: false,
-      searchCultura: null,
-      searchCliente: null,
-      unidades: ["Maço", "Dúzia"],
       showDateDialog: false,
-      dateDialogValue: moment().format("YYYY-MM-DD"),
+      dateDialogValue: moment().format("DD-MM-YYYY"),
+      items: ["Fixo", "Variavel"],
       editouCultura: false,
     };
   },
   validations() {
     return {
       form: {
-        quantidade: {
+        descricao: {
           required,
-          minValue: minValue(0.0000001),
+          minLength: minLength(2),
         },
         valor: {
           required,
@@ -201,13 +165,11 @@ export default {
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
         this.form = {
-          date: pValue[0].data,
-          descricao: pValue[0].produto,
-          valor: pValue[0].preco,
-          cliente: pValue[0].cliente,
-          unidade: pValue[0].unidade,
-          quantidade: pValue[0].vendida,
           index: pValue[0].index,
+          date: pValue[0].data,
+          descricao: pValue[0].name,
+          valor: pValue[0].valor,
+          tipo: pValue[0].tipo,
         };
       }
     },
@@ -216,14 +178,17 @@ export default {
     formattedDate() {
       return moment(this.form.date).format("DD/MM/YYYY");
     },
-    quantityErrors() {
+    descriptionErrors() {
       const errors = [];
-      const quantity = this.$v.form.quantidade;
-      if (!quantity.$dirty) {
+      const description = this.$v.form.descricao;
+      if (!description.$dirty) {
         return errors;
       }
-      !quantity.required && errors.push("Descrição é obrigatória!");
-      !quantity.minValue && errors.push(`Insira um valor acima de 0`);
+      !description.required && errors.push("Descrição é obrigatória!");
+      !description.minLength &&
+        errors.push(
+          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
+        );
       return errors;
     },
     valueErrors() {
@@ -240,7 +205,7 @@ export default {
   methods: {
     cancelDateDialog() {
       this.showDateDialog = false;
-      this.dateDialogValue = this.form.date;
+      this.dateDialogValue = this.formEditou.date;
     },
     cancelar() {
       this.editouCultura = false;

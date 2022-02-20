@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar :color="color">
+  <v-toolbar :color="color" elevation="24" outlined>
     <v-layout align-center>
       <v-flex xs1>
         <div class="text-xs-left">

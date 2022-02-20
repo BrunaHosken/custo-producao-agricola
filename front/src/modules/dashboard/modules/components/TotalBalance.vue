@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="24" outlined>
     <v-card-title primary-title>
       <div class="text-center ma-auto">
         <p class="subheading">Saldo Atual</p>
