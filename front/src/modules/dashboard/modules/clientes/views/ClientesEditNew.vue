@@ -109,7 +109,6 @@ export default {
   },
   computed: {
     title() {
-      console.log(this.editou);
       return this.editou ? "Editar Cliente" : "Novo Cliente";
     },
     nomeErrors() {

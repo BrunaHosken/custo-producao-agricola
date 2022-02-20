@@ -30,7 +30,7 @@
                       <template v-slot:activator="{ on }">
                         <v-text-field
                           name="date"
-                          label="Data da Despesa"
+                          label="Data da Venda"
                           prepend-inner-icon="mdi-calendar"
                           type="text"
                           readonly
@@ -58,38 +58,88 @@
                   </v-col>
 
                   <v-col cols="12" md="6">
-                    <v-select
-                      v-model="form.tipo"
-                      :items="produtos"
+                    <v-autocomplete
+                      v-model="form.descricao"
+                      :loading="loadingCultura"
+                      :items="cultura"
+                      :search-input.sync="searchCultura"
+                      outlined
                       label="Produto"
                       prepend-inner-icon="mdi-format-list-bulleted-type"
+                    >
+                      <v-list-item
+                        slot="prepend-item"
+                        ripple
+                        @click="novoProduto"
+                      >
+                        <v-list-item-action>
+                          <v-icon>mdi-plus</v-icon>
+                        </v-list-item-action>
+                        <v-list-item-title>Novo Produto</v-list-item-title>
+                      </v-list-item>
+                      <v-divider slot="prepend-item" class="mt-2"></v-divider>
+                    </v-autocomplete>
+                  </v-col>
+                </v-row>
+
+                <v-row class="mt-0">
+                  <v-col cols="12" md="6">
+                    <v-autocomplete
+                      v-model="form.cliente"
+                      :loading="loadingCliente"
+                      :items="clientes"
+                      :search-input.sync="searchCliente"
                       outlined
-                    ></v-select>
+                      prepend-inner-icon="mdi-account"
+                      label="Cliente"
+                    >
+                      <v-list-item
+                        slot="prepend-item"
+                        ripple
+                        @click="novoCliente"
+                      >
+                        <v-list-item-action>
+                          <v-icon>mdi-plus</v-icon>
+                        </v-list-item-action>
+                        <v-list-item-title>Novo Cliente</v-list-item-title>
+                      </v-list-item>
+                      <v-divider slot="prepend-item" class="mt-2"></v-divider
+                    ></v-autocomplete>
+                  </v-col>
+
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      :error-messages="quantityErrors"
+                      :success="!$v.form.quantidade.$invalid"
+                      v-model.trim="$v.form.quantidade.$model"
+                      label="Quantidade vendida"
+                      :value="form.quantidade"
+                      prepend-inner-icon="mdi-numeric"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
 
                 <v-row class="mt-0">
                   <v-col cols="12" md="6">
                     <v-text-field
-                      :error-messages="descriptionErrors"
-                      :success="!$v.form.descricao.$invalid"
-                      v-model.trim="$v.form.descricao.$model"
-                      label="Descrição da Despesa"
-                      prepend-inner-icon="mdi-book-variant"
-                      required
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" md="6">
-                    <v-text-field
                       :error-messages="valueErrors"
                       :success="!$v.form.valor.$invalid"
                       v-model.trim="$v.form.valor.$model"
-                      label="Valor da Despesa"
+                      label="Preço unitario"
                       :value="form.valor"
                       prepend-inner-icon="mdi-cash-multiple"
                       prefix="R$"
                     ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12" md="6">
+                    <v-select
+                      v-model="form.unidade"
+                      :items="unidades"
+                      label="Unidade"
+                      prepend-inner-icon="mdi-format-list-numbered"
+                      outlined
+                    ></v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -117,6 +167,15 @@
             </v-btn>
           </v-card-actions>
         </v-card>
+        <CulturasEdit
+          :showDialog="showDialogProduto"
+          :editou="false"
+          @showDialogClose="close"
+        />
+        <ClientesEditNew
+          :showDialog="showDialogCliente"
+          @showDialogClose="close"
+        />
         <Dialog
           message="Deseja realmente limpar os dados?"
           :showDialog="showClearDialog"
@@ -130,36 +189,49 @@
 <script>
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
-
+import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
+import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import Dialog from "./../../../components/Dialog.vue";
 export default {
   name: "VendasNew",
   components: {
     Dialog,
+    ClientesEditNew,
+    CulturasEdit,
   },
   data() {
     return {
       valid: false,
       items: ["Fixo", "Variavel"],
-      produtos: ["Crisântemo"],
+      cultura: ["Crisântemo"],
+      clientes: ["Feira", "Floricultura do Seu João"],
+      loadingCultura: false,
+      loadingCliente: false,
+      searchCultura: null,
+      searchCliente: null,
+      unidades: ["Maço", "Dúzia"],
       form: {
         date: moment().format("YYYY-MM-DD"),
-        descricao: "",
+        descricao: "Crisântemo",
         valor: 0,
-        tipo: "Fixo",
+        cliente: "Feira",
+        unidade: "Maço",
+        quantidade: 0,
       },
 
       showDateDialog: false,
       dateDialogValue: moment().format("YYYY-MM-DD"),
       showClearDialog: false,
+      showDialogCliente: false,
+      showDialogProduto: false,
     };
   },
   validations() {
     return {
       form: {
-        descricao: {
+        quantidade: {
           required,
-          minLength: minLength(2),
+          minValue: minValue(0.0000001),
         },
         valor: {
           required,
@@ -172,17 +244,14 @@ export default {
     formattedDate() {
       return moment(this.form.date).format("DD/MM/YYYY");
     },
-    descriptionErrors() {
+    quantityErrors() {
       const errors = [];
-      const description = this.$v.form.descricao;
-      if (!description.$dirty) {
+      const quantity = this.$v.form.quantidade;
+      if (!quantity.$dirty) {
         return errors;
       }
-      !description.required && errors.push("Descrição é obrigatória!");
-      !description.minLength &&
-        errors.push(
-          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-        );
+      !quantity.required && errors.push("Descrição é obrigatória!");
+      !quantity.minValue && errors.push(`Insira um valor acima de 0`);
       return errors;
     },
     valueErrors() {
@@ -191,12 +260,22 @@ export default {
       if (!value.$dirty) {
         return errors;
       }
-      !value.required && errors.push("Valor da despesa é obrigatória!");
+      !value.required && errors.push("Valor  é obrigatório!");
       !value.minValue && errors.push(`Insira um valor acima de 0`);
       return errors;
     },
   },
   methods: {
+    close() {
+      this.showDialogCliente = false;
+      this.showDialogProduto = false;
+    },
+    novoProduto() {
+      this.showDialogProduto = true;
+    },
+    novoCliente() {
+      this.showDialogCliente = true;
+    },
     option(data) {
       if (data == "nao") {
         this.showClearDialog = false;
@@ -215,9 +294,11 @@ export default {
     clean() {
       this.form = {
         date: moment().format("YYYY-MM-DD"),
-        tipo: "Fixo",
-        descricao: "",
+        descricao: "Crisântemo",
         valor: 0,
+        cliente: "Feira",
+        unidade: "Maço",
+        quantidade: 0,
       };
     },
     save() {

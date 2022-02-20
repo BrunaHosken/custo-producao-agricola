@@ -14,9 +14,9 @@
           Vendas
           <v-spacer></v-spacer>
           <v-text-field
-            v-model="search"
+            v-model="searchTable"
             append-icon="mdi-magnify"
-            label="Search"
+            label="Pesquisar"
             hide-details
           ></v-text-field>
         </v-card-title>
@@ -25,12 +25,15 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="name"
-          :search="search"
+          item-key="produto"
+          :search="searchTable"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
         >
+          <template v-slot:[`item.data`]="{ item }">
+            {{ formatDateTable(item.data) }}
+          </template>
           <template v-slot:[`item.vendida`]="{ item }">
             {{ item.vendida.toLocaleString() }}
           </template>
@@ -44,91 +47,11 @@
       </v-card>
     </v-flex>
 
-    <v-dialog v-model="editou" persistent max-width="600px">
-      <v-flex xs12>
-        <v-card class="elevation-24" outlined>
-          <v-toolbar color="primary" dark>
-            <v-list-item two-line>
-              <v-list-item-content>
-                <v-list-item-title class="text-h5 mb-1">
-                  Editar Venda
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-btn icon dark @click="editou = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-toolbar>
-
-          <v-card-text>
-            <v-form>
-              <v-container>
-                <v-row class="mt-2">
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      :error-messages="descriptionErrors"
-                      :success="!$v.formEditou.descricao.$invalid"
-                      v-model.trim="$v.formEditou.descricao.$model"
-                      label="Descrição do Insumo"
-                      prepend-inner-icon="mdi-book-variant"
-                      required
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-model="formEditou.tipo"
-                      label="Tipo de Insumo"
-                      prepend-inner-icon="mdi-format-list-bulleted-type"
-                      outlined
-                      :items="items"
-                    ></v-select>
-                  </v-col>
-                </v-row>
-
-                <v-row class="mt-0">
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-model="formEditou.unidade"
-                      :items="unidades"
-                      label="Unidade do Insumo"
-                      prepend-inner-icon="mdi-format-list-numbered"
-                      outlined
-                    ></v-select>
-                  </v-col>
-
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      :error-messages="valueErrors"
-                      :success="!$v.formEditou.valor.$invalid"
-                      v-model.trim="$v.formEditou.valor.$model"
-                      label="Valor do Insumo"
-                      prepend-inner-icon="mdi-cash-multiple"
-                      :value="formEditou.valor"
-                      prefix="R$"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-form>
-          </v-card-text>
-          <v-card-actions class="mb-4">
-            <v-spacer></v-spacer>
-            <v-btn color="secundary" class="mr-4" @click="cancelar">
-              Cancelar
-            </v-btn>
-            <v-btn
-              color="success"
-              class="mr-4"
-              :disabled="$v.$invalid"
-              @click="salvar"
-            >
-              Salvar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
-    </v-dialog>
+    <VendasEdit
+      :showDialog="editou"
+      :formEditou="selected"
+      @showDialogClose="close"
+    />
 
     <AppFloatingButton
       v-show="true"
@@ -141,27 +64,20 @@
 
 <script>
 import moment from "moment";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
+import VendasEdit from "./VendasEdit.vue";
 
 export default {
   name: "Vendas",
   components: {
     AppFloatingButton,
+    VendasEdit,
   },
   mixins: [formatCurrentMixin],
   data() {
     return {
-      formEditou: {
-        index: 0,
-        descricao: "",
-        valor: 0,
-        tipo: "Sementes ou Mudas",
-        unidade: "Milheiro",
-      },
-
-      search: "",
+      searchTable: null,
       selected: [],
       headers: [
         {
@@ -182,41 +98,41 @@ export default {
         {
           index: 1,
           produto: "Crisântemo",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           cliente: "Feira",
           vendida: 14000,
           preco: 20,
-          unidade: "Maços",
+          unidade: "Maço",
           total: 0,
         },
         {
           index: 2,
-          produto: "Gébera",
-          data: moment().format("DD/MM/YYYY"),
+          produto: "Gérbera",
+          data: moment().format("YYYY-MM-DD"),
           cliente: "Feira",
           vendida: 9000,
           preco: 10,
-          unidade: "Maços",
+          unidade: "Maço",
           total: 0,
         },
         {
           index: 3,
           produto: "Limonium",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           cliente: "Floricultura do Seu João",
           vendida: 14500,
           preco: 20,
-          unidade: "Maços",
+          unidade: "Maço",
           total: 0,
         },
         {
           index: 4,
           produto: "Rosa",
-          data: moment().format("DD/MM/YYYY"),
+          data: moment().format("YYYY-MM-DD"),
           cliente: "Floricultura do Seu João",
           vendida: 12250,
           preco: 30,
-          unidade: "Maços",
+          unidade: "Maço",
           total: 0,
         },
       ],
@@ -225,82 +141,25 @@ export default {
       produtosEdicao: [],
       editou: false,
       deletou: false,
-      items: [
-        "Sementes ou Mudas",
-        "Adubos ou Corretivos",
-        "Defensivos",
-        "Materiais",
-      ],
-      unidades: [
-        "Milheiro",
-        "Toneladas",
-        "Quilograma/Litro",
-        "Maço",
-        "Quilograma",
-        "Litros",
-        "Quilowatt",
-      ],
     };
-  },
-  validations() {
-    return {
-      formEditou: {
-        descricao: {
-          required,
-          minLength: minLength(2),
-        },
-        valor: {
-          required,
-          minValue: minValue(0.0000001),
-        },
-      },
-    };
-  },
-  computed: {
-    descriptionErrors() {
-      const errors = [];
-      const description = this.$v.formEditou.descricao;
-      if (!description.$dirty) {
-        return errors;
-      }
-      !description.required && errors.push("Descrição é obrigatória!");
-      !description.minLength &&
-        errors.push(
-          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-        );
-      return errors;
-    },
-    valueErrors() {
-      const errors = [];
-      const value = this.$v.formEditou.valor;
-      if (!value.$dirty) {
-        return errors;
-      }
-      !value.required && errors.push("Valor da despesa é obrigatória!");
-      !value.minValue && errors.push(`Insira um valor acima de 0`);
-      return errors;
-    },
   },
 
   methods: {
+    close(item) {
+      this.editou = item;
+    },
+    formatDateTable(value) {
+      return moment(value).format("DD/MM/YYYY");
+    },
+
     edicaoItens(item) {
       this.editou = item;
-      console.log(this.formEditou);
-      console.log(this.selected);
-      this.formEditou = {
-        index: this.selected[0].index,
-        descricao: this.selected[0].name,
-        valor: this.selected[0].preco,
-        tipo: this.selected[0].tipo,
-        unidade: this.selected[0].unidade,
-      };
     },
     deletouItens(item) {
       this.deletou = item;
       console.log(this.deletou);
     },
     calculaTotal(vendida, total) {
-      console.log(vendida, total);
       return vendida * total;
     },
 
@@ -308,13 +167,6 @@ export default {
       return this.produtos.reduce((a, b) => {
         return b.tipo === "Fixo" ? a + b.valor * 12 : a;
       }, 0);
-    },
-    cancelar() {
-      this.editou = false;
-    },
-    salvar() {
-      this.editou = false;
-      console.log(this.formEditou);
     },
   },
 };

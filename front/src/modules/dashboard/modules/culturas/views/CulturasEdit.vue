@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Editar Cultura
+                {{ title }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -88,6 +88,10 @@ export default {
       type: Array,
       default: () => {},
     },
+    editou: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -128,6 +132,9 @@ export default {
     },
   },
   computed: {
+    title() {
+      return this.editou ? "Editar Cultura" : "Nova Cultura";
+    },
     descriptionErrors() {
       const errors = [];
       const description = this.$v.form.name;

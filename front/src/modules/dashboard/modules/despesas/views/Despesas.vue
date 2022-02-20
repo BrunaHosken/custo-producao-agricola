@@ -314,7 +314,7 @@ export default {
       if (!value.$dirty) {
         return errors;
       }
-      !value.required && errors.push("Valor da despesa é obrigatória!");
+      !value.required && errors.push("Valor  é obrigatório!");
       !value.minValue && errors.push(`Insira um valor acima de 0`);
       return errors;
     },
