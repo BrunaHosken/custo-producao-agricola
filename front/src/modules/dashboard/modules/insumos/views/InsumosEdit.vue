@@ -143,7 +143,6 @@ export default {
   },
   watch: {
     formEditou(pValue) {
-      console.log(pValue);
       if (pValue && pValue.length > 0) {
         this.form = {
           index: pValue[0].index,
