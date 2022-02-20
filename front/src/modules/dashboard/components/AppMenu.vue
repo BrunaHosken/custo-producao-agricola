@@ -64,6 +64,12 @@ export default {
         exact: true,
       },
       {
+        title: "Contatos",
+        icon: "mdi-human-greeting-proximity",
+        url: "/dashboard/contatos",
+        exact: true,
+      },
+      {
         title: "Despesas",
         icon: "mdi-cash-remove",
         url: "/dashboard/despesas",
@@ -101,12 +107,6 @@ export default {
         exact: true,
       },
       {
-        title: "Margem Bruta",
-        icon: "mdi-finance",
-        url: "/dashboard/margem-bruta",
-        exact: true,
-      },
-      {
         title: "Vendas",
         icon: "mdi-cash-plus",
         url: "/dashboard/vendas",
@@ -119,6 +119,12 @@ export default {
         exact: true,
       },
       {
+        title: "Margem Bruta",
+        icon: "mdi-finance",
+        url: "/dashboard/margem-bruta",
+        exact: true,
+      },
+      {
         title: "Controle de Estoque",
         icon: "mdi-card-bulleted-outline",
         url: "/dashboard/controle-estoque",
@@ -128,12 +134,6 @@ export default {
         title: "Relatórios",
         icon: "mdi-chart-bar-stacked",
         url: "/dashboard/relatorios",
-        exact: true,
-      },
-      {
-        title: "Contatos",
-        icon: "mdi-human-greeting-proximity",
-        url: "/dashboard/contatos",
         exact: true,
       },
     ],
