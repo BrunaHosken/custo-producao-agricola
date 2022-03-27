@@ -57,19 +57,10 @@
                 v-model.trim="$v.user.password.$model"
               ></v-text-field>
             </v-form>
-            <v-btn block depressed color="secondary" @click="newUser">
-              {{ texts.button }}
-            </v-btn>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              v-show="isLogin && !isForgot"
-              color="primary"
-              text
-              class="ml-2"
-              @click="forgotPassword"
-            >
-              Esqueci a senha
+            <v-btn color="primary" text class="ml-2" @click="forgotPassword">
+              {{ texts.button }}
             </v-btn>
 
             <v-spacer></v-spacer>
@@ -147,10 +138,9 @@ export default {
   },
   computed: {
     texts() {
-      if (this.isLogin) return { toolbar: "Entrar", button: "Criar conta" };
-      if (this.isForgot && !this.isLogin)
-        return { toolbar: "Nova Senha", button: "Já tenho uma conta" };
-      return { toolbar: "Criar Conta", button: "Já tenho uma conta" };
+      if (this.isLogin)
+        return { toolbar: "Entrar", button: "Recuperar a senha" };
+      return { toolbar: "Nova Senha", button: "Cancelar" };
     },
 
     emailErrors() {
