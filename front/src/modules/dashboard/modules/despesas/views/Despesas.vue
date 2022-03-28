@@ -1,8 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
-      <TotalBalance class="mt-5 mb-3" :value="value" />
+      <ToolbarByMonth
+        class="mt-5 mb-3"
+        format="MM-YYYY"
+        month="02"
+        @period="period"
+      />
+      <TotalBalance class="mt-5 mb-3" :value="valuePeriod" />
     </v-flex>
     <v-flex xs12>
       <v-card v-if="produtos.length === 0">
@@ -15,7 +20,7 @@
       </v-card>
       <v-card v-else elevation="24" outlined>
         <v-card-title>
-          Despesas do Mês
+          Despesas do Mês {{ valuePeriod }}
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -41,28 +46,8 @@
           <template v-slot:[`item.valor`]="{ item }">
             {{ formatCurrency(item.valor) }}
           </template>
-          <template v-slot:[`item.valorAnual`]="{ item }">
-            {{ formatCurrency(calculaValorAnual(item)) }}
-          </template>
-          <template v-slot:[`body.append`]>
-            <tr>
-              <td colspan="12">
-                <h3 class="mt-2">
-                  Total do Mês (Despesas Fixas):
-                  {{ formatCurrency(calculaTotalMêsFixo(produtos)) }}
-                </h3>
-
-                <h3>
-                  Total do Mês (Despesas Variaveis):
-                  {{ formatCurrency(calculaTotalMêsVariavel(produtos)) }}
-                </h3>
-
-                <h3 class="mb-2">
-                  Total do Ano:
-                  {{ formatCurrency(calculaTotalAnual(produtos)) }}
-                </h3>
-              </td>
-            </tr>
+          <template v-slot:[`item.valorPeriodo`]="{ item }">
+            {{ formatCurrency(calculaValorPeriodo(item)) }}
           </template>
         </v-data-table>
       </v-card>
@@ -115,7 +100,7 @@ export default {
         { text: "Tipo", value: "tipo" },
         { text: "Data da Despesa", value: "data" },
         { text: "Valor", value: "valor" },
-        { text: "Valor Anual", value: "valorAnual" },
+        { text: "Valor no Período", value: "valorPeriodo" },
       ],
       produtos: [
         {
@@ -124,7 +109,7 @@ export default {
           tipo: "Fixo",
           data: moment().format("YYYY-MM-DD"),
           valor: 1400,
-          valorAnual: 0,
+          valorPeriodo: 0,
         },
         {
           index: 2,
@@ -132,7 +117,7 @@ export default {
           tipo: "Fixo",
           data: moment().format("YYYY-MM-DD"),
           valor: 400,
-          valorAnual: 0,
+          valorPeriodo: 0,
         },
         {
           index: 3,
@@ -140,7 +125,7 @@ export default {
           tipo: "Fixo",
           data: moment().format("YYYY-MM-DD"),
           valor: 900,
-          valorAnual: 0,
+          valorPeriodo: 0,
         },
         {
           index: 4,
@@ -148,11 +133,11 @@ export default {
           tipo: "Variavel",
           data: moment().format("YYYY-MM-DD"),
           valor: 900,
-          valorAnual: 0,
+          valorPeriodo: 0,
         },
       ],
       total: 0,
-      totalAnual: 0,
+      periodSelected: "",
       produtosEdicao: [],
       editou: false,
       deletou: false,
@@ -160,14 +145,32 @@ export default {
   },
 
   computed: {
-    value() {
-      return this.produtos.reduce((a, b) => {
-        return a + b.valor;
-      }, 0);
+    valuePeriod() {
+      let valorPeriod = 0;
+      for (var prop in this.produtos) {
+        if (this.produtos[prop].tipo === "Fixo") {
+          if (this.periodSelected === "Mensal") {
+            valorPeriod += this.produtos[prop].valor;
+          }
+          if (this.periodSelected === "Semanal") {
+            valorPeriod += this.produtos[prop].valor * 4;
+          }
+          if (this.periodSelected === "Anual") {
+            valorPeriod += this.produtos[prop].valor * 12;
+          }
+        }
+        if (this.produtos[prop].tipo === "Variavel") {
+          valorPeriod += this.produtos[prop].valor;
+        }
+      }
+      return valorPeriod;
     },
   },
 
   methods: {
+    period(value) {
+      this.periodSelected = value;
+    },
     close(item) {
       this.editou = item;
     },
@@ -182,8 +185,16 @@ export default {
       this.deletou = item;
       console.log(this.deletou);
     },
-    calculaValorAnual(item) {
-      return item.tipo === "Fixo" ? item.valor * 12 : 0;
+    calculaValorPeriodo(item) {
+      return item.tipo === "Fixo"
+        ? this.periodSelected === "Mensal"
+          ? item.valor
+          : this.periodSelected === "Semanal"
+          ? item.valor * 4
+          : this.periodSelected === "Anual"
+          ? item.valor * 12
+          : 0
+        : item.valor;
     },
     calculaTotalMêsFixo() {
       return this.produtos.reduce((a, b) => {

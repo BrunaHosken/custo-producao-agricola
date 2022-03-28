@@ -2,7 +2,7 @@
   <v-card elevation="24" outlined>
     <v-card-title primary-title>
       <div class="text-center ma-auto">
-        <p class="subheading">Saldo Atual</p>
+        <p class="subheading">Saldo do Período</p>
         <h1 class="display-2">{{ totalInCurrency }}</h1>
       </div>
     </v-card-title>
@@ -25,11 +25,8 @@ export default {
   }),
   computed: {
     totalInCurrency() {
-      return this.formatCurrency(this.total);
+      return this.formatCurrency(this.value);
     },
-  },
-  created() {
-    this.total = this.value;
   },
 };
 </script>

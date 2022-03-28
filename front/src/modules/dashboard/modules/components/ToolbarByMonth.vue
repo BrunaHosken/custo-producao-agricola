@@ -65,14 +65,6 @@ export default {
       currentPeriod: "",
     };
   },
-  computed: {
-    currentMonth() {
-      return this.date.format("MMMM YYYY");
-    },
-    currentYear() {
-      return this.date.format("YYYY");
-    },
-  },
 
   created() {
     this.period();
@@ -82,20 +74,25 @@ export default {
     period() {
       if (this.periodSelected === "Anual") {
         this.currentPeriod = this.date.format("YYYY");
+        this.emitPeriod();
       }
       if (this.periodSelected === "Mensal") {
         this.currentPeriod = this.date.format("MMMM YYYY");
+        this.emitPeriod();
       }
       if (this.periodSelected === "Semanal") {
         let formato = "DD/MM/YYYY";
-        let inicio = moment().day(0).format(formato); // domingo desta semana
+        let inicio = moment().day(0).format(formato);
         let fim = moment().day(6).format(formato);
-
         this.currentPeriod = `${inicio} - ${fim}`;
+        this.emitPeriod();
       }
     },
+    emitPeriod() {
+      this.$emit("period", this.periodSelected);
+    },
     emit() {
-      this.$emit("month", this.date.format(this.format));
+      this.$emit("date", this.date.format(this.format));
     },
     decrement() {
       if (this.periodSelected === "Anual") {
@@ -126,9 +123,6 @@ export default {
         this.currentPeriod = `${inicio} - ${fim}`;
       }
       this.emit();
-    },
-    setCurrentMonth() {
-      this.date = this.month ? moment(this.month, this.format) : moment();
     },
   },
 };
