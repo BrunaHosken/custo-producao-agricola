@@ -9,17 +9,30 @@
         </div>
       </v-flex>
 
-      <v-flex xs8 offset-xs1>
+      <v-flex xs9 offset-xs1>
         <v-toolbar-title class="text-center">
-          <span>{{ currentMonth }}</span>
+          <span>{{ currentPeriod }}</span>
         </v-toolbar-title>
       </v-flex>
 
-      <v-flex v-if="showSlot" xs1 text-right>
-        <slot />
+      <v-flex xs1 text-center mt-3>
+        <v-toolbar-title class="text-center">
+          <v-select
+            v-model="periodSelected"
+            :items="periods"
+            :menu-props="{ maxHeight: '400' }"
+            label="Período"
+            item-text="state"
+            item-value="abbr"
+            persistent-hint
+            return-object
+            single-line
+            @change="period"
+          ></v-select>
+        </v-toolbar-title>
       </v-flex>
 
-      <v-flex xs1 :class="arrowRightClass">
+      <v-flex xs1>
         <div class="text-right">
           <v-btn icon text @click="increment">
             <v-icon>mdi-chevron-right</v-icon>
@@ -44,32 +57,74 @@ export default {
       default: false,
     },
   },
-  data: () => ({
-    date: undefined,
-  }),
+  data() {
+    return {
+      date: moment(),
+      periodSelected: "Mensal",
+      periods: ["Semanal", "Mensal", "Anual"],
+      currentPeriod: "",
+    };
+  },
   computed: {
     currentMonth() {
       return this.date.format("MMMM YYYY");
     },
-    arrowRightClass() {
-      return !this.showSlot ? "offset-xs1" : "";
+    currentYear() {
+      return this.date.format("YYYY");
     },
   },
 
   created() {
-    this.setCurrentMonth();
+    this.period();
     this.emit();
   },
   methods: {
+    period() {
+      if (this.periodSelected === "Anual") {
+        this.currentPeriod = this.date.format("YYYY");
+      }
+      if (this.periodSelected === "Mensal") {
+        this.currentPeriod = this.date.format("MMMM YYYY");
+      }
+      if (this.periodSelected === "Semanal") {
+        let formato = "DD/MM/YYYY";
+        let inicio = moment().day(0).format(formato); // domingo desta semana
+        let fim = moment().day(6).format(formato);
+
+        this.currentPeriod = `${inicio} - ${fim}`;
+      }
+    },
     emit() {
       this.$emit("month", this.date.format(this.format));
     },
     decrement() {
-      this.date = this.date.clone().subtract(1, "month");
+      if (this.periodSelected === "Anual") {
+        this.currentPeriod = this.date.subtract(1, "Y").format("YYYY");
+      }
+      if (this.periodSelected === "Mensal") {
+        this.currentPeriod = this.date.subtract(1, "M").format("MMMM YYYY");
+      }
+      if (this.periodSelected === "Semanal") {
+        let formato = "DD/MM/YYYY";
+        let inicio = this.date.day(0).subtract(7, "d").format(formato);
+        let fim = this.date.day(6).format(formato);
+        this.currentPeriod = `${inicio} - ${fim}`;
+      }
       this.emit();
     },
     increment() {
-      this.date = this.date.clone().add(1, "month");
+      if (this.periodSelected === "Anual") {
+        this.currentPeriod = this.date.add(1, "Y").format("YYYY");
+      }
+      if (this.periodSelected === "Mensal") {
+        this.currentPeriod = this.date.add(1, "M").format("MMMM YYYY");
+      }
+      if (this.periodSelected === "Semanal") {
+        let formato = "DD/MM/YYYY";
+        let inicio = this.date.day(0).add(7, "d").format(formato);
+        let fim = this.date.day(6).format(formato);
+        this.currentPeriod = `${inicio} - ${fim}`;
+      }
       this.emit();
     },
     setCurrentMonth() {
