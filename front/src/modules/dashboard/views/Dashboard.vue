@@ -7,11 +7,11 @@
       shaped
     >
       <v-card-title class="text-h4 mb-3 mt-1 no-break">
-        Bem vindo ao seu Gerenciador de Custo de Produção!!!
+        Bem vindo ao seu Gerenciador de Cultura Desenvolvida!!!
       </v-card-title>
       <v-card-subtitle class="text-h6">
         <p>
-          Aqui você pode criar seu próprio custo de produção, além de
+          Aqui você pode criar seu próprio Cultura Desenvolvida, além de
           administrar suas vendas, despesas, relatórios, margem bruta e controle
           de estoque das culturas!
         </p>

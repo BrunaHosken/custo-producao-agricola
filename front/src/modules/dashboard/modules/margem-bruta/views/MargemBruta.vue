@@ -1,7 +1,12 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+      <ToolbarByMonth
+        class="mt-5 mb-3"
+        format="MM-YYYY"
+        month="02"
+        @period="period"
+      />
     </v-flex>
     <v-flex xs12>
       <v-card elevation="24" outlined>
@@ -10,7 +15,7 @@
             >mdi-alert-circle</v-icon
           >
           Nenhuma Margem Bruta criada. <br />
-          Crie um Custo de Produção e depois uma Venda para poder visualizar
+          Crie um Cultura Desenvolvida e depois uma Venda para poder visualizar
           este conteúdo!</v-card-title
         >
         <v-container v-else fluid grid-list-md>
@@ -44,19 +49,19 @@
                     Custo produção:
                     {{ formatCurrency(custoProducao(card.item, card.index)) }}
                   </p>
-                  <p>
+                  <p v-if="periodoAtual === 'Semanal'">
                     Margem bruta semanal:
                     {{
                       formatCurrency(margemBrutaSemanal(card.item, card.index))
                     }}
                   </p>
-                  <p>
+                  <p v-if="periodoAtual === 'Mensal'">
                     Margem bruta mensal:
                     {{
                       formatCurrency(margemBrutaMensal(card.item, card.index))
                     }}
                   </p>
-                  <p>
+                  <p v-if="periodoAtual === 'Anual'">
                     Margem bruta anual:
                     {{
                       formatCurrency(margemBrutaAnual(card.item, card.index))
@@ -87,6 +92,7 @@ export default {
   },
   data() {
     return {
+      periodoAtual: "Mensal",
       cards: [
         {
           index: 0,
@@ -102,6 +108,9 @@ export default {
     };
   },
   methods: {
+    period(pValue) {
+      this.periodoAtual = pValue;
+    },
     receitaBruta(card, index) {
       console.log(this.cards[index]);
       return this.cards[index].vendido * this.cards[index].valorVenda;

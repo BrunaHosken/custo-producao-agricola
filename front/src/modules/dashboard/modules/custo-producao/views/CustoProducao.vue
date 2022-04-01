@@ -1,5 +1,5 @@
 <template>
-  <h1>Custo de Produção</h1>
+  <h1>Cultura Desenvolvida</h1>
 </template>
 
 <script>

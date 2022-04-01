@@ -9,13 +9,13 @@
         </div>
       </v-flex>
 
-      <v-flex xs9 offset-xs1>
+      <v-flex xs8 offset-xs1>
         <v-toolbar-title class="text-center">
           <span>{{ currentPeriod }}</span>
         </v-toolbar-title>
       </v-flex>
 
-      <v-flex xs1 text-center mt-3>
+      <v-flex xs2 text-center mt-3>
         <v-toolbar-title class="text-center">
           <v-select
             v-model="periodSelected"

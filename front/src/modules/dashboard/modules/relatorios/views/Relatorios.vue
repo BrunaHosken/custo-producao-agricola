@@ -8,8 +8,8 @@
               >mdi-alert-circle</v-icon
             >
             Nenhum Relatório criado. <br />
-            Certifique-se de terem sido criados pelo menos um Custo de Produção,
-            uma Venda e uma Despesa!</v-card-title
+            Certifique-se de terem sido criados pelo menos um Cultura
+            Desenvolvida, uma Venda e uma Despesa!</v-card-title
           >
         </v-card>
       </v-flex>
@@ -106,7 +106,7 @@ export default {
         value: "lucro",
       },
       {
-        text: "Custo de Produção",
+        text: "Cultura Desenvolvida",
         align: "center",
         sortable: false,
         value: "custoProducao",

@@ -82,7 +82,7 @@ export default {
         exact: true,
       },
       {
-        title: "Custo de Produção",
+        title: "Cultura Desenvolvida",
         icon: "mdi-cash-multiple",
         url: "/dashboard/custo-producao",
         exact: true,

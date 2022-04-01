@@ -112,6 +112,9 @@ export default {
         case "/dashboard/vendas":
           this.$router.push("/dashboard/vendas/new");
           break;
+        case "/dashboard/etapas-culturas":
+          this.$router.push("/dashboard/etapas-culturas/new");
+          break;
 
         default:
           break;

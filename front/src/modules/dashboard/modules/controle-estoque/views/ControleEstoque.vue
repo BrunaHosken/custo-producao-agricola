@@ -10,7 +10,7 @@
             >mdi-alert-circle</v-icon
           >
           Nenhum Controle de Estoque criado. <br />
-          Crie um Custo de Produção e depois uma Venda para poder visualizar
+          Crie uma Cultura Desenvolvida e depois uma Venda para poder visualizar
           este conteúdo!</v-card-title
         >
       </v-card>
@@ -129,7 +129,7 @@ export default {
     getColor(data) {
       const estoque = this.qtdEstoque(data);
       if (estoque === 0) return "error";
-      else if (estoque <= 5000) return "orange";
+      else if (estoque <= 500) return "orange";
       else return "success";
     },
   },

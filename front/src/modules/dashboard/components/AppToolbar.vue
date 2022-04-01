@@ -52,9 +52,9 @@ export default {
         case "/dashboard/culturas/new":
           return "Culturas";
         case "/dashboard/custo-producao":
-          return "Custo de Produção";
+          return "Cultura Desenvolvida";
         case "/dashboard/custo-producao/new":
-          return "Custo de Produção";
+          return "Cultura Desenvolvida";
         case "/dashboard/etapas-culturas":
           return "Etapas da Cultura";
         case "/dashboard/etapas-culturas/new":
