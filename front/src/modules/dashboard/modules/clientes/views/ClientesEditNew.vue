@@ -38,6 +38,9 @@
           <v-btn color="secundary" class="mr-4" @click="cancelar">
             Cancelar
           </v-btn>
+          <v-btn v-if="!editou" color="orange" class="mr-4" @click="clear">
+            Limpar
+          </v-btn>
           <v-btn
             color="success"
             class="mr-4"
@@ -97,6 +100,12 @@ export default {
           nome: "",
         };
       }
+      if (pValue) {
+        this.form = {
+          index: this.formEditou[0].index,
+          nome: this.formEditou[0].nome,
+        };
+      }
     },
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
@@ -126,13 +135,22 @@ export default {
     },
   },
   methods: {
+    clear() {
+      this.form = {
+        index: 0,
+        nome: "",
+      };
+    },
     cancelar() {
+      this.$v.$reset();
       this.editouCultura = false;
+      this.clear();
       this.$emit("showDialogClose", this.editouCultura);
     },
     salvar() {
       this.editouCultura = false;
       console.log(this.form);
+      this.$v.$reset();
       this.$emit("showDialogClose", this.editouCultura);
     },
   },
