@@ -97,42 +97,41 @@ export default {
         text: "Produto",
         value: "name",
         align: "center",
-        sortable: false,
       },
       {
         text: "Lucro",
         align: "center",
-        sortable: false,
+
         value: "lucro",
       },
       {
         text: "Cultura Desenvolvida",
         align: "center",
-        sortable: false,
+
         value: "custoProducao",
       },
       {
         text: "Valor Venda",
         align: "center",
-        sortable: false,
+
         value: "venda",
       },
       {
         text: "Lucro Maço",
         align: "center",
-        sortable: false,
+
         value: "lucroMaco",
       },
       {
         text: "Despesas Totais",
         align: "center",
-        sortable: false,
+
         value: "despesas",
       },
       {
         text: "Total Mês",
         align: "center",
-        sortable: false,
+
         value: "total",
       },
     ],

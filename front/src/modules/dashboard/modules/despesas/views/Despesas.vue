@@ -94,7 +94,7 @@ export default {
         {
           text: "Despesa",
           align: "start",
-          sortable: false,
+
           value: "name",
         },
         { text: "Tipo", value: "tipo" },

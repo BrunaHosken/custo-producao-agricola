@@ -70,7 +70,7 @@ export default {
         {
           text: "Cultura",
           align: "start",
-          sortable: false,
+
           value: "name",
         },
         { text: "Quantidade estimada por Hectare", value: "quantidade" },

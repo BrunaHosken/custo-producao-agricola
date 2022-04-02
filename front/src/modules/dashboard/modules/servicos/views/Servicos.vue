@@ -73,7 +73,7 @@ export default {
         {
           text: "Serviço",
           align: "start",
-          sortable: false,
+
           value: "name",
         },
 

@@ -74,7 +74,7 @@ export default {
         {
           text: "Insumo",
           align: "start",
-          sortable: false,
+
           value: "name",
         },
         { text: "Tipo", value: "tipo" },

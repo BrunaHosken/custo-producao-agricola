@@ -64,7 +64,7 @@ export default {
         {
           text: "Clientes",
           align: "start",
-          sortable: false,
+
           value: "nome",
         },
       ],

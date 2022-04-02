@@ -70,24 +70,23 @@ export default {
           text: "Produto",
           value: "name",
           align: "center",
-          sortable: false,
         },
         {
           text: "Quantidade Colhida",
           align: "center",
-          sortable: false,
+
           value: "colhida",
         },
         {
           text: "Quantidade Vendida",
           align: "center",
-          sortable: false,
+
           value: "vendida",
         },
         {
           text: "Quantidade Estoque",
           align: "center",
-          sortable: false,
+
           value: "estoque",
         },
       ],

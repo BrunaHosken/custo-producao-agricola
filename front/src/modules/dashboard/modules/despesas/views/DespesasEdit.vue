@@ -25,7 +25,6 @@
                     :return-value.sync="form.date"
                     v-model="showDateDialog"
                     persistent
-                    lazy
                     width="290px"
                     fullwidth
                   >

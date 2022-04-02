@@ -89,7 +89,7 @@ export default {
         {
           text: "Produto",
           align: "start",
-          sortable: false,
+
           value: "produto",
         },
         { text: "Data da Venda", value: "data" },
