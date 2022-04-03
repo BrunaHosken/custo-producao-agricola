@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Editar Insumo
+                {{ title }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -99,6 +99,10 @@ export default {
       type: Array,
       default: () => {},
     },
+    editou: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -155,6 +159,9 @@ export default {
     },
   },
   computed: {
+    title() {
+      return this.editou ? "Editar Insumo" : "Novo Insumo";
+    },
     descriptionErrors() {
       const errors = [];
       const description = this.$v.form.descricao;

@@ -27,7 +27,7 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="produto"
+          item-key="InsumoServiço"
           :search="searchTable"
           multi-select
           loading="false"
@@ -36,14 +36,11 @@
           <template v-slot:[`item.data`]="{ item }">
             {{ formatDateTable(item.data) }}
           </template>
-          <template v-slot:[`item.vendida`]="{ item }">
-            {{ item.vendida.toLocaleString() }}
-          </template>
-          <template v-slot:[`item.preco`]="{ item }">
-            {{ formatCurrency(item.preco) }}
+          <template v-slot:[`item.valor`]="{ item }">
+            {{ formatCurrency(item.valor) }}
           </template>
           <template v-slot:[`item.total`]="{ item }">
-            {{ formatCurrency(calculaTotal(item.preco, item.vendida)) }}
+            {{ formatCurrency(calculaTotal(item.quantidade, item.valor)) }}
           </template>
         </v-data-table>
       </v-card>
@@ -85,61 +82,86 @@ export default {
       selected: [],
       headers: [
         {
-          text: "Descrição",
+          text: "Ordem da Etapa",
           align: "start",
-          sortable: false,
+          value: "ordem",
+        },
+        {
+          text: "Descrição",
           value: "descricao",
         },
-        { text: "Ordem da Etapa", value: "ordem" },
-        { text: "Mês Início", value: "mesInicio" },
-        { text: "Mês Fim", value: "mesFim" },
-        { text: "Tipo Etapa", value: "tipoEtapa" },
-        { text: "Data", value: "data" },
-        { text: "Tipo Insumo", value: "tipoInsumo" },
-        { text: "Insumo/Serviço", value: "insumoServico" },
-        { text: "Quantidade/Dias por Homem", value: "quantidade" },
+        { text: "Insumos/Serviços", value: "InsumoServiço" },
+        { text: "Tipo do Uso", value: "tipoUso" },
+        { text: "Quantidade", value: "quantidade" },
+        { text: "Unidade", value: "unidade" },
         { text: "Valor", value: "valor" },
         { text: "Total", value: "total" },
       ],
       produtos: [
         {
+          index: 0,
+          ordem: "1º",
+          descricao: "Sementes ou mudas",
+          InsumoServiço: "Mudas enraizadas",
+          tipoUso: "Real",
+          quantidade: 420,
+          unidade: "Milheiro",
+          valor: "35",
+          total: 0,
+        },
+        {
           index: 1,
-          produto: "Crisântemo",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Feira",
-          vendida: 14000,
-          preco: 20,
-          unidade: "Maço",
+          ordem: "1º",
+          descricao: "Adubos e corretivos",
+          InsumoServiço: "Adubo foliar fosfatado",
+          tipoUso: "Previsto",
+          quantidade: 8,
+          unidade: "Litros",
+          valor: "15",
           total: 0,
         },
         {
           index: 2,
-          produto: "Gérbera",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Feira",
-          vendida: 9000,
-          preco: 10,
-          unidade: "Maço",
+          ordem: "1º",
+          descricao: "Defensivos",
+          InsumoServiço: "Fungicidas",
+          tipoUso: "Real",
+          quantidade: 54,
+          unidade: "Quilograma/Litro",
+          valor: "40",
           total: 0,
         },
         {
           index: 3,
-          produto: "Limonium",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Floricultura do Seu João",
-          vendida: 14500,
-          preco: 20,
-          unidade: "Maço",
+          ordem: "3º",
+          descricao: "Defensivos",
+          InsumoServiço: "Espalhante adesivo",
+          tipoUso: "Real",
+          quantidade: 2,
+          unidade: "Litros",
+          valor: "15",
           total: 0,
         },
         {
           index: 4,
-          produto: "Rosa",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Floricultura do Seu João",
-          vendida: 12250,
-          preco: 30,
-          unidade: "Maço",
+          ordem: "5º",
+          descricao: "Serviços",
+          InsumoServiço: "Irrigação",
+          tipoUso: "Previsto",
+          quantidade: 30,
+          unidade: "Dias/Homem",
+          valor: "15",
+          total: 0,
+        },
+        {
+          index: 5,
+          ordem: "1º",
+          descricao: "Materiais",
+          InsumoServiço: "Fitilho",
+          tipoUso: "Real",
+          quantidade: 14,
+          unidade: "Quilograma",
+          valor: "6",
           total: 0,
         },
       ],
@@ -172,8 +194,8 @@ export default {
       this.deletou = item;
       console.log(this.deletou);
     },
-    calculaTotal(vendida, total) {
-      return vendida * total;
+    calculaTotal(quantidade, valor) {
+      return quantidade * valor;
     },
 
     calculaTotalAnual() {

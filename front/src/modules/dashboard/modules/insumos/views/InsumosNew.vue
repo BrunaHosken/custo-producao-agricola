@@ -194,10 +194,10 @@ export default {
     },
     clean() {
       this.form = {
-        date: moment().format("YYYY-MM-DD"),
-        tipo: "Fixo",
         descricao: "",
         valor: 0,
+        tipo: "Sementes ou Mudas",
+        unidade: "Milheiro",
       };
     },
     save() {
