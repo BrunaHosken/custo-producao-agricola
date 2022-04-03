@@ -13,7 +13,7 @@
           v-model="fab"
           fab
           :color="fab ? 'red accent-2' : 'primary'"
-          :title="fab ? 'Cancelar' : itensLength"
+          :title="fab ? 'Cancelar' : 'Opções'"
         >
           <v-icon v-if="fab">mdi-close</v-icon>
           <v-icon v-else>mdi-dots-vertical</v-icon>

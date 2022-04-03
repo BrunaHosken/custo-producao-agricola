@@ -366,6 +366,9 @@ export default {
     };
   },
   watch: {
+    "form.mesFinal"(pValue) {
+      console.log(pValue);
+    },
     "form.tipoEtapa"(pValue) {
       if (pValue === "Serviço") {
         this.isServico = true;
