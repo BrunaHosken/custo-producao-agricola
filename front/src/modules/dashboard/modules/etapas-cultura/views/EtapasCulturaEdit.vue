@@ -378,8 +378,8 @@ export default {
           tipoEtapa: pValue[0].tipoEtapa,
           tipoUso: pValue[0].tipoUso,
           quantidade: pValue[0].quantidade,
-          servico: pValue[0].InsumoServiço,
-          insumo: pValue[0].InsumoServiço,
+          servico: pValue[0].insumoServico,
+          insumo: pValue[0].insumoServico,
           ordem: pValue[0].ordem,
         };
 

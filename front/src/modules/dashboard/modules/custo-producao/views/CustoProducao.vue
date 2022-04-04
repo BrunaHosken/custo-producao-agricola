@@ -36,16 +36,25 @@
                 </v-card-subtitle>
                 <hr />
                 <v-card-text class="text-center">
-                  <p v-for="etapa in card.etapas" :key="etapa.index">
-                    Etapa {{ etapa.ordem }} | Data da Etapa: {{ etapa.data }} |
-                    {{ etapa.descricao }} | {{ etapa.insumoServiço }} | Uso
-                    {{ etapa.uso }} | {{ etapa.quantidade }}
-                    {{ etapa.unidade }} | {{ formatCurrency(etapa.valor) }} |
-                    Total:
-                    {{
-                      formatCurrency(totalEtapa(etapa.quantidade, etapa.valor))
-                    }}
-                  </p>
+                  <h4 class="mb-2">Etapas</h4>
+                  <v-data-table
+                    :headers="headers"
+                    :items="card.etapas"
+                    :items-per-page="5"
+                    class="elevation-1"
+                  >
+                    <template v-slot:[`item.quantidade`]="{ item }">
+                      {{ item.quantidade.toLocaleString() }}
+                    </template>
+                    <template v-slot:[`item.valor`]="{ item }">
+                      {{ formatCurrency(item.valor) }}
+                    </template>
+                    <template v-slot:[`item.total`]="{ item }">
+                      {{
+                        formatCurrency(totalEtapa(item.quantidade, item.valor))
+                      }}
+                    </template>
+                  </v-data-table>
                 </v-card-text>
                 <hr />
                 <v-card-text class="text-center">
@@ -97,6 +106,48 @@ export default {
   data() {
     return {
       periodoAtual: "Mensal",
+      headers: [
+        {
+          text: "Etapa",
+          align: "start",
+          value: "ordem",
+        },
+        {
+          text: "Data",
+          align: "start",
+          value: "data",
+        },
+        {
+          text: "Descrição",
+          align: "start",
+          value: "descricao",
+        },
+        {
+          text: "Insumos/Serviços",
+          align: "start",
+          value: "insumoServico",
+        },
+        {
+          text: "Quantidade",
+          align: "start",
+          value: "quantidade",
+        },
+        {
+          text: "Unidade",
+          align: "start",
+          value: "unidade",
+        },
+        {
+          text: "Custo Unitário",
+          align: "start",
+          value: "valor",
+        },
+        {
+          text: "Custo Total",
+          align: "start",
+          value: "total",
+        },
+      ],
       cards: [
         {
           index: 0,
@@ -112,7 +163,7 @@ export default {
               ordem: 1,
               data: moment().format("DD/MM/YYYY"),
               descricao: "Semementes ou Mudas",
-              insumoServiço: "Mudas enraizadas",
+              insumoServico: "Mudas enraizadas",
               uso: "Real",
               quantidade: 420,
               unidade: "Milheiro",
@@ -124,7 +175,7 @@ export default {
               ordem: 1,
               data: moment().format("DD/MM/YYYY"),
               descricao: "Adubos e corretivos",
-              insumoServiço: "Adubo foliar fosfatado",
+              insumoServico: "Adubo foliar fosfatado",
               uso: "Previsto",
               quantidade: 8,
               unidade: "Litros",
@@ -136,7 +187,7 @@ export default {
               ordem: 1,
               data: moment().format("DD/MM/YYYY"),
               descricao: "Defensivos",
-              insumoServiço: "Fungicidas",
+              insumoServico: "Fungicidas",
               uso: "Real",
               quantidade: 54,
               unidade: "Quilograma/Litro",

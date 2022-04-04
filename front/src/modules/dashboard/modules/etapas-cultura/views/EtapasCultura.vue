@@ -27,7 +27,7 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="InsumoServiço"
+          item-key="insumoServico"
           :search="searchTable"
           multi-select
           loading="false"
@@ -90,7 +90,7 @@ export default {
           text: "Descrição",
           value: "descricao",
         },
-        { text: "Insumos/Serviços", value: "InsumoServiço" },
+        { text: "Insumos/Serviços", value: "insumoServico" },
         { text: "Tipo do Uso", value: "tipoUso" },
         { text: "Quantidade", value: "quantidade" },
         { text: "Unidade", value: "unidade" },
@@ -101,7 +101,7 @@ export default {
           index: 0,
           ordem: "1º",
           descricao: "Sementes ou mudas",
-          InsumoServiço: "Mudas enraizadas",
+          insumoServico: "Mudas enraizadas",
           tipoUso: "Real",
           quantidade: 420,
           unidade: "Milheiro",
@@ -116,7 +116,7 @@ export default {
           index: 1,
           ordem: "1º",
           descricao: "Adubos e corretivos",
-          InsumoServiço: "Adubo foliar fosfatado",
+          insumoServico: "Adubo foliar fosfatado",
           tipoUso: "Previsto",
           quantidade: 8,
           unidade: "Litros",
@@ -130,7 +130,7 @@ export default {
           index: 2,
           ordem: "1º",
           descricao: "Defensivos",
-          InsumoServiço: "Fungicidas",
+          insumoServico: "Fungicidas",
           tipoUso: "Real",
           quantidade: 54,
           unidade: "Quilograma/Litro",
@@ -145,7 +145,7 @@ export default {
           index: 3,
           ordem: "3º",
           descricao: "Defensivos",
-          InsumoServiço: "Espalhante adesivo",
+          insumoServico: "Espalhante adesivo",
           tipoUso: "Real",
           quantidade: 2,
           unidade: "Litros",
@@ -160,7 +160,7 @@ export default {
           index: 4,
           ordem: "5º",
           descricao: "Serviços",
-          InsumoServiço: "Irrigação",
+          insumoServico: "Irrigação",
           tipoUso: "Previsto",
           quantidade: 30,
           unidade: "Dias/Homem",
@@ -174,7 +174,7 @@ export default {
           index: 5,
           ordem: "1º",
           descricao: "Materiais",
-          InsumoServiço: "Fitilho",
+          insumoServico: "Fitilho",
           tipoUso: "Real",
           quantidade: 14,
           unidade: "Quilograma",
