@@ -36,11 +36,11 @@
           <template v-slot:[`item.data`]="{ item }">
             {{ formatDateTable(item.data) }}
           </template>
+          <template v-slot:[`item.quantidade`]="{ item }">
+            {{ item.quantidade.toLocaleString() }}
+          </template>
           <template v-slot:[`item.valor`]="{ item }">
             {{ formatCurrency(item.valor) }}
-          </template>
-          <template v-slot:[`item.total`]="{ item }">
-            {{ formatCurrency(calculaTotal(item.quantidade, item.valor)) }}
           </template>
         </v-data-table>
       </v-card>
@@ -95,7 +95,6 @@ export default {
         { text: "Quantidade", value: "quantidade" },
         { text: "Unidade", value: "unidade" },
         { text: "Valor", value: "valor" },
-        { text: "Total", value: "total" },
       ],
       produtos: [
         {
@@ -215,9 +214,6 @@ export default {
     deletouItens(item) {
       this.deletou = item;
       console.log(this.deletou);
-    },
-    calculaTotal(quantidade, valor) {
-      return quantidade * valor;
     },
 
     calculaTotalAnual() {
