@@ -1,0 +1,9 @@
+type Query {
+  agricultor(CodAgricultor: ID!): Agricultor
+}
+type Agricultor {
+  CodAgricultor: ID!
+  Nome: String!
+  Email: String!
+  Senha: String!
+}

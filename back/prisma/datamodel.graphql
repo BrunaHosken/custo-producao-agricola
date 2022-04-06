@@ -1,0 +1,106 @@
+type Agricultor {
+  CodAgricultor: ID! @unique
+  Nome: String!
+  Email: String! @unique
+  Senha: String!
+}
+type TipoDespesa {
+  CodTipoDespesa: ID! @unique
+  DescrTipoDespesa: String!
+}
+type DespesaRealizada {
+  CodCultDes: ID! @unique
+  DescrDetalhada: String!
+  Data: DateTime!
+  Valor: Float!
+  Agricultor: Agricultor
+  TipoDespesa: TipoDespesa
+}
+type Contato {
+  CodContato: ID! @unique
+  DescrContato: String!
+  Agricultor: Agricultor
+}
+type Cultura {
+  CodCultura: ID! @unique
+  DescrCultura: String!
+  QtdEstimadaPorHectare: Float!
+  Und: String!
+}
+type CulturaDesenvolvida {
+  CodCultDes: ID! @unique
+  AreaTerrenoHectares: Float!
+  DataInicio: DateTime!
+  DataColheita: DateTime!
+  QtdColhida: Float!
+  Unidade: Float!
+  Agricultor: Agricultor
+  Cultura: Cultura
+}
+
+type VendaItem {
+  CodVendaItem: ID! @unique
+  Qtd: Float!
+  Und: Float!
+  PrecoUnit: Float!
+  Venda: Venda
+}
+type Venda {
+  CodVenda: ID! @unique
+  Data: DateTime!
+  Cliente: Cliente
+}
+type Cliente {
+  CodCliente: ID! @unique
+  NomeCliente: String!
+}
+type CulturaEtapa {
+  CodEtapa: ID! @unique
+  DescrEtapa: String!
+  NumEtapa: Float!
+  MesInicio: DateTime!
+  MesFim: DateTime!
+  CulturaDesenvolvida: CulturaDesenvolvida
+}
+type UsoInsumoPrevisto {
+  CodUsoInsumoPrevisto: ID! @unique
+  Qtd: Float!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
+}
+type UsoInsumoReal {
+  CodUsoInsumoReal: ID! @unique
+  Data: DateTime!
+  Qtd: Float!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
+}
+type ServicoPrestado {
+  CodServicoPrestado: ID! @unique
+  Data: DateTime!
+  DiasHomem: Float!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
+}
+type ServicoPrevisto {
+  CodServicoPrevisto: ID! @unique
+  DiasHomem: Float!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
+}
+type Insumo {
+  CodInsumo: ID! @unique
+  DescrInsumo: String!
+  PrecoUnit: Float!
+  Und: Float!
+  TipoInsumo: TipoInsumo
+}
+type TipoInsumo {
+  CodTipoInsumo: ID! @unique
+  NomeTipo: String!
+}
+type Servico {
+  CodServico: ID! @unique
+  DescrServico: String!
+  ValorDiaHomem: Float!
+}
