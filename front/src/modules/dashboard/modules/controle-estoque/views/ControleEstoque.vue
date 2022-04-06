@@ -33,6 +33,7 @@
           :search="search"
           :loading="false"
           loading-text="Loading... Please wait"
+          multi-sort
         >
           <template v-slot:[`item.colhida`]="{ item }">
             {{ item.colhida.toLocaleString() }}

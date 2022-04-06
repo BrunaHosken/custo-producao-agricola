@@ -32,7 +32,11 @@
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
+          multi-sort
         >
+          <template v-slot:[`item.ordem`]="{ item }">
+            {{ item.ordem }}º
+          </template>
           <template v-slot:[`item.data`]="{ item }">
             {{ formatDateTable(item.data) }}
           </template>
@@ -99,7 +103,7 @@ export default {
       produtos: [
         {
           index: 0,
-          ordem: "1º",
+          ordem: 1,
           descricao: "Sementes ou mudas",
           insumoServico: "Mudas enraizadas",
           tipoUso: "Real",
@@ -114,7 +118,7 @@ export default {
         },
         {
           index: 1,
-          ordem: "1º",
+          ordem: 1,
           descricao: "Adubos e corretivos",
           insumoServico: "Adubo foliar fosfatado",
           tipoUso: "Previsto",
@@ -128,7 +132,7 @@ export default {
         },
         {
           index: 2,
-          ordem: "1º",
+          ordem: 1,
           descricao: "Defensivos",
           insumoServico: "Fungicidas",
           tipoUso: "Real",
@@ -143,7 +147,7 @@ export default {
         },
         {
           index: 3,
-          ordem: "3º",
+          ordem: 3,
           descricao: "Defensivos",
           insumoServico: "Espalhante adesivo",
           tipoUso: "Real",
@@ -158,7 +162,7 @@ export default {
         },
         {
           index: 4,
-          ordem: "5º",
+          ordem: 5,
           descricao: "Serviços",
           insumoServico: "Irrigação",
           tipoUso: "Previsto",
@@ -172,7 +176,7 @@ export default {
         },
         {
           index: 5,
-          ordem: "1º",
+          ordem: 1,
           descricao: "Materiais",
           insumoServico: "Fitilho",
           tipoUso: "Real",

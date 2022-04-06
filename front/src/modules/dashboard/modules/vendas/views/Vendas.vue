@@ -32,6 +32,7 @@
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
+          multi-sort
         >
           <template v-slot:[`item.data`]="{ item }">
             {{ formatDateTable(item.data) }}

@@ -23,6 +23,7 @@
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
+          multi-sort
         >
         </v-data-table>
       </v-card>

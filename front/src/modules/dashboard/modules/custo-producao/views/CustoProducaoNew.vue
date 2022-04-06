@@ -7,7 +7,7 @@
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title class="text-h5 mb-1">
-                  Cadastrar uma Nova Cultura Desenvolvida
+                  Cadastrar Cultura Desenvolvida
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -43,7 +43,6 @@
                         scrollable
                         color="primary"
                         v-model="dateDialogValueInitial"
-                        type="month"
                       >
                         <v-spacer></v-spacer>
                         <v-btn text @click="cancelDateDialogInitial">
@@ -103,7 +102,6 @@
                           scrollable
                           color="primary"
                           v-model="dateDialogValueFinal"
-                          type="month"
                         >
                           <v-spacer></v-spacer>
                           <v-btn text @click="cancelDateDialogFinal">
@@ -126,7 +124,7 @@
                 <v-row class="mt-4">
                   <v-col cols="12" md="4">
                     <v-autocomplete
-                      v-model="form.descricao"
+                      v-model="form.culturaDescricao"
                       :loading="loadingCultura"
                       :items="cultura"
                       :search-input.sync="searchCultura"
@@ -137,7 +135,7 @@
                       <v-list-item
                         slot="prepend-item"
                         ripple
-                        @click="novoProduto"
+                        @click="novaCultura"
                       >
                         <v-list-item-action>
                           <v-icon>mdi-plus</v-icon>
@@ -147,26 +145,25 @@
                       <v-divider slot="prepend-item" class="mt-2"></v-divider>
                     </v-autocomplete>
                   </v-col>
-
+                  <v-col cols="12" md="4">
+                    <v-text-field
+                      :error-messages="terrenoErrors"
+                      :success="!$v.form.terreno.$invalid"
+                      v-model.trim="$v.form.terreno.$model"
+                      label="Total de Hectares"
+                      :value="form.quantidade"
+                      prepend-inner-icon="mdi-numeric"
+                    ></v-text-field>
+                  </v-col>
                   <v-col cols="12" md="4">
                     <v-text-field
                       :error-messages="valueErrors"
                       :success="!$v.form.quantidade.$invalid"
                       v-model.trim="$v.form.quantidade.$model"
-                      :label="label"
+                      label="Quantidade"
                       :value="form.quantidade"
                       prepend-inner-icon="mdi-numeric"
                     ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" md="4">
-                    <v-select
-                      v-model="form.unidade"
-                      :items="unidades"
-                      label="Unidade do Insumo"
-                      prepend-inner-icon="mdi-format-list-numbered"
-                      outlined
-                    ></v-select>
                   </v-col>
                 </v-row>
                 <h4 class="mb-2">Etapas já adicionadas</h4>
@@ -175,19 +172,15 @@
                     >Adicionar nova etapa</v-subheader
                   >
                   <v-autocomplete
-                    v-model="form.descricao"
-                    :loading="loadingCultura"
-                    :items="cultura"
-                    :search-input.sync="searchCultura"
+                    v-model="form.etapa"
+                    :loading="loadingEtapa"
+                    :items="etapas"
+                    :search-input.sync="searchEtapa"
                     outlined
                     label="Etapa da Cultura"
                     prepend-inner-icon="mdi-format-list-bulleted-type"
                   >
-                    <v-list-item
-                      slot="prepend-item"
-                      ripple
-                      @click="novoProduto"
-                    >
+                    <v-list-item slot="prepend-item" ripple @click="novaEtapa">
                       <v-list-item-action>
                         <v-icon>mdi-plus</v-icon>
                       </v-list-item-action>
@@ -197,7 +190,11 @@
                     </v-list-item>
                     <v-divider slot="prepend-item" class="mt-2"></v-divider>
                   </v-autocomplete>
-                  <v-btn color="success" class="ma-2"
+                  <v-btn
+                    color="success"
+                    class="ma-2"
+                    title="Adicionar"
+                    @click="adicionarEtapa"
                     ><v-icon>mdi-plus</v-icon></v-btn
                   >
                 </v-row>
@@ -206,7 +203,29 @@
                   :items="form.etapas"
                   :items-per-page="5"
                   class="elevation-1"
+                  multi-sort
                 >
+                  <template v-slot:[`item.ordem`]="{ item }">
+                    {{ item.ordem }}º
+                  </template>
+
+                  <template v-slot:[`item.quantidade`]="{ item }">
+                    {{ item.quantidade.toLocaleString() }}
+                  </template>
+                  <template v-slot:[`item.valor`]="{ item }">
+                    {{ formatCurrency(item.valor) }}
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    {{
+                      formatCurrency(calculaTotal(item.valor, item.quantidade))
+                    }}
+                  </template>
+
+                  <template v-slot:[`item.actions`]="{ item }">
+                    <v-icon small @click="deleteItem(item)">
+                      mdi-delete
+                    </v-icon>
+                  </template>
                 </v-data-table>
               </v-container>
             </v-form>
@@ -233,13 +252,13 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-        <ServicoEdit
-          :showDialog="showDialogServico"
+        <CulturasEdit
+          :showDialog="showDialogProduto"
           :editou="false"
           @showDialogClose="close"
         />
-        <InsumosEdit
-          :showDialog="showDialogInsumo"
+        <EtapasCulturaEdit
+          :showDialog="showDialogEtapas"
           :editou="false"
           @showDialogClose="close"
         />
@@ -257,23 +276,24 @@
 <script>
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
-import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
-import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
+import EtapasCulturaEdit from "../../etapas-cultura/views/EtapasCulturaEdit.vue";
+import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import Dialog from "./../../../components/Dialog.vue";
+import formatCurrentMixin from "./../../../../../mixins/format-currency";
 export default {
   name: "EtapasCulturaNew",
   components: {
     Dialog,
-    InsumosEdit,
-    ServicoEdit,
+    CulturasEdit,
+    EtapasCulturaEdit,
   },
+  mixins: [formatCurrentMixin],
   data() {
     return {
       valid: false,
       itemsEtapa: ["Insumo", "Serviço"],
       itemsUso: ["Real", "Previsto"],
-      itemsServico: ["Preparo do Solo", "Calagem", "Adubação", "Plantio"],
-      itemsInsumo: ["Mudas", "Calcário", "Fungicidas", "Frete"],
+
       headers: [
         {
           text: "Etapa",
@@ -315,21 +335,32 @@ export default {
           align: "start",
           value: "total",
         },
+        { text: "Actions", value: "actions", sortable: false, align: "center" },
+      ],
+      cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
+      unidades: ["Maço", "Dúzia"],
+      etapas: [
+        "Adubo foliar fosfatado",
+        "Espalhante adesivo",
+        "Fitilho",
+        "Fungicidas",
+        "Irrigação",
+        "Mudas enraizadas",
       ],
       form: {
         colheita: true,
-        mesInicio: new Date().toISOString().substr(0, 7),
-        mesFinal: new Date(new Date().setMonth(new Date().getMonth() + 1))
-          .toISOString()
-          .substr(0, 7),
-        datePrevista: moment().format("YYYY-MM-DD"),
+        mesInicio: moment().format("YYYY-MM-DD"),
+        mesFinal: moment().add(1, "M").format("YYYY-MM-DD"),
+        culturaDescricao: "Crisântemo",
+        unidade: "Maço",
         descricao: "",
         tipoEtapa: "Insumo",
         tipoUso: "Real",
         quantidade: 0,
+        etapa: "Adubo foliar fosfatado",
         servico: "Preparo do Solo",
         insumo: "Mudas",
-        ordem: 0,
+        terreno: 0,
         etapas: [
           {
             index: 0,
@@ -369,22 +400,21 @@ export default {
           },
         ],
       },
-
+      showDialogProduto: false,
       showDateDialogInitial: false,
-      dateDialogValueInitial: new Date().toISOString().substr(0, 7),
+      dateDialogValueInitial: moment().format("YYYY-MM-DD"),
       showDateDialogPrevista: false,
-      dateDialogValuePrevista: moment().format("YYYY-MM-DD"),
+      dateDialogValuePrevista: moment().add(1, "M").format("YYYY-MM-DD"),
       showDateDialogFinal: false,
-      dateDialogValueFinal: new Date(
-        new Date().setMonth(new Date().getMonth() + 1)
-      )
-        .toISOString()
-        .substr(0, 7),
+      dateDialogValueFinal: moment().add(1, "M").format("YYYY-MM-DD"),
       showClearDialog: false,
       isServico: false,
       isPrevisto: false,
-      showDialogServico: false,
-      showDialogInsumo: false,
+      searchCultura: null,
+      searchEtapa: null,
+      loadingCultura: false,
+      loadingEtapa: false,
+      showDialogEtapas: false,
     };
   },
   validations() {
@@ -398,7 +428,7 @@ export default {
           required,
           minValue: minValue(0.0000001),
         },
-        ordem: {
+        terreno: {
           required,
           minValue: minValue(0.0000001),
         },
@@ -425,21 +455,15 @@ export default {
     },
   },
   computed: {
-    label() {
-      return this.isServico ? "Dias/Homem" : "Quantidade";
-    },
     formattedDateInitial() {
-      return moment(this.form.mesInicio).format("MMMM/YYYY");
-    },
-    formattedDatePrevista() {
-      return moment(this.form.datePrevista).format("DD/MM/YYYY");
+      return moment(this.form.mesInicio).format("DD/MM/YYYY");
     },
     formattedDateFinal() {
-      return moment(this.form.mesFinal).format("MMMM/YYYY");
+      return moment(this.form.mesFinal).format("DD/MM/YYYY");
     },
-    ordemErrors() {
+    terrenoErrors() {
       const errors = [];
-      const value = this.$v.form.ordem;
+      const value = this.$v.form.terreno;
       if (!value.$dirty) {
         return errors;
       }
@@ -472,15 +496,29 @@ export default {
     },
   },
   methods: {
+    calculaTotal(valor, quantidade) {
+      return valor * quantidade;
+    },
+    formatDateTable(value) {
+      console.log(value);
+      console.log(moment(value).format("YYYY-MM-DD"));
+      return moment(value).format("DD/MM/YYYY");
+    },
+    deleteItem(item) {
+      console.log(item);
+    },
+    adicionarEtapa() {
+      console.log(this.form.etapa);
+    },
     close() {
-      this.showDialogServico = false;
-      this.showDialogInsumo = false;
+      this.showDialogProduto = false;
+      this.showDialogEtapas = false;
     },
-    novoServico() {
-      this.showDialogServico = true;
+    novaCultura() {
+      this.showDialogProduto = true;
     },
-    novoInsumo() {
-      this.showDialogInsumo = true;
+    novaEtapa() {
+      this.showDialogEtapas = true;
     },
     option(data) {
       if (data == "nao") {

@@ -47,6 +47,7 @@
             :loading="false"
             item-key="text"
             loading-text="Loading... Please wait"
+            multi-sort
           >
             <template v-slot:[`item.lucro`]="{ item }">
               {{ formatCurrency(item.lucro) }}

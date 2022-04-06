@@ -42,7 +42,11 @@
                     :items="card.etapas"
                     :items-per-page="5"
                     class="elevation-1"
+                    multi-sort
                   >
+                    <template v-slot:[`item.data`]="{ item }">
+                      {{ formatDateTable(item.data) }}
+                    </template>
                     <template v-slot:[`item.quantidade`]="{ item }">
                       {{ item.quantidade.toLocaleString() }}
                     </template>
@@ -58,28 +62,32 @@
                 </v-card-text>
                 <hr />
                 <v-card-text class="text-center">
-                  <p>
+                  <h3>
                     Total cultura desenvolvida:
                     {{
                       formatCurrency(totalCulturaDesenvolvida(card, card.index))
                     }}
-                  </p>
+                  </h3>
 
-                  <p>
+                  <h3>
                     Quantidade estimada de produção:
                     {{ card.quantidadeProduzida.toLocaleString() }}
                     {{ card.unidade }}/hectare
-                  </p>
-                  <p>
+                  </h3>
+                  <h3>
                     Custo Unitário:
                     {{ formatCurrency(custoUnitario(card, card.index)) }}
-                  </p>
+                  </h3>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="warning" text> Editar </v-btn>
+                  <v-btn color="warning" text @click="editar(card)">
+                    Editar
+                  </v-btn>
 
-                  <v-btn color="red accent-2" text> Excluir </v-btn>
+                  <v-btn color="red accent-2" text @click="excluir(card)">
+                    Excluir
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-flex>
@@ -87,14 +95,24 @@
         </v-container>
       </v-card>
     </v-flex>
+    <CustoProducaoEdit
+      :showDialog="editou"
+      :formEditou="culturaDesenvolvida"
+      @showDialogClose="close"
+    />
+    <Dialog
+      :message="message"
+      :showDialog="showDeleteDialog"
+      @option="option"
+    />
   </v-layout>
 </template>
 
 <script>
 // import moment from "moment";
-
+import CustoProducaoEdit from "./CustoProduçãoEdit.vue";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
-
+import Dialog from "./../../../components/Dialog.vue";
 import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 export default {
@@ -102,6 +120,8 @@ export default {
   mixins: [formatCurrentMixin],
   components: {
     ToolbarByMonth,
+    Dialog,
+    CustoProducaoEdit,
   },
   data() {
     return {
@@ -151,7 +171,7 @@ export default {
       cards: [
         {
           index: 0,
-          day: moment().format("DD/MM/YYYY"),
+          day: moment().format("YYYY-MM-DD"),
           cultura: "Crisântemo",
           terreno: 14,
           colheita: "Ainda não colhido",
@@ -161,7 +181,7 @@ export default {
             {
               index: 0,
               ordem: 1,
-              data: moment().format("DD/MM/YYYY"),
+              data: moment().format("YYYY-MM-DD"),
               descricao: "Semementes ou Mudas",
               insumoServico: "Mudas enraizadas",
               uso: "Real",
@@ -173,7 +193,7 @@ export default {
             {
               index: 1,
               ordem: 1,
-              data: moment().format("DD/MM/YYYY"),
+              data: moment().format("YYYY-MM-DD"),
               descricao: "Adubos e corretivos",
               insumoServico: "Adubo foliar fosfatado",
               uso: "Previsto",
@@ -185,7 +205,7 @@ export default {
             {
               index: 2,
               ordem: 1,
-              data: moment().format("DD/MM/YYYY"),
+              data: moment().format("YYYY-MM-DD"),
               descricao: "Defensivos",
               insumoServico: "Fungicidas",
               uso: "Real",
@@ -197,28 +217,56 @@ export default {
           ],
         },
       ],
+      message: "",
+      showDeleteDialog: false,
+      culturaDesenvolvida: null,
+      editou: false,
     };
   },
   methods: {
+    formatDateTable(value) {
+      return moment(value).format("DD/MM/YYYY");
+    },
+    close(item) {
+      this.editou = item;
+      console.log(item);
+    },
+    editar(item) {
+      console.log(item);
+      this.culturaDesenvolvida = item;
+      this.editou = true;
+    },
+    option(data) {
+      console.log(data);
+      if (data === "sim") {
+        console.log("deletou");
+        this.showDeleteDialog = false;
+      } else {
+        this.showDeleteDialog = false;
+      }
+    },
+    excluir(item) {
+      console.log(item);
+      this.message = `Deseja realmente a cultura desenvolvida do ${item.cultura}?`;
+      this.showDeleteDialog = true;
+      this.culturaDesenvolvida = item;
+      console.log(this.culturaDesenvolvida);
+    },
     novo() {
       this.$router.push("/dashboard/custo-producao/new");
     },
     custoUnitario(item, index) {
       let valorTotal =
         this.totalCulturaDesenvolvida(item, index) / item.quantidadeProduzida;
-      console.log(valorTotal);
+
       return valorTotal;
-      // Total dos custos / quantidade estimada da produção
     },
     totalCulturaDesenvolvida(item, index) {
       let valorTotal = 0;
       for (var prop in item.etapas) {
-        console.log(item.etapas[prop].valor);
-        console.log(item.etapas[prop].quantidade);
         valorTotal += item.etapas[prop].valor * item.etapas[prop].quantidade;
       }
       return valorTotal;
-      // Total dos custos / quantidade estimada da produção
     },
     totalEtapa(quantidade, valor) {
       return quantidade * valor;
@@ -251,5 +299,8 @@ export default {
 <style lang="scss">
 .hover-card:hover {
   background: #616161;
+}
+h3 {
+  justify-content: center;
 }
 </style>

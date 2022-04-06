@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Editar Etapa da Cultura
+                {{ title }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -18,8 +18,7 @@
         <v-card-text>
           <v-form v-model="valid">
             <v-container>
-              <v-row class="mt-2"
-                >{{ formEditou }}
+              <v-row class="mt-2">
                 <v-col cols="12" md="4">
                   <v-text-field
                     :error-messages="descriptionErrors"
@@ -306,6 +305,10 @@ export default {
       type: Array,
       default: () => {},
     },
+    editou: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -404,6 +407,9 @@ export default {
     },
   },
   computed: {
+    title() {
+      return this.editou ? "Editar Cultura" : "Nova Cultura";
+    },
     label() {
       return this.isServico ? "Dias/Homem" : "Quantidade";
     },
