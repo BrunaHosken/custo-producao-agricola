@@ -1,9 +1,18 @@
 type Query {
   agricultor(CodAgricultor: ID!): Agricultor
 }
+
+type Mutation {
+  login(Email: String!, Senha: String!): AuthPayload
+}
+
+type AuthPayload {
+  token: String!
+  agricultor: Agricultor!
+}
+
 type Agricultor {
   CodAgricultor: ID!
   Nome: String!
   Email: String!
-  Senha: String!
 }
