@@ -1,5 +1,5 @@
 type Query {
-  agricultor(id: ID!): Agricultor
+  agricultor: Agricultor
 }
 
 type Mutation {

@@ -9,7 +9,7 @@
       <v-list-item-content>
         <div class="dados" v-show="!editUser">
           <v-list-item-title class="text-h5 mb-1">
-            Dados do usuário
+            Dados do Usuário
           </v-list-item-title>
           <v-list-item-subtitle>
             <p>Nome: {{ user.nome }}</p>
@@ -53,7 +53,7 @@
           <v-list-item-title class="text-h5">
             Modificar Usuário
           </v-list-item-title>
-          <v-list-item-subtitle class="mb-2">
+          <v-list-item-subtitle class="mt-1">
             <v-text-field
               :error-messages="nameErrors"
               :success="!$v.user.nome.$invalid"
@@ -70,6 +70,7 @@
               name="email"
               label="Email"
               type="email"
+              disabled
             ></v-text-field>
 
             <v-text-field

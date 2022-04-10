@@ -1,5 +1,7 @@
+const { getAgricultorId } = require("./../utils");
 function agricultor(_, args, ctx, info) {
-  return ctx.db.query.agricultor({ where: { id: args.id } }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.agricultor({ where: { id: agricultorId } }, info);
 }
 
 module.exports = {
