@@ -1,3 +1,5 @@
+scalar Date
+
 type Query {
   agricultor: Agricultor
 }
@@ -5,6 +7,14 @@ type Query {
 type Mutation {
   login(Email: String!, Senha: String!): AuthPayload
   signup(Email: String!, Senha: String!, Nome: String!): AuthPayload
+  createContato(DescrContato: String!): Contato!
+  createTipoDespesa(DescrTipoDespesa: String!): TipoDespesa!
+  createDespesaRealizada(
+    DescrDetalhada: String!
+    Data: Date!
+    Valor: Float!
+    TipoDespesaId: ID!
+  ): DespesaRealizada!
 }
 
 type AuthPayload {
@@ -16,4 +26,24 @@ type Agricultor {
   id: ID!
   Nome: String!
   Email: String!
+}
+
+type Contato {
+  id: ID!
+  DescrContato: String!
+  Agricultor: Agricultor
+}
+
+type TipoDespesa {
+  id: ID!
+  DescrTipoDespesa: String!
+}
+
+type DespesaRealizada {
+  id: ID!
+  DescrDetalhada: String!
+  Data: Date!
+  Valor: Float!
+  Agricultor: Agricultor!
+  TipoDespesa: TipoDespesa!
 }
