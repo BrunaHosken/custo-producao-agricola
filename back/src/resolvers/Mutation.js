@@ -103,10 +103,103 @@ function createDespesaRealizada(_, args, ctx, info) {
   );
 }
 
+function createCliente(_, { NomeCliente }, ctx, info) {
+  return ctx.db.mutation.createCliente(
+    {
+      data: {
+        NomeCliente,
+      },
+    },
+    info
+  );
+}
+
+function createVenda(_, args, ctx, info) {
+  const date = moment(args.Data);
+  if (!date.isValid()) {
+    throw new Error("Data inválida!");
+  }
+  return ctx.db.mutation.createVenda(
+    {
+      data: {
+        Cliente: {
+          connect: {
+            id: args.ClienteId,
+          },
+        },
+        Data: args.Data,
+      },
+    },
+    info
+  );
+}
+
+// function createVendaItem(_, args, ctx, info) {
+//  Qtd:Float!,Und:String!,PrecoUnit:Float!,Venda:ID!,CulturaDesenvolvida
+//   return ctx.db.mutation.createVenda(
+//     {
+//       data: {
+//         Cliente: {
+//           connect: {
+//             id: args.ClienteId,
+//           },
+//         },
+//         Data: args.Data,
+//       },
+//     },
+//     info
+//   );
+// }
+function createCultura(
+  _,
+  { DescrCultura, QtdEstimadaPorHectare, Und },
+  ctx,
+  info
+) {
+  return ctx.db.mutation.createCultura(
+    {
+      data: {
+        DescrCultura,
+        QtdEstimadaPorHectare,
+        Und,
+      },
+    },
+    info
+  );
+}
+
+function createTipoInsumo(_, { NomeTipo }, ctx, info) {
+  return ctx.db.mutation.createTipoInsumo(
+    {
+      data: {
+        NomeTipo,
+      },
+    },
+    info
+  );
+}
+function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
+  return ctx.db.mutation.createServico(
+    {
+      data: {
+        DescrServico,
+        ValorDiaHomem,
+      },
+    },
+    info
+  );
+}
+
 module.exports = {
   signup,
   login,
   createContato,
   createTipoDespesa,
   createDespesaRealizada,
+  createCliente,
+  createVenda,
+  // createVendaItem,
+  createCultura,
+  createTipoInsumo,
+  createServico,
 };

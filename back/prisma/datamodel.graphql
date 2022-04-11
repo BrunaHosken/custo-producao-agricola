@@ -13,13 +13,13 @@ type DespesaRealizada {
   DescrDetalhada: String!
   Data: DateTime!
   Valor: Float!
-  Agricultor: Agricultor
-  TipoDespesa: TipoDespesa
+  Agricultor: Agricultor!
+  TipoDespesa: TipoDespesa!
 }
 type Contato {
   id: ID! @unique
   DescrContato: String!
-  Agricultor: Agricultor
+  Agricultor: Agricultor!
 }
 type Cultura {
   id: ID! @unique
@@ -33,22 +33,23 @@ type CulturaDesenvolvida {
   DataInicio: DateTime!
   DataColheita: DateTime!
   QtdColhida: Float!
-  Unidade: Float!
-  Agricultor: Agricultor
-  Cultura: Cultura
+  Unidade: String!
+  Agricultor: Agricultor!
+  Cultura: Cultura!
 }
 
 type VendaItem {
   id: ID! @unique
   Qtd: Float!
-  Und: Float!
+  Und: String!
   PrecoUnit: Float!
-  Venda: Venda
+  Venda: Venda!
+  CulturaDesenvolvida: CulturaDesenvolvida!
 }
 type Venda {
   id: ID! @unique
   Data: DateTime!
-  Cliente: Cliente
+  Cliente: Cliente!
 }
 type Cliente {
   id: ID! @unique
@@ -60,40 +61,40 @@ type CulturaEtapa {
   NumEtapa: Float!
   MesInicio: DateTime!
   MesFim: DateTime!
-  CulturaDesenvolvida: CulturaDesenvolvida
+  CulturaDesenvolvida: CulturaDesenvolvida!
 }
 type UsoInsumoPrevisto {
   id: ID! @unique
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa
-  Insumo: Insumo
+  CulturaEtapa: CulturaEtapa!
+  Insumo: Insumo!
 }
 type UsoInsumoReal {
   id: ID! @unique
   Data: DateTime!
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa
-  Insumo: Insumo
+  CulturaEtapa: CulturaEtapa!
+  Insumo: Insumo!
 }
 type ServicoPrestado {
   id: ID! @unique
   Data: DateTime!
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa
-  Servico: Servico
+  CulturaEtapa: CulturaEtapa!
+  Servico: Servico!
 }
 type ServicoPrevisto {
   id: ID! @unique
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa
-  Servico: Servico
+  CulturaEtapa: CulturaEtapa!
+  Servico: Servico!
 }
 type Insumo {
   id: ID! @unique
   DescrInsumo: String!
   PrecoUnit: Float!
-  Und: Float!
-  TipoInsumo: TipoInsumo
+  Und: String!
+  TipoInsumo: TipoInsumo!
 }
 type TipoInsumo {
   id: ID! @unique

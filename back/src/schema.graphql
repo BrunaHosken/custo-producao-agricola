@@ -15,6 +15,16 @@ type Mutation {
     Valor: Float!
     TipoDespesaId: ID!
   ): DespesaRealizada!
+  createCliente(NomeCliente: String): Cliente!
+  createVenda(Data: Date!, ClienteId: ID!): Venda!
+  # createVendaItem(Qtd:Float!,Und:String!,PrecoUnit:Float!,Venda:ID!):VendaItem!
+  createCultura(
+    DescrCultura: String!
+    QtdEstimadaPorHectare: Float!
+    Und: String!
+  ): Cultura!
+  createTipoInsumo(NomeTipo: String!): TipoInsumo!
+  createServico(DescrServico: String!, ValorDiaHomem: Float!): Servico!
 }
 
 type AuthPayload {
@@ -31,7 +41,7 @@ type Agricultor {
 type Contato {
   id: ID!
   DescrContato: String!
-  Agricultor: Agricultor
+  Agricultor: Agricultor!
 }
 
 type TipoDespesa {
@@ -46,4 +56,40 @@ type DespesaRealizada {
   Valor: Float!
   Agricultor: Agricultor!
   TipoDespesa: TipoDespesa!
+}
+
+type Cliente {
+  id: ID!
+  NomeCliente: String!
+}
+
+type Venda {
+  id: ID!
+  Data: Date!
+  Cliente: Cliente!
+}
+
+# type VendaItem {
+#   id: ID!
+#   Qtd: Float!
+#   Und: String!
+#   PrecoUnit: Float!
+#   Venda: Venda!
+# }
+
+type Cultura {
+  id: ID!
+  DescrCultura: String!
+  QtdEstimadaPorHectare: Float!
+  Und: String!
+}
+
+type TipoInsumo {
+  id: ID!
+  NomeTipo: String!
+}
+type Servico {
+  id: ID!
+  DescrServico: String!
+  ValorDiaHomem: Float!
 }
