@@ -27,3 +27,9 @@ export default {
   }),
 };
 </script>
+
+<style scoped>
+.v-navigation-drawer {
+  width: 300px !important;
+}
+</style>

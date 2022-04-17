@@ -7,11 +7,9 @@
   >
     <v-list>
       <v-list-item tag="div">
-        <!-- <v-list-item-avatar> -->
         <v-list-item-action>
           <v-icon>mdi-account</v-icon>
         </v-list-item-action>
-        <!-- </v-list-item-avatar> -->
 
         <v-list-item-content>
           <v-list-item-title>Teste</v-list-item-title>
@@ -26,22 +24,49 @@
 
       <v-list class="pt-0" dense>
         <v-divider light></v-divider>
+        <div v-for="item in items" :key="item.title">
+          <v-list-item
+            v-if="!item.subLinks"
+            :to="item.url"
+            :exact="item.exact"
+            @click.stop="$emit('input', false)"
+          >
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
 
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
-          :to="item.url"
-          :exact="item.exact"
-          @click.stop="$emit('input', false)"
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <v-list-group
+            v-else
+            :key="item.title"
+            no-action
+            :prepend-icon="item.icon"
+            :value="false"
+          >
+            <template v-slot:activator>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </template>
+            <v-list-item
+              v-for="sublink in item.subLinks"
+              :to="sublink.url"
+              :key="sublink.title"
+              :exact="sublink.exact"
+              @click.stop="$emit('input', false)"
+            >
+              <v-list-item-action>
+                <v-icon>{{ sublink.icon }}</v-icon>
+              </v-list-item-action>
+
+              <v-list-item-content>
+                <v-list-item-title>{{ sublink.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </div>
       </v-list>
     </v-list>
   </v-navigation-drawer>
@@ -76,48 +101,54 @@ export default {
         exact: true,
       },
       {
-        title: "Culturas",
-        icon: "mdi-flower-tulip",
-        url: "/dashboard/culturas",
-        exact: true,
+        icon: "mdi-cash-multiple",
+        title: "Custo de Produção",
+        subLinks: [
+          {
+            title: "Culturas",
+            icon: "mdi-flower-tulip",
+            url: "/dashboard/culturas",
+            exact: true,
+          },
+          {
+            title: "Insumos",
+            icon: "mdi-barley",
+            url: "/dashboard/insumos",
+            exact: true,
+          },
+          {
+            title: "Serviços",
+            icon: "mdi-account-tie",
+            url: "/dashboard/servicos",
+            exact: true,
+          },
+          {
+            title: "Cultura Desenvolvida",
+            icon: "mdi-cash-multiple",
+            url: "/dashboard/custo-producao",
+            exact: true,
+          },
+        ],
       },
       {
-        title: "Cultura Desenvolvida",
-        icon: "mdi-cash-multiple",
-        url: "/dashboard/custo-producao",
-        exact: true,
+        icon: "mdi-cash-plus",
+        title: "Vendas da Produção",
+        subLinks: [
+          {
+            title: "Vendas",
+            icon: "mdi-cash-plus",
+            url: "/dashboard/vendas",
+            exact: true,
+          },
+          {
+            title: "Clientes",
+            icon: "mdi-account-group-outline",
+            url: "/dashboard/clientes",
+            exact: true,
+          },
+        ],
       },
 
-      {
-        title: "Etapas da Cultura",
-        icon: "mdi-sitemap-outline",
-        url: "/dashboard/etapas-culturas",
-        exact: true,
-      },
-      {
-        title: "Insumos",
-        icon: "mdi-barley",
-        url: "/dashboard/insumos",
-        exact: true,
-      },
-      {
-        title: "Serviços",
-        icon: "mdi-account-tie",
-        url: "/dashboard/servicos",
-        exact: true,
-      },
-      {
-        title: "Vendas",
-        icon: "mdi-cash-plus",
-        url: "/dashboard/vendas",
-        exact: true,
-      },
-      {
-        title: "Clientes",
-        icon: "mdi-account-group-outline",
-        url: "/dashboard/clientes",
-        exact: true,
-      },
       {
         title: "Margem Bruta",
         icon: "mdi-finance",

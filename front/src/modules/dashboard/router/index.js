@@ -2,7 +2,6 @@ import configuracoesRoutes from "./../modules/configuracoes/router";
 import despesasRoutes from "./../modules/despesas/router";
 import culturasRoutes from "./../modules/culturas/router";
 import custoProducaoRoutes from "./../modules/custo-producao/router";
-import etapasCulturaRoutes from "./../modules/etapas-cultura/router";
 import insumosRoutes from "./../modules/insumos/router";
 import servicosRoutes from "./../modules/servicos/router";
 import margemBrutaRoutes from "./../modules/margem-bruta/router";
@@ -23,7 +22,6 @@ export default [
       ...despesasRoutes,
       ...culturasRoutes,
       ...custoProducaoRoutes,
-      ...etapasCulturaRoutes,
       ...insumosRoutes,
       ...servicosRoutes,
       ...margemBrutaRoutes,
