@@ -134,22 +134,6 @@ function createVenda(_, args, ctx, info) {
   );
 }
 
-// function createVendaItem(_, args, ctx, info) {
-//  Qtd:Float!,Und:String!,PrecoUnit:Float!,Venda:ID!,CulturaDesenvolvida
-//   return ctx.db.mutation.createVenda(
-//     {
-//       data: {
-//         Cliente: {
-//           connect: {
-//             id: args.ClienteId,
-//           },
-//         },
-//         Data: args.Data,
-//       },
-//     },
-//     info
-//   );
-// }
 function createCultura(
   _,
   { DescrCultura, QtdEstimadaPorHectare, Und },
@@ -190,6 +174,75 @@ function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
   );
 }
 
+function createInsumo(_, args, ctx, info) {
+  return ctx.db.mutation.createInsumo(
+    {
+      data: {
+        TipoInsumo: {
+          connect: {
+            id: args.TipoInsumoId,
+          },
+        },
+        DescrInsumo: args.DescrInsumo,
+        PrecoUnit: args.PrecoUnit,
+        Und: args.Und,
+      },
+    },
+    info
+  );
+}
+
+function createCulturaDesenvolvida(_, args, ctx, info) {
+  const dateInicio = moment(args.DataInicio);
+  const dateColheita = moment(args.DataColheita);
+  if (!dateInicio.isValid() || !dateColheita.isValid()) {
+    throw new Error("Data inválida!");
+  }
+  const agricultorId = getAgricultorId(ctx);
+  console.log(agricultorId);
+  return ctx.db.mutation.createCulturaDesenvolvida({
+    data: {
+      Agricultor: {
+        connect: {
+          id: agricultorId,
+        },
+      },
+      Cultura: {
+        connect: {
+          id: args.CulturaId,
+        },
+      },
+      AreaTerrenoHectares: args.AreaTerrenoHectares,
+      DataInicio: args.DataInicio,
+      DataColheita: args.DataColheita,
+      QtdColhida: args.QtdColhida,
+      Unidade: args.Unidade,
+    },
+  });
+}
+function createVendaItem(_, args, ctx, info) {
+  return ctx.db.mutation.createVendaItem(
+    {
+      data: {
+        Qtd: args.Qtd,
+        Und: args.Und,
+        PrecoUnit: args.PrecoUnit,
+        Venda: {
+          connect: {
+            id: args.VendaId,
+          },
+        },
+        CulturaDesenvolvida: {
+          connect: {
+            id: args.CulturaDesenvolvidaId,
+          },
+        },
+      },
+    },
+    info
+  );
+}
+
 module.exports = {
   signup,
   login,
@@ -198,8 +251,10 @@ module.exports = {
   createDespesaRealizada,
   createCliente,
   createVenda,
-  // createVendaItem,
+  createVendaItem,
   createCultura,
   createTipoInsumo,
   createServico,
+  createInsumo,
+  createCulturaDesenvolvida,
 };

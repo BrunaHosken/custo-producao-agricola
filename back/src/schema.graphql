@@ -1,32 +1,5 @@
 scalar Date
 
-type Query {
-  agricultor: Agricultor
-}
-
-type Mutation {
-  login(Email: String!, Senha: String!): AuthPayload
-  signup(Email: String!, Senha: String!, Nome: String!): AuthPayload
-  createContato(DescrContato: String!): Contato!
-  createTipoDespesa(DescrTipoDespesa: String!): TipoDespesa!
-  createDespesaRealizada(
-    DescrDetalhada: String!
-    Data: Date!
-    Valor: Float!
-    TipoDespesaId: ID!
-  ): DespesaRealizada!
-  createCliente(NomeCliente: String): Cliente!
-  createVenda(Data: Date!, ClienteId: ID!): Venda!
-  # createVendaItem(Qtd:Float!,Und:String!,PrecoUnit:Float!,Venda:ID!):VendaItem!
-  createCultura(
-    DescrCultura: String!
-    QtdEstimadaPorHectare: Float!
-    Und: String!
-  ): Cultura!
-  createTipoInsumo(NomeTipo: String!): TipoInsumo!
-  createServico(DescrServico: String!, ValorDiaHomem: Float!): Servico!
-}
-
 type AuthPayload {
   token: String!
   agricultor: Agricultor!
@@ -69,13 +42,14 @@ type Venda {
   Cliente: Cliente!
 }
 
-# type VendaItem {
-#   id: ID!
-#   Qtd: Float!
-#   Und: String!
-#   PrecoUnit: Float!
-#   Venda: Venda!
-# }
+type VendaItem {
+  id: ID!
+  Qtd: Float!
+  Und: String!
+  PrecoUnit: Float!
+  CulturaDesenvolvida: CulturaDesenvolvida!
+  Venda: Venda!
+}
 
 type Cultura {
   id: ID!
@@ -92,4 +66,135 @@ type Servico {
   id: ID!
   DescrServico: String!
   ValorDiaHomem: Float!
+}
+
+type Insumo {
+  id: ID!
+  DescrInsumo: String!
+  PrecoUnit: Float!
+  Und: String!
+  TipoInsumo: TipoInsumo!
+}
+
+type UsoInsumoPrevisto {
+  id: ID!
+  Qtd: Float!
+  CulturaEtapa: CulturaEtapa!
+  Insumo: Insumo!
+}
+type UsoInsumoReal {
+  id: ID!
+  Data: Date!
+  Qtd: Float!
+  CulturaEtapa: CulturaEtapa!
+  Insumo: Insumo!
+}
+type ServicoPrestado {
+  id: ID!
+  Data: Date!
+  DiasHomem: Float!
+  CulturaEtapa: CulturaEtapa!
+  Servico: Servico!
+}
+type ServicoPrevisto {
+  id: ID!
+  DiasHomem: Float!
+  CulturaEtapa: CulturaEtapa!
+  Servico: Servico!
+}
+
+type CulturaEtapa {
+  id: ID!
+  DescrEtapa: String!
+  NumEtapa: Float!
+  MesInicio: Date!
+  MesFim: Date!
+  CulturaDesenvolvida: CulturaDesenvolvida!
+}
+
+type CulturaDesenvolvida {
+  id: ID!
+  AreaTerrenoHectares: Float!
+  DataInicio: Date!
+  DataColheita: Date!
+  QtdColhida: Float!
+  Unidade: String!
+  Agricultor: Agricultor!
+  Cultura: Cultura!
+}
+
+type Mutation {
+  login(Email: String!, Senha: String!): AuthPayload
+  signup(Email: String!, Senha: String!, Nome: String!): AuthPayload
+  createContato(DescrContato: String!): Contato!
+  createTipoDespesa(DescrTipoDespesa: String!): TipoDespesa!
+  createDespesaRealizada(
+    DescrDetalhada: String!
+    Data: Date!
+    Valor: Float!
+    TipoDespesaId: ID!
+  ): DespesaRealizada!
+  createCliente(NomeCliente: String): Cliente!
+  createVenda(Data: Date!, ClienteId: ID!): Venda!
+  createVendaItem(
+    Qtd: Float!
+    Und: String!
+    PrecoUnit: Float!
+    VendaId: ID!
+    CulturaDesenvolvidaId: ID!
+  ): VendaItem!
+  createCultura(
+    DescrCultura: String!
+    QtdEstimadaPorHectare: Float!
+    Und: String!
+  ): Cultura!
+  createTipoInsumo(NomeTipo: String!): TipoInsumo!
+  createServico(DescrServico: String!, ValorDiaHomem: Float!): Servico!
+  createInsumo(
+    DescrInsumo: String!
+    PrecoUnit: Float!
+    Und: String!
+    TipoInsumoId: ID!
+  ): Insumo!
+  createUsoInsumoReal(
+    Data: Date!
+    Qtd: Float!
+    CulturaEtapaId: ID!
+    InsumoId: ID!
+  ): UsoInsumoReal!
+  createUsoInsumoPrevisto(
+    Qtd: Float!
+    CulturaEtapaId: ID!
+    InsumoId: ID!
+  ): UsoInsumoPrevisto!
+  createServicoPrestado(
+    Data: Date!
+    DiasHomem: Float!
+    CulturaEtapaId: ID!
+    InsumoId: ID!
+  ): ServicoPrestado!
+  createServicoPrevisto(
+    DiasHomem: Float!
+    CulturaEtapaId: ID!
+    InsumoId: ID!
+  ): ServicoPrevisto!
+  createCulturaEtapa(
+    DescrEtapa: String!
+    NumEtapa: Float!
+    MesInicio: Date!
+    MesFim: Date!
+    CulturaDesenvolvidaId: ID!
+  ): CulturaEtapa!
+  createCulturaDesenvolvida(
+    AreaTerrenoHectares: Float!
+    DataInicio: Date!
+    DataColheita: Date!
+    QtdColhida: Float!
+    Unidade: String!
+    CulturaId: ID!
+  ): CulturaDesenvolvida!
+}
+
+type Query {
+  agricultor: Agricultor
 }
