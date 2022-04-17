@@ -199,7 +199,6 @@ function createCulturaDesenvolvida(_, args, ctx, info) {
     throw new Error("Data inválida!");
   }
   const agricultorId = getAgricultorId(ctx);
-  console.log(agricultorId);
   return ctx.db.mutation.createCulturaDesenvolvida({
     data: {
       Agricultor: {
@@ -243,6 +242,106 @@ function createVendaItem(_, args, ctx, info) {
   );
 }
 
+function createCulturaEtapa(_, args, ctx, info) {
+  const MesInicio = moment(args.MesInicio);
+  const MesFim = moment(args.MesFim);
+  if (!MesInicio.isValid() || !MesFim.isValid()) {
+    throw new Error("Data inválida!");
+  }
+  return ctx.db.mutation.createCulturaEtapa({
+    data: {
+      DescrEtapa: args.DescrEtapa,
+      NumEtapa: args.NumEtapa,
+      MesInicio: args.MesInicio,
+      MesFim: args.MesFim,
+      CulturaDesenvolvida: {
+        connect: {
+          id: args.CulturaDesenvolvidaId,
+        },
+      },
+    },
+  });
+}
+
+function createUsoInsumoReal(_, args, ctx, info) {
+  const Data = moment(args.Data);
+  if (!Data.isValid()) {
+    throw new Error("Data inválida!");
+  }
+  return ctx.db.mutation.createUsoInsumoReal({
+    data: {
+      Data: args.Data,
+      Qtd: args.Qtd,
+      CulturaEtapa: {
+        connect: {
+          id: args.CulturaEtapaId,
+        },
+      },
+      Insumo: {
+        connect: {
+          id: args.InsumoId,
+        },
+      },
+    },
+  });
+}
+function createUsoInsumoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.createUsoInsumoPrevisto({
+    data: {
+      Qtd: args.Qtd,
+      CulturaEtapa: {
+        connect: {
+          id: args.CulturaEtapaId,
+        },
+      },
+      Insumo: {
+        connect: {
+          id: args.InsumoId,
+        },
+      },
+    },
+  });
+}
+function createServicoPrestado(_, args, ctx, info) {
+  const Data = moment(args.Data);
+  if (!Data.isValid()) {
+    throw new Error("Data inválida!");
+  }
+  return ctx.db.mutation.createServicoPrestado({
+    data: {
+      Data: args.Data,
+      DiasHomem: args.DiasHomem,
+      CulturaEtapa: {
+        connect: {
+          id: args.CulturaEtapaId,
+        },
+      },
+      Servico: {
+        connect: {
+          id: args.ServicoId,
+        },
+      },
+    },
+  });
+}
+function createServicoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.createServicoPrevisto({
+    data: {
+      DiasHomem: args.DiasHomem,
+      CulturaEtapa: {
+        connect: {
+          id: args.CulturaEtapaId,
+        },
+      },
+      Servico: {
+        connect: {
+          id: args.ServicoId,
+        },
+      },
+    },
+  });
+}
+
 module.exports = {
   signup,
   login,
@@ -257,4 +356,9 @@ module.exports = {
   createServico,
   createInsumo,
   createCulturaDesenvolvida,
+  createUsoInsumoReal,
+  createUsoInsumoPrevisto,
+  createServicoPrestado,
+  createServicoPrevisto,
+  createCulturaEtapa,
 };

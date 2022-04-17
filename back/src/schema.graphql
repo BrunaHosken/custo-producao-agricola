@@ -171,12 +171,12 @@ type Mutation {
     Data: Date!
     DiasHomem: Float!
     CulturaEtapaId: ID!
-    InsumoId: ID!
+    ServicoId: ID!
   ): ServicoPrestado!
   createServicoPrevisto(
     DiasHomem: Float!
     CulturaEtapaId: ID!
-    InsumoId: ID!
+    ServicoId: ID!
   ): ServicoPrevisto!
   createCulturaEtapa(
     DescrEtapa: String!
