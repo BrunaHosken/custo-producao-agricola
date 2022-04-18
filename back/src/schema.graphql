@@ -197,4 +197,19 @@ type Mutation {
 
 type Query {
   agricultor: Agricultor
+  tipoDespesas: [TipoDespesa!]!
+  tipoInsumoes: [TipoInsumo!]!
+  servicoes: [Servico!]!
+  clientes: [Cliente!]!
+  culturas: [Cultura!]!
+  vendas: [Venda!]!
+  despesaRealizadas: [DespesaRealizada!]!
+  culturaDesenvolvidas: [CulturaDesenvolvida!]!
+  insumoes: [Insumo!]!
+  vendaItems: [VendaItem!]!
+  culturaEtapas: [CulturaEtapa!]!
+  usoInsumoReals: [UsoInsumoReal!]!
+  usoInsumoPrevistoes: [UsoInsumoPrevisto!]!
+  servicoPrestadoes: [ServicoPrestado!]!
+  servicoPrevistoes: [ServicoPrevisto!]!
 }
