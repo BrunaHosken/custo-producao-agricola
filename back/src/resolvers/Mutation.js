@@ -22,7 +22,6 @@ async function signup(_, args, ctx, info) {
     agricultor,
   };
 }
-
 async function login(_, { Email, Senha }, ctx, info) {
   const agricultor = await ctx.db.query.agricultor({
     where: {
@@ -46,9 +45,9 @@ async function login(_, { Email, Senha }, ctx, info) {
     agricultor,
   };
 }
-
 function createContato(_, { DescrContato }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
+
   return ctx.db.mutation.createContato(
     {
       data: {
@@ -73,7 +72,6 @@ function createTipoDespesa(_, { DescrTipoDespesa }, ctx, info) {
     info
   );
 }
-
 function createDespesaRealizada(_, args, ctx, info) {
   const date = moment(args.Data);
   if (!date.isValid()) {
@@ -102,7 +100,6 @@ function createDespesaRealizada(_, args, ctx, info) {
     info
   );
 }
-
 function createCliente(_, { NomeCliente }, ctx, info) {
   return ctx.db.mutation.createCliente(
     {
@@ -113,7 +110,6 @@ function createCliente(_, { NomeCliente }, ctx, info) {
     info
   );
 }
-
 function createVenda(_, args, ctx, info) {
   const date = moment(args.Data);
   if (!date.isValid()) {
@@ -133,7 +129,6 @@ function createVenda(_, args, ctx, info) {
     info
   );
 }
-
 function createCultura(
   _,
   { DescrCultura, QtdEstimadaPorHectare, Und },
@@ -151,7 +146,6 @@ function createCultura(
     info
   );
 }
-
 function createTipoInsumo(_, { NomeTipo }, ctx, info) {
   return ctx.db.mutation.createTipoInsumo(
     {
@@ -173,8 +167,8 @@ function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
     info
   );
 }
-
 function createInsumo(_, args, ctx, info) {
+  console.log(args);
   return ctx.db.mutation.createInsumo(
     {
       data: {
@@ -191,7 +185,6 @@ function createInsumo(_, args, ctx, info) {
     info
   );
 }
-
 function createCulturaDesenvolvida(_, args, ctx, info) {
   const dateInicio = moment(args.DataInicio);
   const dateColheita = moment(args.DataColheita);
@@ -241,7 +234,6 @@ function createVendaItem(_, args, ctx, info) {
     info
   );
 }
-
 function createCulturaEtapa(_, args, ctx, info) {
   const MesInicio = moment(args.MesInicio);
   const MesFim = moment(args.MesFim);
@@ -262,7 +254,6 @@ function createCulturaEtapa(_, args, ctx, info) {
     },
   });
 }
-
 function createUsoInsumoReal(_, args, ctx, info) {
   const Data = moment(args.Data);
   if (!Data.isValid()) {
@@ -341,6 +332,94 @@ function createServicoPrevisto(_, args, ctx, info) {
     },
   });
 }
+function deleteAgricultor(_, args, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.mutation.deleteAgricultor(
+    {
+      where: {
+        id: agricultorId,
+      },
+    },
+    info
+  );
+}
+function updateAgricultor(_, args, ctx, info) {
+  console.log(args);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.mutation.updateAgricultor(
+    {
+      where: {
+        id: agricultorId,
+      },
+    },
+    info
+  );
+}
+function updateCliente(_, args, ctx, info) {
+  return ctx.db.mutation.updateCliente(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function deleteManyClientes(_, args, ctx, info) {
+  console.log(args.where.id_in);
+  return ctx.db.mutation.deleteManyClientes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function updateServico(_, args, ctx, info) {
+  console.log(args.where.id_in);
+  return ctx.db.mutation.updateServico(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function deleteManyServicoes(_, args, ctx, info) {
+  console.log(args.where.id_in);
+  return ctx.db.mutation.deleteManyServicoes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function updateCultura(_, args, ctx, info) {
+  console.log(args.where.id_in);
+  return ctx.db.mutation.updateCultura(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function deleteManyCulturas(_, args, ctx, info) {
+  console.log(args.where.id_in);
+  return ctx.db.mutation.deleteManyCulturas(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
 
 module.exports = {
   signup,
@@ -361,4 +440,12 @@ module.exports = {
   createServicoPrestado,
   createServicoPrevisto,
   createCulturaEtapa,
+  deleteAgricultor,
+  updateAgricultor,
+  updateCliente,
+  deleteManyClientes,
+  updateServico,
+  deleteManyServicoes,
+  updateCultura,
+  deleteManyCulturas,
 };

@@ -1,27 +1,24 @@
 scalar Date
+scalar Long
 
 type AuthPayload {
   token: String!
   agricultor: Agricultor!
 }
-
 type Agricultor {
   id: ID!
   Nome: String!
   Email: String!
 }
-
 type Contato {
   id: ID!
   DescrContato: String!
   Agricultor: Agricultor!
 }
-
 type TipoDespesa {
   id: ID!
   DescrTipoDespesa: String!
 }
-
 type DespesaRealizada {
   id: ID!
   DescrDetalhada: String!
@@ -30,18 +27,15 @@ type DespesaRealizada {
   Agricultor: Agricultor!
   TipoDespesa: TipoDespesa!
 }
-
 type Cliente {
   id: ID!
   NomeCliente: String!
 }
-
 type Venda {
   id: ID!
   Data: Date!
   Cliente: Cliente!
 }
-
 type VendaItem {
   id: ID!
   Qtd: Float!
@@ -50,14 +44,12 @@ type VendaItem {
   CulturaDesenvolvida: CulturaDesenvolvida!
   Venda: Venda!
 }
-
 type Cultura {
   id: ID!
   DescrCultura: String!
   QtdEstimadaPorHectare: Float!
   Und: String!
 }
-
 type TipoInsumo {
   id: ID!
   NomeTipo: String!
@@ -67,7 +59,6 @@ type Servico {
   DescrServico: String!
   ValorDiaHomem: Float!
 }
-
 type Insumo {
   id: ID!
   DescrInsumo: String!
@@ -75,7 +66,6 @@ type Insumo {
   Und: String!
   TipoInsumo: TipoInsumo!
 }
-
 type UsoInsumoPrevisto {
   id: ID!
   Qtd: Float!
@@ -102,7 +92,6 @@ type ServicoPrevisto {
   CulturaEtapa: CulturaEtapa!
   Servico: Servico!
 }
-
 type CulturaEtapa {
   id: ID!
   DescrEtapa: String!
@@ -111,7 +100,6 @@ type CulturaEtapa {
   MesFim: Date!
   CulturaDesenvolvida: CulturaDesenvolvida!
 }
-
 type CulturaDesenvolvida {
   id: ID!
   AreaTerrenoHectares: Float!
@@ -121,6 +109,168 @@ type CulturaDesenvolvida {
   Unidade: String!
   Agricultor: Agricultor!
   Cultura: Cultura!
+}
+type BatchPayload {
+  count: Long!
+}
+input AgricultorWhereUniqueInput {
+  id: ID
+  Email: String
+}
+input AgricultorUpdateInput {
+  Nome: String
+  Email: String
+  Senha: String
+}
+input ClienteUpdateInput {
+  NomeCliente: String
+}
+input ClienteWhereUniqueInput {
+  id: ID
+}
+input ClienteWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  NomeCliente: String
+  NomeCliente_not: String
+  NomeCliente_in: [String!]
+  NomeCliente_not_in: [String!]
+  NomeCliente_lt: String
+  NomeCliente_lte: String
+  NomeCliente_gt: String
+  NomeCliente_gte: String
+  NomeCliente_contains: String
+  NomeCliente_not_contains: String
+  NomeCliente_starts_with: String
+  NomeCliente_not_starts_with: String
+  NomeCliente_ends_with: String
+  NomeCliente_not_ends_with: String
+  AND: [ClienteWhereInput!]
+  OR: [ClienteWhereInput!]
+  NOT: [ClienteWhereInput!]
+}
+input ServicoUpdateInput {
+  DescrServico: String
+  ValorDiaHomem: Float
+}
+input ServicoWhereUniqueInput {
+  id: ID
+}
+input ServicoWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  DescrServico: String
+  DescrServico_not: String
+  DescrServico_in: [String!]
+  DescrServico_not_in: [String!]
+  DescrServico_lt: String
+  DescrServico_lte: String
+  DescrServico_gt: String
+  DescrServico_gte: String
+  DescrServico_contains: String
+  DescrServico_not_contains: String
+  DescrServico_starts_with: String
+  DescrServico_not_starts_with: String
+  DescrServico_ends_with: String
+  DescrServico_not_ends_with: String
+  ValorDiaHomem: Float
+  ValorDiaHomem_not: Float
+  ValorDiaHomem_in: [Float!]
+  ValorDiaHomem_not_in: [Float!]
+  ValorDiaHomem_lt: Float
+  ValorDiaHomem_lte: Float
+  ValorDiaHomem_gt: Float
+  ValorDiaHomem_gte: Float
+  AND: [ServicoWhereInput!]
+  OR: [ServicoWhereInput!]
+  NOT: [ServicoWhereInput!]
+}
+input CulturaUpdateInput {
+  DescrCultura: String
+  QtdEstimadaPorHectare: Float
+  Und: String
+}
+input CulturaWhereUniqueInput {
+  id: ID
+}
+input CulturaWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  DescrCultura: String
+  DescrCultura_not: String
+  DescrCultura_in: [String!]
+  DescrCultura_not_in: [String!]
+  DescrCultura_lt: String
+  DescrCultura_lte: String
+  DescrCultura_gt: String
+  DescrCultura_gte: String
+  DescrCultura_contains: String
+  DescrCultura_not_contains: String
+  DescrCultura_starts_with: String
+  DescrCultura_not_starts_with: String
+  DescrCultura_ends_with: String
+  DescrCultura_not_ends_with: String
+  QtdEstimadaPorHectare: Float
+  QtdEstimadaPorHectare_not: Float
+  QtdEstimadaPorHectare_in: [Float!]
+  QtdEstimadaPorHectare_not_in: [Float!]
+  QtdEstimadaPorHectare_lt: Float
+  QtdEstimadaPorHectare_lte: Float
+  QtdEstimadaPorHectare_gt: Float
+  QtdEstimadaPorHectare_gte: Float
+  Und: String
+  Und_not: String
+  Und_in: [String!]
+  Und_not_in: [String!]
+  Und_lt: String
+  Und_lte: String
+  Und_gt: String
+  Und_gte: String
+  Und_contains: String
+  Und_not_contains: String
+  Und_starts_with: String
+  Und_not_starts_with: String
+  Und_ends_with: String
+  Und_not_ends_with: String
+  AND: [CulturaWhereInput!]
+  OR: [CulturaWhereInput!]
+  NOT: [CulturaWhereInput!]
 }
 
 type Mutation {
@@ -193,6 +343,26 @@ type Mutation {
     Unidade: String!
     CulturaId: ID!
   ): CulturaDesenvolvida!
+  deleteAgricultor(where: AgricultorWhereUniqueInput!): Agricultor
+  updateAgricultor(
+    data: AgricultorUpdateInput!
+    where: AgricultorWhereUniqueInput!
+  ): Agricultor
+  updateCliente(
+    data: ClienteUpdateInput!
+    where: ClienteWhereUniqueInput!
+  ): Cliente
+  deleteManyClientes(where: ClienteWhereInput): BatchPayload!
+  updateServico(
+    data: ServicoUpdateInput!
+    where: ServicoWhereUniqueInput!
+  ): Servico
+  deleteManyServicoes(where: ServicoWhereInput): BatchPayload!
+  updateCultura(
+    data: CulturaUpdateInput!
+    where: CulturaWhereUniqueInput!
+  ): Cultura
+  deleteManyCulturas(where: CulturaWhereInput): BatchPayload!
 }
 
 type Query {
