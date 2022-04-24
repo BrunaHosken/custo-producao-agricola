@@ -151,18 +151,135 @@ input CulturaWhereInput {
 }
 input CulturaDesenvolvidaUpdateInput {
   AreaTerrenoHectares: Float
-  DataInicio: Date!
-  DataColheita: Date!
+  DataInicio: Date
+  DataColheita: Date
   QtdColhida: Float
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
   Cultura: CulturaUpdateOneRequiredInput
 }
-input CulturaEtapaUpdateManyMutationInput {
-  DescrEtapa: String
-  NumEtapa: Float
+input UsoInsumoRealUpdateManyMutationInput {
+  Data: Date
+  Qtd: Float
+}
+input CulturaEtapaCreateInput {
+  DescrEtapa: String!
+  NumEtapa: Float!
   MesInicio: Date!
   MesFim: Date!
+  CulturaDesenvolvida: CulturaDesenvolvidaCreateOneInput!
+}
+input CulturaDesenvolvidaCreateOneInput {
+  create: CulturaDesenvolvidaCreateInput
+  connect: CulturaDesenvolvidaWhereUniqueInput
+}
+input CulturaEtapaUpdateDataInput {
+  DescrEtapa: String
+  NumEtapa: Float
+  MesInicio: Date
+  MesFim: Date
+  CulturaDesenvolvida: CulturaDesenvolvidaUpdateOneRequiredInput
+}
+input CulturaEtapaWhereUniqueInput {
+  id: ID
+}
+input ServicoUpdateOneRequiredInput {
+  create: ServicoCreateInput
+  update: ServicoUpdateDataInput
+  upsert: ServicoUpsertNestedInput
+  connect: ServicoWhereUniqueInput
+}
+input ServicoUpdateDataInput {
+  DescrServico: String
+  ValorDiaHomem: Float
+}
+input ServicoUpsertNestedInput {
+  update: ServicoUpdateDataInput!
+  create: ServicoCreateInput!
+}
+input ServicoPrestadoWhereUniqueInput {
+  id: ID
+}
+input ServicoPrevistoUpdateInput {
+  DiasHomem: Float
+  CulturaEtapa: CulturaEtapaUpdateOneRequiredInput
+  Servico: ServicoUpdateOneRequiredInput
+}
+input ServicoPrevistoWhereUniqueInput {
+  id: ID
+}
+input UsoInsumoPrevistoUpdateInput {
+  Qtd: Float
+  CulturaEtapa: CulturaEtapaUpdateOneRequiredInput
+  Insumo: InsumoUpdateOneRequiredInput
+}
+input InsumoUpdateOneRequiredInput {
+  create: InsumoCreateInput
+  update: InsumoUpdateDataInput
+  upsert: InsumoUpsertNestedInput
+  connect: InsumoWhereUniqueInput
+}
+input TipoInsumoCreateInput {
+  NomeTipo: String!
+}
+input InsumoCreateInput {
+  DescrInsumo: String!
+  PrecoUnit: Float!
+  Und: String!
+  TipoInsumo: TipoInsumoCreateOneInput!
+}
+input InsumoUpdateDataInput {
+  DescrInsumo: String
+  PrecoUnit: Float
+  Und: String
+  TipoInsumo: TipoInsumoUpdateOneRequiredInput
+}
+input InsumoUpsertNestedInput {
+  update: InsumoUpdateDataInput!
+  create: InsumoCreateInput!
+}
+input TipoInsumoCreateOneInput {
+  create: TipoInsumoCreateInput
+  connect: TipoInsumoWhereUniqueInput
+}
+input UsoInsumoPrevistoWhereUniqueInput {
+  id: ID
+}
+input UsoInsumoRealUpdateInput {
+  Data: Date
+  Qtd: Float
+  CulturaEtapa: CulturaEtapaUpdateOneRequiredInput
+  Insumo: InsumoUpdateOneRequiredInput
+}
+input UsoInsumoRealWhereUniqueInput {
+  id: ID
+}
+input ServicoCreateInput {
+  DescrServico: String!
+  ValorDiaHomem: Float!
+}
+input CulturaEtapaUpsertNestedInput {
+  update: CulturaEtapaUpdateDataInput!
+  create: CulturaEtapaCreateInput!
+}
+input CulturaEtapaUpdateOneRequiredInput {
+  create: CulturaEtapaCreateInput
+  update: CulturaEtapaUpdateDataInput
+  upsert: CulturaEtapaUpsertNestedInput
+  connect: CulturaEtapaWhereUniqueInput
+}
+input ServicoPrestadoUpdateInput {
+  Data: Date
+  DiasHomem: Float
+  CulturaEtapa: CulturaEtapaUpdateOneRequiredInput
+  Servico: ServicoUpdateOneRequiredInput
+}
+input CulturaEtapaUpdateInput {
+  DescrEtapa: String
+  NumEtapa: Float
+  MesInicio: Date
+  MesFim: Date
+  CulturaDesenvolvida: CulturaDesenvolvidaUpdateOneRequiredInput
 }
 input CulturaEtapaWhereInput {
   id_in: [ID!]
@@ -186,28 +303,14 @@ input InsumoUpdateInput {
 input InsumoWhereUniqueInput {
   id: ID
 }
-input ServicoPrestadoUpdateManyMutationInput {
-  Data: Date!
-  DiasHomem: Float
-}
 input ServicoPrestadoWhereInput {
   id_in: [ID!]
-}
-input ServicoPrevistoUpdateManyMutationInput {
-  DiasHomem: Float
 }
 input ServicoPrevistoWhereInput {
   id_in: [ID!]
 }
-input UsoInsumoPrevistoUpdateManyMutationInput {
-  Qtd: Float
-}
 input UsoInsumoPrevistoWhereInput {
   id_in: [ID!]
-}
-input UsoInsumoRealUpdateManyMutationInput {
-  Data: Date!
-  Qtd: Float
 }
 input UsoInsumoRealWhereInput {
   id_in: [ID!]
@@ -294,7 +397,6 @@ input TipoInsumoUpdateOneRequiredInput {
   upsert: TipoInsumoUpsertNestedInput
   connect: TipoInsumoWhereUniqueInput
 }
-
 input TipoInsumoUpsertNestedInput {
   update: TipoInsumoUpdateDataInput!
   create: TipoInsumoCreateInput!
@@ -304,9 +406,6 @@ input TipoInsumoWhereInput {
 }
 input TipoInsumoUpdateDataInput {
   NomeTipo: String
-}
-input TipoInsumoCreateInput {
-  NomeTipo: String!
 }
 input ClienteUpdateOneRequiredInput {
   create: ClienteCreateInput
@@ -321,7 +420,6 @@ input ClienteUpsertNestedInput {
 input ClienteWhereInput {
   id_in: [ID!]
 }
-
 input ClienteCreateInput {
   NomeCliente: String!
 }
@@ -499,10 +597,10 @@ type Mutation {
   deleteCulturaDesenvolvida(
     where: CulturaDesenvolvidaWhereUniqueInput!
   ): CulturaDesenvolvida
-  updateManyCulturaEtapas(
-    data: CulturaEtapaUpdateManyMutationInput!
-    where: CulturaEtapaWhereInput
-  ): BatchPayload!
+  updateCulturaEtapa(
+    data: CulturaEtapaUpdateInput!
+    where: CulturaEtapaWhereUniqueInput!
+  ): CulturaEtapa
   deleteManyCulturaEtapas(where: CulturaEtapaWhereInput): BatchPayload!
   updateDespesaRealizada(
     data: DespesaRealizadaUpdateInput!
@@ -513,26 +611,26 @@ type Mutation {
   ): DespesaRealizada
   updateInsumo(data: InsumoUpdateInput!, where: InsumoWhereUniqueInput!): Insumo
   deleteManyInsumoes(where: InsumoWhereInput): BatchPayload!
-  updateManyServicoPrestadoes(
-    data: ServicoPrestadoUpdateManyMutationInput!
-    where: ServicoPrestadoWhereInput
-  ): BatchPayload!
+  updateServicoPrestado(
+    data: ServicoPrestadoUpdateInput!
+    where: ServicoPrestadoWhereUniqueInput!
+  ): ServicoPrestado
+  updateServicoPrevisto(
+    data: ServicoPrevistoUpdateInput!
+    where: ServicoPrevistoWhereUniqueInput!
+  ): ServicoPrevisto
+  updateUsoInsumoPrevisto(
+    data: UsoInsumoPrevistoUpdateInput!
+    where: UsoInsumoPrevistoWhereUniqueInput!
+  ): UsoInsumoPrevisto
+  updateUsoInsumoReal(
+    data: UsoInsumoRealUpdateInput!
+    where: UsoInsumoRealWhereUniqueInput!
+  ): UsoInsumoReal
   deleteManyServicoPrestadoes(where: ServicoPrestadoWhereInput): BatchPayload!
-  updateManyServicoPrevistoes(
-    data: ServicoPrevistoUpdateManyMutationInput!
-    where: ServicoPrevistoWhereInput
-  ): BatchPayload!
   deleteManyServicoPrevistoes(where: ServicoPrevistoWhereInput): BatchPayload!
-  updateManyUsoInsumoPrevistoes(
-    data: UsoInsumoPrevistoUpdateManyMutationInput!
-    where: UsoInsumoPrevistoWhereInput
-  ): BatchPayload!
   deleteManyUsoInsumoPrevistoes(
     where: UsoInsumoPrevistoWhereInput
-  ): BatchPayload!
-  updateManyUsoInsumoReals(
-    data: UsoInsumoRealUpdateManyMutationInput!
-    where: UsoInsumoRealWhereInput
   ): BatchPayload!
   deleteManyUsoInsumoReals(where: UsoInsumoRealWhereInput): BatchPayload!
   updateVenda(data: VendaUpdateInput!, where: VendaWhereUniqueInput!): Venda

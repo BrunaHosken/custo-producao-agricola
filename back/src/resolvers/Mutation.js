@@ -168,7 +168,6 @@ function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
   );
 }
 function createInsumo(_, args, ctx, info) {
-  console.log(args);
   return ctx.db.mutation.createInsumo(
     {
       data: {
@@ -344,7 +343,6 @@ function deleteAgricultor(_, args, ctx, info) {
   );
 }
 function updateAgricultor(_, args, ctx, info) {
-  console.log(args);
   const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.updateAgricultor(
     {
@@ -366,7 +364,6 @@ function updateCliente(_, args, ctx, info) {
   );
 }
 function deleteManyClientes(_, args, ctx, info) {
-  console.log(args.where.id_in);
   return ctx.db.mutation.deleteManyClientes(
     {
       where: {
@@ -377,7 +374,6 @@ function deleteManyClientes(_, args, ctx, info) {
   );
 }
 function updateServico(_, args, ctx, info) {
-  console.log(args.where.id_in);
   return ctx.db.mutation.updateServico(
     {
       where: {
@@ -388,7 +384,6 @@ function updateServico(_, args, ctx, info) {
   );
 }
 function deleteManyServicoes(_, args, ctx, info) {
-  console.log(args.where.id_in);
   return ctx.db.mutation.deleteManyServicoes(
     {
       where: {
@@ -399,7 +394,6 @@ function deleteManyServicoes(_, args, ctx, info) {
   );
 }
 function updateCultura(_, args, ctx, info) {
-  console.log(args.where.id_in);
   return ctx.db.mutation.updateCultura(
     {
       where: {
@@ -410,11 +404,110 @@ function updateCultura(_, args, ctx, info) {
   );
 }
 function deleteManyCulturas(_, args, ctx, info) {
-  console.log(args.where.id_in);
   return ctx.db.mutation.deleteManyCulturas(
     {
       where: {
         id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function updateCulturaDesenvolvida(_, args, ctx, info) {
+  return ctx.db.mutation.updateCulturaDesenvolvida(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateCulturaEtapa(_, args, ctx, info) {
+  return ctx.db.mutation.updateCulturaEtapa(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateDespesaRealizada(_, args, ctx, info) {
+  return ctx.db.mutation.updateDespesaRealizada(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateInsumo(_, args, ctx, info) {
+  return ctx.db.mutation.updateInsumo(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateServicoPrestado(_, args, ctx, info) {
+  return ctx.db.mutation.updateServicoPrestado(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateServicoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.updateServicoPrevisto(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateUsoInsumoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.updateUsoInsumoPrevisto(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateUsoInsumoReal(_, args, ctx, info) {
+  return ctx.db.mutation.updateUsoInsumoReal(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateVenda(_, args, ctx, info) {
+  return ctx.db.mutation.updateVenda(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function updateVendaItem(_, args, ctx, info) {
+  return ctx.db.mutation.updateVendaItem(
+    {
+      where: {
+        id: args.where.id,
       },
     },
     info
@@ -448,4 +541,14 @@ module.exports = {
   deleteManyServicoes,
   updateCultura,
   deleteManyCulturas,
+  updateCulturaDesenvolvida,
+  updateDespesaRealizada,
+  updateInsumo,
+  updateServicoPrestado,
+  updateServicoPrevisto,
+  updateUsoInsumoPrevisto,
+  updateUsoInsumoReal,
+  updateCulturaEtapa,
+  updateVenda,
+  updateVendaItem,
 };
