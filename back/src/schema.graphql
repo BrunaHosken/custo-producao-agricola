@@ -128,39 +128,6 @@ input ClienteUpdateInput {
 input ClienteWhereUniqueInput {
   id: ID
 }
-input ClienteWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  NomeCliente: String
-  NomeCliente_not: String
-  NomeCliente_in: [String!]
-  NomeCliente_not_in: [String!]
-  NomeCliente_lt: String
-  NomeCliente_lte: String
-  NomeCliente_gt: String
-  NomeCliente_gte: String
-  NomeCliente_contains: String
-  NomeCliente_not_contains: String
-  NomeCliente_starts_with: String
-  NomeCliente_not_starts_with: String
-  NomeCliente_ends_with: String
-  NomeCliente_not_ends_with: String
-  AND: [ClienteWhereInput!]
-  OR: [ClienteWhereInput!]
-  NOT: [ClienteWhereInput!]
-}
 input ServicoUpdateInput {
   DescrServico: String
   ValorDiaHomem: Float
@@ -169,45 +136,7 @@ input ServicoWhereUniqueInput {
   id: ID
 }
 input ServicoWhereInput {
-  id: ID
-  id_not: ID
   id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  DescrServico: String
-  DescrServico_not: String
-  DescrServico_in: [String!]
-  DescrServico_not_in: [String!]
-  DescrServico_lt: String
-  DescrServico_lte: String
-  DescrServico_gt: String
-  DescrServico_gte: String
-  DescrServico_contains: String
-  DescrServico_not_contains: String
-  DescrServico_starts_with: String
-  DescrServico_not_starts_with: String
-  DescrServico_ends_with: String
-  DescrServico_not_ends_with: String
-  ValorDiaHomem: Float
-  ValorDiaHomem_not: Float
-  ValorDiaHomem_in: [Float!]
-  ValorDiaHomem_not_in: [Float!]
-  ValorDiaHomem_lt: Float
-  ValorDiaHomem_lte: Float
-  ValorDiaHomem_gt: Float
-  ValorDiaHomem_gte: Float
-  AND: [ServicoWhereInput!]
-  OR: [ServicoWhereInput!]
-  NOT: [ServicoWhereInput!]
 }
 input CulturaUpdateInput {
   DescrCultura: String
@@ -218,59 +147,259 @@ input CulturaWhereUniqueInput {
   id: ID
 }
 input CulturaWhereInput {
-  id: ID
-  id_not: ID
   id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  DescrCultura: String
-  DescrCultura_not: String
-  DescrCultura_in: [String!]
-  DescrCultura_not_in: [String!]
-  DescrCultura_lt: String
-  DescrCultura_lte: String
-  DescrCultura_gt: String
-  DescrCultura_gte: String
-  DescrCultura_contains: String
-  DescrCultura_not_contains: String
-  DescrCultura_starts_with: String
-  DescrCultura_not_starts_with: String
-  DescrCultura_ends_with: String
-  DescrCultura_not_ends_with: String
-  QtdEstimadaPorHectare: Float
-  QtdEstimadaPorHectare_not: Float
-  QtdEstimadaPorHectare_in: [Float!]
-  QtdEstimadaPorHectare_not_in: [Float!]
-  QtdEstimadaPorHectare_lt: Float
-  QtdEstimadaPorHectare_lte: Float
-  QtdEstimadaPorHectare_gt: Float
-  QtdEstimadaPorHectare_gte: Float
+}
+input CulturaDesenvolvidaUpdateInput {
+  AreaTerrenoHectares: Float
+  DataInicio: Date!
+  DataColheita: Date!
+  QtdColhida: Float
+  Unidade: String
+  Agricultor: AgricultorUpdateOneRequiredInput
+  Cultura: CulturaUpdateOneRequiredInput
+}
+input CulturaEtapaUpdateManyMutationInput {
+  DescrEtapa: String
+  NumEtapa: Float
+  MesInicio: Date!
+  MesFim: Date!
+}
+input CulturaEtapaWhereInput {
+  id_in: [ID!]
+}
+input DespesaRealizadaUpdateInput {
+  DescrDetalhada: String
+  Data: Date!
+  Valor: Float
+  Agricultor: AgricultorUpdateOneRequiredInput
+  TipoDespesa: TipoDespesaUpdateOneRequiredInput
+}
+input DespesaRealizadaWhereUniqueInput {
+  id: ID
+}
+input InsumoUpdateInput {
+  DescrInsumo: String
+  PrecoUnit: Float
   Und: String
-  Und_not: String
-  Und_in: [String!]
-  Und_not_in: [String!]
-  Und_lt: String
-  Und_lte: String
-  Und_gt: String
-  Und_gte: String
-  Und_contains: String
-  Und_not_contains: String
-  Und_starts_with: String
-  Und_not_starts_with: String
-  Und_ends_with: String
-  Und_not_ends_with: String
-  AND: [CulturaWhereInput!]
-  OR: [CulturaWhereInput!]
-  NOT: [CulturaWhereInput!]
+  TipoInsumo: TipoInsumoUpdateOneRequiredInput
+}
+input InsumoWhereUniqueInput {
+  id: ID
+}
+input ServicoPrestadoUpdateManyMutationInput {
+  Data: Date!
+  DiasHomem: Float
+}
+input ServicoPrestadoWhereInput {
+  id_in: [ID!]
+}
+input ServicoPrevistoUpdateManyMutationInput {
+  DiasHomem: Float
+}
+input ServicoPrevistoWhereInput {
+  id_in: [ID!]
+}
+input UsoInsumoPrevistoUpdateManyMutationInput {
+  Qtd: Float
+}
+input UsoInsumoPrevistoWhereInput {
+  id_in: [ID!]
+}
+input UsoInsumoRealUpdateManyMutationInput {
+  Data: Date!
+  Qtd: Float
+}
+input UsoInsumoRealWhereInput {
+  id_in: [ID!]
+}
+input VendaUpdateInput {
+  Data: Date!
+  Cliente: ClienteUpdateOneRequiredInput
+}
+input VendaWhereInput {
+  id_in: [ID!]
+}
+input VendaItemUpdateInput {
+  Qtd: Float
+  Und: String
+  PrecoUnit: Float
+  Venda: VendaUpdateOneRequiredInput
+  CulturaDesenvolvida: CulturaDesenvolvidaUpdateOneRequiredInput
+}
+input VendaItemWhereUniqueInput {
+  id: ID
+}
+input AgricultorUpdateOneRequiredInput {
+  create: AgricultorCreateInput
+  update: AgricultorUpdateDataInput
+  upsert: AgricultorUpsertNestedInput
+  connect: AgricultorWhereUniqueInput
+}
+input AgricultorCreateInput {
+  Nome: String!
+  Email: String!
+  Senha: String!
+}
+input AgricultorUpdateDataInput {
+  Nome: String
+  Email: String
+  Senha: String
+}
+input AgricultorUpsertNestedInput {
+  update: AgricultorUpdateDataInput!
+  create: AgricultorCreateInput!
+}
+input CulturaUpdateOneRequiredInput {
+  create: CulturaCreateInput
+  update: CulturaUpdateDataInput
+  upsert: CulturaUpsertNestedInput
+  connect: CulturaWhereUniqueInput
+}
+input CulturaCreateInput {
+  DescrCultura: String!
+  QtdEstimadaPorHectare: Float!
+  Und: String!
+}
+input CulturaUpdateDataInput {
+  DescrCultura: String
+  QtdEstimadaPorHectare: Float
+  Und: String
+}
+input CulturaUpsertNestedInput {
+  update: CulturaUpdateDataInput!
+  create: CulturaCreateInput!
+}
+input TipoDespesaUpdateOneRequiredInput {
+  create: TipoDespesaCreateInput
+  update: TipoDespesaUpdateDataInput
+  upsert: TipoDespesaUpsertNestedInput
+  connect: TipoDespesaWhereUniqueInput
+}
+input TipoDespesaCreateInput {
+  DescrTipoDespesa: String!
+}
+input TipoDespesaUpdateDataInput {
+  DescrTipoDespesa: String
+}
+input TipoDespesaUpsertNestedInput {
+  update: TipoDespesaUpdateDataInput!
+  create: TipoDespesaCreateInput!
+}
+input TipoDespesaWhereInput {
+  id_in: [ID!]
+}
+input TipoInsumoUpdateOneRequiredInput {
+  create: TipoInsumoCreateInput
+  update: TipoInsumoUpdateDataInput
+  upsert: TipoInsumoUpsertNestedInput
+  connect: TipoInsumoWhereUniqueInput
+}
+
+input TipoInsumoUpsertNestedInput {
+  update: TipoInsumoUpdateDataInput!
+  create: TipoInsumoCreateInput!
+}
+input TipoInsumoWhereInput {
+  id_in: [ID!]
+}
+input TipoInsumoUpdateDataInput {
+  NomeTipo: String
+}
+input TipoInsumoCreateInput {
+  NomeTipo: String!
+}
+input ClienteUpdateOneRequiredInput {
+  create: ClienteCreateInput
+  update: ClienteUpdateDataInput
+  upsert: ClienteUpsertNestedInput
+  connect: ClienteWhereUniqueInput
+}
+input ClienteUpsertNestedInput {
+  update: ClienteUpdateDataInput!
+  create: ClienteCreateInput!
+}
+input ClienteWhereInput {
+  id_in: [ID!]
+}
+
+input ClienteCreateInput {
+  NomeCliente: String!
+}
+input VendaUpdateOneRequiredInput {
+  create: VendaCreateInput
+  update: VendaUpdateDataInput
+  upsert: VendaUpsertNestedInput
+  connect: VendaWhereUniqueInput
+}
+input VendaUpsertNestedInput {
+  update: VendaUpdateDataInput!
+  create: VendaCreateInput!
+}
+input VendaWhereUniqueInput {
+  id: ID
+}
+input VendaUpdateDataInput {
+  Data: Date!
+  Cliente: ClienteUpdateOneRequiredInput
+}
+input VendaCreateInput {
+  Data: Date!
+  Cliente: ClienteCreateOneInput!
+}
+input CulturaDesenvolvidaUpdateOneRequiredInput {
+  create: CulturaDesenvolvidaCreateInput
+  update: CulturaDesenvolvidaUpdateDataInput
+  upsert: CulturaDesenvolvidaUpsertNestedInput
+  connect: CulturaDesenvolvidaWhereUniqueInput
+}
+input CulturaDesenvolvidaWhereUniqueInput {
+  id: ID
+}
+input CulturaDesenvolvidaUpsertNestedInput {
+  update: CulturaDesenvolvidaUpdateDataInput!
+  create: CulturaDesenvolvidaCreateInput!
+}
+input CulturaDesenvolvidaUpdateDataInput {
+  AreaTerrenoHectares: Float
+  DataInicio: Date!
+  DataColheita: Date!
+  QtdColhida: Float
+  Unidade: String
+  Agricultor: AgricultorUpdateOneRequiredInput
+  Cultura: CulturaUpdateOneRequiredInput
+}
+input CulturaDesenvolvidaCreateInput {
+  AreaTerrenoHectares: Float!
+  DataInicio: Date!
+  DataColheita: Date!
+  QtdColhida: Float!
+  Unidade: String!
+  Agricultor: AgricultorCreateOneInput!
+  Cultura: CulturaCreateOneInput!
+}
+input TipoDespesaWhereUniqueInput {
+  id: ID
+}
+input TipoInsumoWhereUniqueInput {
+  id: ID
+}
+input ClienteUpdateDataInput {
+  NomeCliente: String
+}
+input ClienteCreateOneInput {
+  create: ClienteCreateInput
+  connect: ClienteWhereUniqueInput
+}
+input AgricultorCreateOneInput {
+  create: AgricultorCreateInput
+  connect: AgricultorWhereUniqueInput
+}
+input CulturaCreateOneInput {
+  create: CulturaCreateInput
+  connect: CulturaWhereUniqueInput
+}
+input InsumoWhereInput {
+  id_in: [ID!]
 }
 
 type Mutation {
@@ -363,6 +492,56 @@ type Mutation {
     where: CulturaWhereUniqueInput!
   ): Cultura
   deleteManyCulturas(where: CulturaWhereInput): BatchPayload!
+  updateCulturaDesenvolvida(
+    data: CulturaDesenvolvidaUpdateInput!
+    where: CulturaDesenvolvidaWhereUniqueInput!
+  ): CulturaDesenvolvida
+  deleteCulturaDesenvolvida(
+    where: CulturaDesenvolvidaWhereUniqueInput!
+  ): CulturaDesenvolvida
+  updateManyCulturaEtapas(
+    data: CulturaEtapaUpdateManyMutationInput!
+    where: CulturaEtapaWhereInput
+  ): BatchPayload!
+  deleteManyCulturaEtapas(where: CulturaEtapaWhereInput): BatchPayload!
+  updateDespesaRealizada(
+    data: DespesaRealizadaUpdateInput!
+    where: DespesaRealizadaWhereUniqueInput!
+  ): DespesaRealizada
+  deleteDespesaRealizada(
+    where: DespesaRealizadaWhereUniqueInput!
+  ): DespesaRealizada
+  updateInsumo(data: InsumoUpdateInput!, where: InsumoWhereUniqueInput!): Insumo
+  deleteManyInsumoes(where: InsumoWhereInput): BatchPayload!
+  updateManyServicoPrestadoes(
+    data: ServicoPrestadoUpdateManyMutationInput!
+    where: ServicoPrestadoWhereInput
+  ): BatchPayload!
+  deleteManyServicoPrestadoes(where: ServicoPrestadoWhereInput): BatchPayload!
+  updateManyServicoPrevistoes(
+    data: ServicoPrevistoUpdateManyMutationInput!
+    where: ServicoPrevistoWhereInput
+  ): BatchPayload!
+  deleteManyServicoPrevistoes(where: ServicoPrevistoWhereInput): BatchPayload!
+  updateManyUsoInsumoPrevistoes(
+    data: UsoInsumoPrevistoUpdateManyMutationInput!
+    where: UsoInsumoPrevistoWhereInput
+  ): BatchPayload!
+  deleteManyUsoInsumoPrevistoes(
+    where: UsoInsumoPrevistoWhereInput
+  ): BatchPayload!
+  updateManyUsoInsumoReals(
+    data: UsoInsumoRealUpdateManyMutationInput!
+    where: UsoInsumoRealWhereInput
+  ): BatchPayload!
+  deleteManyUsoInsumoReals(where: UsoInsumoRealWhereInput): BatchPayload!
+  updateVenda(data: VendaUpdateInput!, where: VendaWhereUniqueInput!): Venda
+  deleteManyVendas(where: VendaWhereInput): BatchPayload!
+  updateVendaItem(
+    data: VendaItemUpdateInput!
+    where: VendaItemWhereUniqueInput!
+  ): VendaItem
+  deleteVendaItem(where: VendaItemWhereUniqueInput!): VendaItem
 }
 
 type Query {
