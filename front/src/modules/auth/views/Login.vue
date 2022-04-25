@@ -92,7 +92,7 @@
 //
 <script>
 import { required, email, minLength } from "vuelidate/lib/validators";
-// import AuthService from "./../services/auth-service";
+import AuthService from "./../services/auth-service";
 // import { formatError } from "@/utils";
 
 export default {
@@ -189,24 +189,23 @@ export default {
       this.isForgot = false;
       this.isLogin = !this.isLogin;
     },
-    submit() {
-      console.log(this.user);
-      this.$router.push("/dashboard");
-    },
-    //   async submit() {
-    //     this.isLoading = true;
-    //     try {
-    //       this.isLogin
-    //         ? await AuthService.login(this.user)
-    //         : await AuthService.signup(this.user);
+    async submit() {
+      // this.isLoading = true;
+      const authData = await AuthService.login(this.user);
+      console.log(authData);
+      // try {
+      //   this.isLogin
+      //     ? await AuthService.login(this.user)
+      //     : await AuthService.signup(this.user);
 
-    //       this.$router.push(this.$route.query.redirect || "/dashboard");
-    //     } catch (error) {
-    //       this.error = formatError(error.message);
-    //       this.showSnackBar = true;
-    //     } finally {
-    //       this.isLoading = false;
-    //     }
+      //   this.$router.push("/dashboard");
+      // } catch (error) {
+      //   this.error = formatError(error.message);
+      //   this.showSnackBar = true;
+      // } finally {
+      //   this.isLoading = false;
+      // }
+    },
   },
 };
 </script>
