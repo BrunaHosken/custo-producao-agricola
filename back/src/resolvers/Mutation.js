@@ -513,6 +513,106 @@ function updateVendaItem(_, args, ctx, info) {
     info
   );
 }
+function deleteCulturaDesenvolvida(_, args, ctx, info) {
+  return ctx.db.mutation.deleteCulturaDesenvolvida(
+    {
+      where: {
+        id: args.where.id,
+      },
+    },
+    info
+  );
+}
+function deleteManyCulturaEtapas(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyCulturaEtapas(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyDespesaRealizadas(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyDespesaRealizadas(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyInsumoes(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyInsumoes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyServicoPrestadoes(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyServicoPrestadoes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyServicoPrevistoes(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyServicoPrevistoes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyUsoInsumoPrevistoes(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyUsoInsumoPrevistoes(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyUsoInsumoReals(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyUsoInsumoReals(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyVendas(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyVendas(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
+function deleteManyVendaItems(_, args, ctx, info) {
+  return ctx.db.mutation.deleteManyVendaItems(
+    {
+      where: {
+        id_in: args.where.id_in,
+      },
+    },
+    info
+  );
+}
 
 module.exports = {
   signup,
@@ -551,4 +651,14 @@ module.exports = {
   updateCulturaEtapa,
   updateVenda,
   updateVendaItem,
+  deleteCulturaDesenvolvida,
+  deleteManyCulturaEtapas,
+  deleteManyDespesaRealizadas,
+  deleteManyInsumoes,
+  deleteManyServicoPrestadoes,
+  deleteManyServicoPrevistoes,
+  deleteManyUsoInsumoPrevistoes,
+  deleteManyUsoInsumoReals,
+  deleteManyVendas,
+  deleteManyVendaItems,
 };

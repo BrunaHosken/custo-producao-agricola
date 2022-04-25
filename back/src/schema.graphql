@@ -13,7 +13,7 @@ type Agricultor {
 type Contato {
   id: ID!
   DescrContato: String!
-  Agricultor: Agricultor!
+  Agricultor: Agricultor
 }
 type TipoDespesa {
   id: ID!
@@ -24,8 +24,8 @@ type DespesaRealizada {
   DescrDetalhada: String!
   Data: Date!
   Valor: Float!
-  Agricultor: Agricultor!
-  TipoDespesa: TipoDespesa!
+  Agricultor: Agricultor
+  TipoDespesa: TipoDespesa
 }
 type Cliente {
   id: ID!
@@ -34,15 +34,15 @@ type Cliente {
 type Venda {
   id: ID!
   Data: Date!
-  Cliente: Cliente!
+  Cliente: Cliente
 }
 type VendaItem {
   id: ID!
   Qtd: Float!
   Und: String!
   PrecoUnit: Float!
-  CulturaDesenvolvida: CulturaDesenvolvida!
-  Venda: Venda!
+  CulturaDesenvolvida: CulturaDesenvolvida
+  Venda: Venda
 }
 type Cultura {
   id: ID!
@@ -64,33 +64,33 @@ type Insumo {
   DescrInsumo: String!
   PrecoUnit: Float!
   Und: String!
-  TipoInsumo: TipoInsumo!
+  TipoInsumo: TipoInsumo
 }
 type UsoInsumoPrevisto {
   id: ID!
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa!
-  Insumo: Insumo!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
 }
 type UsoInsumoReal {
   id: ID!
   Data: Date!
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa!
-  Insumo: Insumo!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
 }
 type ServicoPrestado {
   id: ID!
   Data: Date!
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa!
-  Servico: Servico!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
 }
 type ServicoPrevisto {
   id: ID!
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa!
-  Servico: Servico!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
 }
 type CulturaEtapa {
   id: ID!
@@ -98,17 +98,17 @@ type CulturaEtapa {
   NumEtapa: Float!
   MesInicio: Date!
   MesFim: Date!
-  CulturaDesenvolvida: CulturaDesenvolvida!
+  CulturaDesenvolvida: CulturaDesenvolvida
 }
 type CulturaDesenvolvida {
   id: ID!
   AreaTerrenoHectares: Float!
   DataInicio: Date!
-  DataColheita: Date!
-  QtdColhida: Float!
+  DataColheita: Date
+  QtdColhida: Float
   Unidade: String!
-  Agricultor: Agricultor!
-  Cultura: Cultura!
+  Agricultor: Agricultor
+  Cultura: Cultura
 }
 type BatchPayload {
   count: Long!
@@ -167,7 +167,7 @@ input CulturaEtapaCreateInput {
   NumEtapa: Float!
   MesInicio: Date!
   MesFim: Date!
-  CulturaDesenvolvida: CulturaDesenvolvidaCreateOneInput!
+  CulturaDesenvolvida: CulturaDesenvolvidaCreateOneInput
 }
 input CulturaDesenvolvidaCreateOneInput {
   create: CulturaDesenvolvidaCreateInput
@@ -226,7 +226,7 @@ input InsumoCreateInput {
   DescrInsumo: String!
   PrecoUnit: Float!
   Und: String!
-  TipoInsumo: TipoInsumoCreateOneInput!
+  TipoInsumo: TipoInsumoCreateOneInput
 }
 input InsumoUpdateDataInput {
   DescrInsumo: String
@@ -442,7 +442,7 @@ input VendaUpdateDataInput {
 }
 input VendaCreateInput {
   Data: Date!
-  Cliente: ClienteCreateOneInput!
+  Cliente: ClienteCreateOneInput
 }
 input CulturaDesenvolvidaUpdateOneRequiredInput {
   create: CulturaDesenvolvidaCreateInput
@@ -460,7 +460,7 @@ input CulturaDesenvolvidaUpsertNestedInput {
 input CulturaDesenvolvidaUpdateDataInput {
   AreaTerrenoHectares: Float
   DataInicio: Date!
-  DataColheita: Date!
+  DataColheita: Date
   QtdColhida: Float
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
@@ -469,11 +469,11 @@ input CulturaDesenvolvidaUpdateDataInput {
 input CulturaDesenvolvidaCreateInput {
   AreaTerrenoHectares: Float!
   DataInicio: Date!
-  DataColheita: Date!
-  QtdColhida: Float!
+  DataColheita: Date
+  QtdColhida: Float
   Unidade: String!
-  Agricultor: AgricultorCreateOneInput!
-  Cultura: CulturaCreateOneInput!
+  Agricultor: AgricultorCreateOneInput
+  Cultura: CulturaCreateOneInput
 }
 input TipoDespesaWhereUniqueInput {
   id: ID
@@ -497,6 +497,13 @@ input CulturaCreateOneInput {
   connect: CulturaWhereUniqueInput
 }
 input InsumoWhereInput {
+  id_in: [ID!]
+}
+input DespesaRealizadaWhereInput {
+  id_in: [ID!]
+}
+
+input VendaItemWhereInput {
   id_in: [ID!]
 }
 
@@ -565,8 +572,8 @@ type Mutation {
   createCulturaDesenvolvida(
     AreaTerrenoHectares: Float!
     DataInicio: Date!
-    DataColheita: Date!
-    QtdColhida: Float!
+    DataColheita: Date
+    QtdColhida: Float
     Unidade: String!
     CulturaId: ID!
   ): CulturaDesenvolvida!
@@ -606,9 +613,7 @@ type Mutation {
     data: DespesaRealizadaUpdateInput!
     where: DespesaRealizadaWhereUniqueInput!
   ): DespesaRealizada
-  deleteDespesaRealizada(
-    where: DespesaRealizadaWhereUniqueInput!
-  ): DespesaRealizada
+  deleteManyDespesaRealizadas(where: DespesaRealizadaWhereInput): BatchPayload!
   updateInsumo(data: InsumoUpdateInput!, where: InsumoWhereUniqueInput!): Insumo
   deleteManyInsumoes(where: InsumoWhereInput): BatchPayload!
   updateServicoPrestado(
@@ -639,7 +644,7 @@ type Mutation {
     data: VendaItemUpdateInput!
     where: VendaItemWhereUniqueInput!
   ): VendaItem
-  deleteVendaItem(where: VendaItemWhereUniqueInput!): VendaItem
+  deleteManyVendaItems(where: VendaItemWhereInput): BatchPayload!
 }
 
 type Query {

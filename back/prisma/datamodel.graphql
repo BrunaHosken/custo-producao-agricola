@@ -13,13 +13,13 @@ type DespesaRealizada {
   DescrDetalhada: String!
   Data: DateTime!
   Valor: Float!
-  Agricultor: Agricultor!
-  TipoDespesa: TipoDespesa!
+  Agricultor: Agricultor
+  TipoDespesa: TipoDespesa
 }
 type Contato {
   id: ID! @unique
   DescrContato: String!
-  Agricultor: Agricultor!
+  Agricultor: Agricultor
 }
 type Cultura {
   id: ID! @unique
@@ -31,11 +31,11 @@ type CulturaDesenvolvida {
   id: ID! @unique
   AreaTerrenoHectares: Float!
   DataInicio: DateTime!
-  DataColheita: DateTime!
-  QtdColhida: Float!
+  DataColheita: DateTime
+  QtdColhida: Float
   Unidade: String!
-  Agricultor: Agricultor!
-  Cultura: Cultura!
+  Agricultor: Agricultor
+  Cultura: Cultura
 }
 
 type VendaItem {
@@ -43,13 +43,13 @@ type VendaItem {
   Qtd: Float!
   Und: String!
   PrecoUnit: Float!
-  Venda: Venda!
-  CulturaDesenvolvida: CulturaDesenvolvida!
+  Venda: Venda
+  CulturaDesenvolvida: CulturaDesenvolvida
 }
 type Venda {
   id: ID! @unique
   Data: DateTime!
-  Cliente: Cliente!
+  Cliente: Cliente
 }
 type Cliente {
   id: ID! @unique
@@ -61,40 +61,40 @@ type CulturaEtapa {
   NumEtapa: Float!
   MesInicio: DateTime!
   MesFim: DateTime!
-  CulturaDesenvolvida: CulturaDesenvolvida!
+  CulturaDesenvolvida: CulturaDesenvolvida
 }
 type UsoInsumoPrevisto {
   id: ID! @unique
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa!
-  Insumo: Insumo!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
 }
 type UsoInsumoReal {
   id: ID! @unique
   Data: DateTime!
   Qtd: Float!
-  CulturaEtapa: CulturaEtapa!
-  Insumo: Insumo!
+  CulturaEtapa: CulturaEtapa
+  Insumo: Insumo
 }
 type ServicoPrestado {
   id: ID! @unique
   Data: DateTime!
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa!
-  Servico: Servico!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
 }
 type ServicoPrevisto {
   id: ID! @unique
   DiasHomem: Float!
-  CulturaEtapa: CulturaEtapa!
-  Servico: Servico!
+  CulturaEtapa: CulturaEtapa
+  Servico: Servico
 }
 type Insumo {
   id: ID! @unique
   DescrInsumo: String!
   PrecoUnit: Float!
   Und: String!
-  TipoInsumo: TipoInsumo!
+  TipoInsumo: TipoInsumo
 }
 type TipoInsumo {
   id: ID! @unique
