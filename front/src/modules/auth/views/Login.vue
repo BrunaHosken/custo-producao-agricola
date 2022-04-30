@@ -75,11 +75,22 @@
               {{ texts.toolbar }}
             </v-btn>
           </v-card-actions>
-          <v-snackbar v-model="showSnackBar" top rounded="pill">
+          <v-snackbar
+            v-model="showSnackBar"
+            bottom
+            right
+            color="red"
+            class="mb-4"
+          >
             {{ error }}
             <template v-slot:action="{ attrs }">
-              <v-btn color="red" text v-bind="attrs">
-                <v-icon>close</v-icon>
+              <v-btn
+                color="white"
+                text
+                v-bind="attrs"
+                @click="showSnackBar = false"
+              >
+                <v-icon>mdi-close</v-icon>
               </v-btn>
             </template>
           </v-snackbar>
@@ -93,7 +104,7 @@
 <script>
 import { required, email, minLength } from "vuelidate/lib/validators";
 import AuthService from "./../services/auth-service";
-// import { formatError } from "@/utils";
+import { formatError } from "@/utils";
 
 export default {
   name: "Login",
@@ -190,21 +201,16 @@ export default {
       this.isLogin = !this.isLogin;
     },
     async submit() {
-      // this.isLoading = true;
-      const authData = await AuthService.login(this.user);
-      console.log(authData);
-      // try {
-      //   this.isLogin
-      //     ? await AuthService.login(this.user)
-      //     : await AuthService.signup(this.user);
-
-      //   this.$router.push("/dashboard");
-      // } catch (error) {
-      //   this.error = formatError(error.message);
-      //   this.showSnackBar = true;
-      // } finally {
-      //   this.isLoading = false;
-      // }
+      this.isLoading = true;
+      try {
+        await AuthService.login(this.user);
+        this.$router.push(this.$route.query.redirect || "/dashboard");
+      } catch (error) {
+        this.error = formatError(error.message);
+        this.showSnackBar = true;
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 };
