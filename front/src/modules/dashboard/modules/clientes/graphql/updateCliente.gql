@@ -1,0 +1,11 @@
+mutation UpdateCliente($nome: String!, $index: ID!) {
+  updateCliente(data: { NomeCliente: $nome }, where: { id: $index }) {
+    id
+    NomeCliente
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

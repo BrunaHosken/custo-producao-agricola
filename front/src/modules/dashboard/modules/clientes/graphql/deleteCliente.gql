@@ -1,0 +1,11 @@
+mutation DeleteCliente($id: ID) {
+  deleteCliente(where: { id: $id }) {
+    id
+    NomeCliente
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

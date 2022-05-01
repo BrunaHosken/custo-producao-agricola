@@ -101,10 +101,17 @@ function createDespesaRealizada(_, args, ctx, info) {
   );
 }
 function createCliente(_, { NomeCliente }, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
+  console.log(NomeCliente);
   return ctx.db.mutation.createCliente(
     {
       data: {
         NomeCliente,
+        Agricultor: {
+          connect: {
+            id: agricultorId,
+          },
+        },
       },
     },
     info
@@ -135,33 +142,51 @@ function createCultura(
   ctx,
   info
 ) {
+  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createCultura(
     {
       data: {
         DescrCultura,
         QtdEstimadaPorHectare,
         Und,
+        Agricultor: {
+          connect: {
+            id: agricultorId,
+          },
+        },
       },
     },
     info
   );
 }
 function createTipoInsumo(_, { NomeTipo }, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createTipoInsumo(
     {
       data: {
         NomeTipo,
+        Agricultor: {
+          connect: {
+            id: agricultorId,
+          },
+        },
       },
     },
     info
   );
 }
 function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createServico(
     {
       data: {
         DescrServico,
         ValorDiaHomem,
+        Agricultor: {
+          connect: {
+            id: agricultorId,
+          },
+        },
       },
     },
     info
@@ -363,11 +388,12 @@ function updateCliente(_, args, ctx, info) {
     info
   );
 }
-function deleteManyClientes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyClientes(
+function deleteCliente(_, args, ctx, info) {
+  console.log(args);
+  return ctx.db.mutation.deleteCliente(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
@@ -383,11 +409,11 @@ function updateServico(_, args, ctx, info) {
     info
   );
 }
-function deleteManyServicoes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyServicoes(
+function deleteServico(_, args, ctx, info) {
+  return ctx.db.mutation.deleteServico(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
@@ -403,11 +429,11 @@ function updateCultura(_, args, ctx, info) {
     info
   );
 }
-function deleteManyCulturas(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyCulturas(
+function deleteCultura(_, args, ctx, info) {
+  return ctx.db.mutation.deleteCultura(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
@@ -523,91 +549,91 @@ function deleteCulturaDesenvolvida(_, args, ctx, info) {
     info
   );
 }
-function deleteManyCulturaEtapas(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyCulturaEtapas(
+function deleteCulturaEtapa(_, args, ctx, info) {
+  return ctx.db.mutation.deleteCulturaEtapa(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyDespesaRealizadas(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyDespesaRealizadas(
+function deleteDespesaRealizada(_, args, ctx, info) {
+  return ctx.db.mutation.deleteDespesaRealizada(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyInsumoes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyInsumoes(
+function deleteInsumo(_, args, ctx, info) {
+  return ctx.db.mutation.deleteInsumo(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyServicoPrestadoes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyServicoPrestadoes(
+function deleteServicoPrestado(_, args, ctx, info) {
+  return ctx.db.mutation.deleteServicoPrestado(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyServicoPrevistoes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyServicoPrevistoes(
+function deleteServicoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.deleteServicoPrevisto(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyUsoInsumoPrevistoes(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyUsoInsumoPrevistoes(
+function deleteUsoInsumoPrevisto(_, args, ctx, info) {
+  return ctx.db.mutation.deleteUsoInsumoPrevisto(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyUsoInsumoReals(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyUsoInsumoReals(
+function deleteUsoInsumoReal(_, args, ctx, info) {
+  return ctx.db.mutation.deleteUsoInsumoReal(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyVendas(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyVendas(
+function deleteVenda(_, args, ctx, info) {
+  return ctx.db.mutation.deleteVenda(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
   );
 }
-function deleteManyVendaItems(_, args, ctx, info) {
-  return ctx.db.mutation.deleteManyVendaItems(
+function deleteVendaItem(_, args, ctx, info) {
+  return ctx.db.mutation.deleteVendaItem(
     {
       where: {
-        id_in: args.where.id_in,
+        id: args.where.id,
       },
     },
     info
@@ -636,11 +662,11 @@ module.exports = {
   deleteAgricultor,
   updateAgricultor,
   updateCliente,
-  deleteManyClientes,
+  deleteCliente,
   updateServico,
-  deleteManyServicoes,
+  deleteServico,
   updateCultura,
-  deleteManyCulturas,
+  deleteCultura,
   updateCulturaDesenvolvida,
   updateDespesaRealizada,
   updateInsumo,
@@ -652,13 +678,13 @@ module.exports = {
   updateVenda,
   updateVendaItem,
   deleteCulturaDesenvolvida,
-  deleteManyCulturaEtapas,
-  deleteManyDespesaRealizadas,
-  deleteManyInsumoes,
-  deleteManyServicoPrestadoes,
-  deleteManyServicoPrevistoes,
-  deleteManyUsoInsumoPrevistoes,
-  deleteManyUsoInsumoReals,
-  deleteManyVendas,
-  deleteManyVendaItems,
+  deleteCulturaEtapa,
+  deleteDespesaRealizada,
+  deleteInsumo,
+  deleteServicoPrestado,
+  deleteServicoPrevisto,
+  deleteUsoInsumoPrevisto,
+  deleteUsoInsumoReal,
+  deleteVenda,
+  deleteVendaItem,
 };

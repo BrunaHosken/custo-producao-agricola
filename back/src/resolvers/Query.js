@@ -9,17 +9,61 @@ function tipoDespesas(_, args, ctx, info) {
 }
 
 function tipoInsumoes(_, args, ctx, info) {
-  return ctx.db.query.tipoInsumoes({ orderBy: "NomeTipo_ASC" }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.tipoInsumoes(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "NomeTipo_ASC",
+    },
+    info
+  );
 }
 
 function servicoes(_, args, ctx, info) {
-  return ctx.db.query.servicoes({ orderBy: "DescrServico_ASC" }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.servicoes(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "DescrServico_ASC",
+    },
+    info
+  );
 }
 function clientes(_, args, ctx, info) {
-  return ctx.db.query.clientes({ orderBy: "NomeCliente_ASC" }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.clientes(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "NomeCliente_ASC",
+    },
+    info
+  );
 }
 function culturas(_, args, ctx, info) {
-  return ctx.db.query.culturas({ orderBy: "DescrCultura_ASC" }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.culturas(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "DescrCultura_ASC",
+    },
+    info
+  );
 }
 function vendas(_, args, ctx, info) {
   return ctx.db.query.vendas({ orderBy: "Data_ASC" }, info);

@@ -4,7 +4,7 @@ Trabalho de Conclusão de Curso para o Instituto Politécnico de Nova Friburgo (
 
 # Funcionalidades
 
-- Criar conta do agricultor
+- Criar conta do agricultor (administrador)
 - Login
 - Modificar Usuário
 - Deletar Usuário
@@ -48,6 +48,7 @@ Trabalho de Conclusão de Curso para o Instituto Politécnico de Nova Friburgo (
 - Vuelidate
 - Apollo Client
 - Chart JS (Gráficos)
+- API do EmailJS
 
 # Modelagem de dados
 

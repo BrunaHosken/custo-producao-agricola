@@ -1,5 +1,4 @@
 scalar Date
-scalar Long
 
 type AuthPayload {
   token: String!
@@ -30,6 +29,7 @@ type DespesaRealizada {
 type Cliente {
   id: ID!
   NomeCliente: String!
+  Agricultor: Agricultor
 }
 type Venda {
   id: ID!
@@ -48,16 +48,19 @@ type Cultura {
   id: ID!
   DescrCultura: String!
   QtdEstimadaPorHectare: Float!
+  Agricultor: Agricultor
   Und: String!
 }
 type TipoInsumo {
   id: ID!
   NomeTipo: String!
+  Agricultor: Agricultor
 }
 type Servico {
   id: ID!
   DescrServico: String!
   ValorDiaHomem: Float!
+  Agricultor: Agricultor
 }
 type Insumo {
   id: ID!
@@ -110,9 +113,7 @@ type CulturaDesenvolvida {
   Agricultor: Agricultor
   Cultura: Cultura
 }
-type BatchPayload {
-  count: Long!
-}
+
 input AgricultorWhereUniqueInput {
   id: ID
   Email: String
@@ -124,6 +125,8 @@ input AgricultorUpdateInput {
 }
 input ClienteUpdateInput {
   NomeCliente: String
+
+  Agricultor: AgricultorUpdateOneInput
 }
 input ClienteWhereUniqueInput {
   id: ID
@@ -131,24 +134,23 @@ input ClienteWhereUniqueInput {
 input ServicoUpdateInput {
   DescrServico: String
   ValorDiaHomem: Float
+
+  Agricultor: AgricultorUpdateOneInput
 }
 input ServicoWhereUniqueInput {
   id: ID
 }
-input ServicoWhereInput {
-  id_in: [ID!]
-}
+
 input CulturaUpdateInput {
   DescrCultura: String
   QtdEstimadaPorHectare: Float
   Und: String
+  Agricultor: AgricultorUpdateOneInput
 }
 input CulturaWhereUniqueInput {
   id: ID
 }
-input CulturaWhereInput {
-  id_in: [ID!]
-}
+
 input CulturaDesenvolvidaUpdateInput {
   AreaTerrenoHectares: Float
   DataInicio: Date
@@ -156,7 +158,7 @@ input CulturaDesenvolvidaUpdateInput {
   QtdColhida: Float
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
-  Cultura: CulturaUpdateOneRequiredInput
+  Cultura: CulturaUpdateOneInput
 }
 input UsoInsumoRealUpdateManyMutationInput {
   Data: Date
@@ -192,6 +194,8 @@ input ServicoUpdateOneRequiredInput {
 input ServicoUpdateDataInput {
   DescrServico: String
   ValorDiaHomem: Float
+
+  Agricultor: AgricultorUpdateOneInput
 }
 input ServicoUpsertNestedInput {
   update: ServicoUpdateDataInput!
@@ -221,6 +225,7 @@ input InsumoUpdateOneRequiredInput {
 }
 input TipoInsumoCreateInput {
   NomeTipo: String!
+  Agricultor: AgricultorCreateOneInput
 }
 input InsumoCreateInput {
   DescrInsumo: String!
@@ -232,7 +237,7 @@ input InsumoUpdateDataInput {
   DescrInsumo: String
   PrecoUnit: Float
   Und: String
-  TipoInsumo: TipoInsumoUpdateOneRequiredInput
+  TipoInsumo: TipoInsumoUpdateOneInput
 }
 input InsumoUpsertNestedInput {
   update: InsumoUpdateDataInput!
@@ -257,6 +262,8 @@ input UsoInsumoRealWhereUniqueInput {
 input ServicoCreateInput {
   DescrServico: String!
   ValorDiaHomem: Float!
+
+  Agricultor: AgricultorCreateOneInput
 }
 input CulturaEtapaUpsertNestedInput {
   update: CulturaEtapaUpdateDataInput!
@@ -281,9 +288,7 @@ input CulturaEtapaUpdateInput {
   MesFim: Date
   CulturaDesenvolvida: CulturaDesenvolvidaUpdateOneRequiredInput
 }
-input CulturaEtapaWhereInput {
-  id_in: [ID!]
-}
+
 input DespesaRealizadaUpdateInput {
   DescrDetalhada: String
   Data: Date!
@@ -298,30 +303,17 @@ input InsumoUpdateInput {
   DescrInsumo: String
   PrecoUnit: Float
   Und: String
-  TipoInsumo: TipoInsumoUpdateOneRequiredInput
+  TipoInsumo: TipoInsumoUpdateOneInput
 }
 input InsumoWhereUniqueInput {
   id: ID
 }
-input ServicoPrestadoWhereInput {
-  id_in: [ID!]
-}
-input ServicoPrevistoWhereInput {
-  id_in: [ID!]
-}
-input UsoInsumoPrevistoWhereInput {
-  id_in: [ID!]
-}
-input UsoInsumoRealWhereInput {
-  id_in: [ID!]
-}
+
 input VendaUpdateInput {
   Data: Date!
   Cliente: ClienteUpdateOneRequiredInput
 }
-input VendaWhereInput {
-  id_in: [ID!]
-}
+
 input VendaItemUpdateInput {
   Qtd: Float
   Und: String
@@ -352,21 +344,26 @@ input AgricultorUpsertNestedInput {
   update: AgricultorUpdateDataInput!
   create: AgricultorCreateInput!
 }
-input CulturaUpdateOneRequiredInput {
+input CulturaUpdateOneInput {
   create: CulturaCreateInput
   update: CulturaUpdateDataInput
   upsert: CulturaUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
   connect: CulturaWhereUniqueInput
 }
 input CulturaCreateInput {
   DescrCultura: String!
   QtdEstimadaPorHectare: Float!
   Und: String!
+
+  Agricultor: AgricultorCreateOneInput
 }
 input CulturaUpdateDataInput {
   DescrCultura: String
   QtdEstimadaPorHectare: Float
   Und: String
+  Agricultor: AgricultorUpdateOneInput
 }
 input CulturaUpsertNestedInput {
   update: CulturaUpdateDataInput!
@@ -388,10 +385,8 @@ input TipoDespesaUpsertNestedInput {
   update: TipoDespesaUpdateDataInput!
   create: TipoDespesaCreateInput!
 }
-input TipoDespesaWhereInput {
-  id_in: [ID!]
-}
-input TipoInsumoUpdateOneRequiredInput {
+
+input TipoInsumoUpdateOneInput {
   create: TipoInsumoCreateInput
   update: TipoInsumoUpdateDataInput
   upsert: TipoInsumoUpsertNestedInput
@@ -401,11 +396,18 @@ input TipoInsumoUpsertNestedInput {
   update: TipoInsumoUpdateDataInput!
   create: TipoInsumoCreateInput!
 }
-input TipoInsumoWhereInput {
-  id_in: [ID!]
-}
+
 input TipoInsumoUpdateDataInput {
   NomeTipo: String
+  Agricultor: AgricultorUpdateOneInput
+}
+input AgricultorUpdateOneInput {
+  create: AgricultorCreateInput
+  update: AgricultorUpdateDataInput
+  upsert: AgricultorUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AgricultorWhereUniqueInput
 }
 input ClienteUpdateOneRequiredInput {
   create: ClienteCreateInput
@@ -417,11 +419,11 @@ input ClienteUpsertNestedInput {
   update: ClienteUpdateDataInput!
   create: ClienteCreateInput!
 }
-input ClienteWhereInput {
-  id_in: [ID!]
-}
+
 input ClienteCreateInput {
   NomeCliente: String!
+
+  Agricultor: AgricultorCreateOneInput
 }
 input VendaUpdateOneRequiredInput {
   create: VendaCreateInput
@@ -464,7 +466,7 @@ input CulturaDesenvolvidaUpdateDataInput {
   QtdColhida: Float
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
-  Cultura: CulturaUpdateOneRequiredInput
+  Cultura: CulturaUpdateOneInput
 }
 input CulturaDesenvolvidaCreateInput {
   AreaTerrenoHectares: Float!
@@ -483,6 +485,8 @@ input TipoInsumoWhereUniqueInput {
 }
 input ClienteUpdateDataInput {
   NomeCliente: String
+
+  Agricultor: AgricultorUpdateOneInput
 }
 input ClienteCreateOneInput {
   create: ClienteCreateInput
@@ -495,16 +499,6 @@ input AgricultorCreateOneInput {
 input CulturaCreateOneInput {
   create: CulturaCreateInput
   connect: CulturaWhereUniqueInput
-}
-input InsumoWhereInput {
-  id_in: [ID!]
-}
-input DespesaRealizadaWhereInput {
-  id_in: [ID!]
-}
-
-input VendaItemWhereInput {
-  id_in: [ID!]
 }
 
 type Mutation {
@@ -586,17 +580,17 @@ type Mutation {
     data: ClienteUpdateInput!
     where: ClienteWhereUniqueInput!
   ): Cliente
-  deleteManyClientes(where: ClienteWhereInput): BatchPayload!
+  deleteCliente(where: ClienteWhereUniqueInput!): Cliente
   updateServico(
     data: ServicoUpdateInput!
     where: ServicoWhereUniqueInput!
   ): Servico
-  deleteManyServicoes(where: ServicoWhereInput): BatchPayload!
+  deleteServico(where: ServicoWhereUniqueInput!): Servico
   updateCultura(
     data: CulturaUpdateInput!
     where: CulturaWhereUniqueInput!
   ): Cultura
-  deleteManyCulturas(where: CulturaWhereInput): BatchPayload!
+  deleteCultura(where: CulturaWhereUniqueInput!): Cultura
   updateCulturaDesenvolvida(
     data: CulturaDesenvolvidaUpdateInput!
     where: CulturaDesenvolvidaWhereUniqueInput!
@@ -608,14 +602,16 @@ type Mutation {
     data: CulturaEtapaUpdateInput!
     where: CulturaEtapaWhereUniqueInput!
   ): CulturaEtapa
-  deleteManyCulturaEtapas(where: CulturaEtapaWhereInput): BatchPayload!
+  deleteCulturaEtapa(where: CulturaEtapaWhereUniqueInput!): CulturaEtapa
   updateDespesaRealizada(
     data: DespesaRealizadaUpdateInput!
     where: DespesaRealizadaWhereUniqueInput!
   ): DespesaRealizada
-  deleteManyDespesaRealizadas(where: DespesaRealizadaWhereInput): BatchPayload!
+  deleteDespesaRealizada(
+    where: DespesaRealizadaWhereUniqueInput!
+  ): DespesaRealizada
   updateInsumo(data: InsumoUpdateInput!, where: InsumoWhereUniqueInput!): Insumo
-  deleteManyInsumoes(where: InsumoWhereInput): BatchPayload!
+  deleteInsumo(where: InsumoWhereUniqueInput!): Insumo
   updateServicoPrestado(
     data: ServicoPrestadoUpdateInput!
     where: ServicoPrestadoWhereUniqueInput!
@@ -632,19 +628,23 @@ type Mutation {
     data: UsoInsumoRealUpdateInput!
     where: UsoInsumoRealWhereUniqueInput!
   ): UsoInsumoReal
-  deleteManyServicoPrestadoes(where: ServicoPrestadoWhereInput): BatchPayload!
-  deleteManyServicoPrevistoes(where: ServicoPrevistoWhereInput): BatchPayload!
-  deleteManyUsoInsumoPrevistoes(
-    where: UsoInsumoPrevistoWhereInput
-  ): BatchPayload!
-  deleteManyUsoInsumoReals(where: UsoInsumoRealWhereInput): BatchPayload!
+  deleteServicoPrestado(
+    where: ServicoPrestadoWhereUniqueInput!
+  ): ServicoPrestado
+  deleteServicoPrevisto(
+    where: ServicoPrevistoWhereUniqueInput!
+  ): ServicoPrevisto
+  deleteUsoInsumoPrevisto(
+    where: UsoInsumoPrevistoWhereUniqueInput!
+  ): UsoInsumoPrevisto
+  deleteUsoInsumoReal(where: UsoInsumoRealWhereUniqueInput!): UsoInsumoReal
   updateVenda(data: VendaUpdateInput!, where: VendaWhereUniqueInput!): Venda
-  deleteManyVendas(where: VendaWhereInput): BatchPayload!
+  deleteVenda(where: VendaWhereUniqueInput!): Venda
   updateVendaItem(
     data: VendaItemUpdateInput!
     where: VendaItemWhereUniqueInput!
   ): VendaItem
-  deleteManyVendaItems(where: VendaItemWhereInput): BatchPayload!
+  deleteVendaItem(where: VendaItemWhereUniqueInput!): VendaItem
 }
 
 type Query {

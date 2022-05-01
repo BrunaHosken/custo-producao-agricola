@@ -26,6 +26,7 @@ type Cultura {
   DescrCultura: String!
   QtdEstimadaPorHectare: Float!
   Und: String!
+  Agricultor: Agricultor
 }
 type CulturaDesenvolvida {
   id: ID! @unique
@@ -54,6 +55,7 @@ type Venda {
 type Cliente {
   id: ID! @unique
   NomeCliente: String!
+  Agricultor: Agricultor
 }
 type CulturaEtapa {
   id: ID! @unique
@@ -99,9 +101,11 @@ type Insumo {
 type TipoInsumo {
   id: ID! @unique
   NomeTipo: String!
+  Agricultor: Agricultor
 }
 type Servico {
   id: ID! @unique
   DescrServico: String!
   ValorDiaHomem: Float!
+  Agricultor: Agricultor
 }

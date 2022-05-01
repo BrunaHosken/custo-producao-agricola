@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card v-if="produtos.length === 0">
+      <v-card v-if="clientesList.length === 0">
         <v-card-title>
           <v-icon size="50" color="warning" class="mr-2"
             >mdi-alert-circle</v-icon
@@ -17,9 +17,9 @@
         <v-data-table
           v-model="selected"
           :headers="headers"
-          :items="produtos"
+          :items="clientesList"
           show-select
-          item-key="nome"
+          item-key="id"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
@@ -43,19 +43,32 @@
       @edicao="edicaoItens"
       @deletou="deletouItens"
     />
+    <SnackBar
+      :show="createWithSuccess"
+      :mensagem="this.mensagem"
+      @show="showSnackBarSuccess"
+    />
+    <SnackBar
+      :show="createWithError"
+      :mensagem="this.mensagem"
+      color="red"
+      @show="showSnackBarError"
+    />
   </v-layout>
 </template>
 
 <script>
-import moment from "moment";
+import clienteService from "./../services/cliente-service";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import ClientesEditNew from "./ClientesEditNew.vue";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "Despesas",
   components: {
     AppFloatingButton,
     ClientesEditNew,
+    SnackBar,
   },
   mixins: [formatCurrentMixin],
   data() {
@@ -66,48 +79,51 @@ export default {
           text: "Clientes",
           align: "start",
 
-          value: "nome",
+          value: "NomeCliente",
         },
       ],
-      produtos: [
-        {
-          index: 1,
-          nome: "Feira",
-        },
-        {
-          index: 2,
-          nome: "Floricultura do Seu João",
-        },
-        {
-          index: 3,
-          nome: "Floricultura do Seu João 1",
-        },
-        {
-          index: 4,
-          nome: "Floricultura do Seu João 2",
-        },
-      ],
+      clientesList: [],
       cliente: false,
       editou: false,
       deletou: false,
+      createWithSuccess: false,
+      mensagem: "",
+      createWithError: false,
     };
   },
-
+  async created() {
+    this.clientesList = await clienteService.cliente();
+  },
   methods: {
+    showSnackBarSuccess(data) {
+      this.createWithSuccess = data;
+    },
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     novoItem() {
       this.cliente = true;
       this.editou = false;
     },
-    close(item) {
+    async close(item) {
       this.cliente = item;
+      this.editou = false;
     },
     edicaoItens(item) {
       this.cliente = item;
       this.editou = true;
     },
-    deletouItens(item) {
-      this.deletou = item;
-      console.log(this.deletou);
+    async deletouItens(item) {
+      try {
+        await clienteService.DeleteCliente(this.selected);
+        this.mensagem = "Cliente excluído com sucesso";
+        this.createWithSuccess = true;
+      } catch (e) {
+        this.mensagem = e;
+        this.createWithError = true;
+      } finally {
+        this.deletou = item;
+      }
     },
   },
 };

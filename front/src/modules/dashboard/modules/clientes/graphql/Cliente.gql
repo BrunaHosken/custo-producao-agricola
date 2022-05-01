@@ -1,0 +1,11 @@
+query Clientes {
+  clientes {
+    id
+    NomeCliente
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

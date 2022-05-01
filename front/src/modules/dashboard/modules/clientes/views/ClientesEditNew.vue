@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" persistent max-width="600px">
+  <v-dialog v-model="showDialog" persistent max-width="600px" class="mr-2">
     <v-flex xs12>
       <v-card class="elevation-24" outlined>
         <v-toolbar color="primary" dark>
@@ -51,14 +51,30 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <SnackBar
+        :show="createWithSuccess"
+        :mensagem="this.mensagem"
+        @show="showSnackBarSuccess"
+      />
+      <SnackBar
+        :show="createWithError"
+        :mensagem="this.mensagem"
+        color="red"
+        @show="showSnackBarError"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
+import clienteService from "./../services/cliente-service";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "ClientesEditNew",
+  components: {
+    SnackBar,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -75,6 +91,9 @@ export default {
   },
   data() {
     return {
+      createWithSuccess: false,
+      mensagem: "",
+      createWithError: false,
       editouCultura: false,
       form: {
         index: 0,
@@ -95,23 +114,20 @@ export default {
   watch: {
     editou(pValue) {
       if (!pValue) {
-        this.form = {
-          index: 0,
-          nome: "",
-        };
+        this.clear();
       }
       if (pValue) {
         this.form = {
-          index: this.formEditou[0].index,
-          nome: this.formEditou[0].nome,
+          index: this.formEditou[0].id,
+          nome: this.formEditou[0].NomeCliente,
         };
       }
     },
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
         this.form = {
-          index: pValue[0].index,
-          nome: pValue[0].nome,
+          index: pValue[0].id,
+          nome: pValue[0].NomeCliente,
         };
       }
     },
@@ -135,6 +151,12 @@ export default {
     },
   },
   methods: {
+    showSnackBarSuccess(data) {
+      this.createWithSuccess = data;
+    },
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     clear() {
       this.form = {
         index: 0,
@@ -147,11 +169,19 @@ export default {
       this.clear();
       this.$emit("showDialogClose", this.editouCultura);
     },
-    salvar() {
-      this.editouCultura = false;
-      console.log(this.form);
-      this.$v.$reset();
-      this.$emit("showDialogClose", this.editouCultura);
+    async salvar() {
+      try {
+        this.editou
+          ? await clienteService.UpdateCliente(this.form)
+          : await clienteService.CreateCliente(this.form);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.editouCultura = false;
+        this.$v.$reset();
+        this.clear();
+        this.$emit("showDialogClose", this.editouCultura);
+      }
     },
   },
 };

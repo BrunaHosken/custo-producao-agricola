@@ -87,7 +87,6 @@ export default {
         this.deletou = false;
         this.showDeleteDialog = false;
       } else {
-        console.log("deletou");
         this.deletou = true;
         this.showDeleteDialog = false;
         this.$emit("deletou", this.deletou);
