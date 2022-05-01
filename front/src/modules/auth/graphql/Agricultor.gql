@@ -1,0 +1,7 @@
+query Agricultor {
+  agricultor {
+    id
+    Nome
+    Email
+  }
+}

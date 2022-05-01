@@ -12,7 +12,7 @@
         </v-list-item-action>
 
         <v-list-item-content>
-          <v-list-item-title>Teste</v-list-item-title>
+          <v-list-item-title>{{ user.Nome }}</v-list-item-title>
         </v-list-item-content>
 
         <v-list-item-action>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-// import AuthService from "./../../auth/services/auth-service";
+import AuthService from "./../../auth/services/auth-service";
 export default {
   name: "AppMenu",
   props: {
@@ -81,7 +81,6 @@ export default {
   },
   data: () => ({
     items: [
-      // { title: "Home", icon: "mdi-home", url: "/dashboard", exact: true },
       {
         title: "Configurações",
         icon: "mdi-cog-outline",
@@ -171,8 +170,9 @@ export default {
     mini: false,
     user: {},
   }),
-  // async created() {
-  //   this.user = await AuthService.user();
-  // },
+  async created() {
+    this.user = await AuthService.agricultor();
+    console.log(this.user);
+  },
 };
 </script>
