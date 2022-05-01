@@ -172,7 +172,6 @@ export default {
   }),
   async created() {
     this.user = await AuthService.agricultor();
-    console.log(this.user);
   },
 };
 </script>

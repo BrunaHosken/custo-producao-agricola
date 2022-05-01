@@ -27,10 +27,22 @@
         Salvar
       </v-btn>
     </v-card-actions>
+
     <Dialog
       message="Deseja realmente limpar os dados?"
       :showDialog="showClearDialog"
       @option="option"
+    />
+    <SnackBar
+      :show="createWithSuccess"
+      mensagem="Contato enviado com sucesso!"
+      @show="showSnackBarSuccess"
+    />
+    <SnackBar
+      :show="createWithError"
+      :mensagem="this.mensagem"
+      color="red"
+      @show="showSnackBarError"
     />
   </v-card>
 </template>
@@ -38,10 +50,15 @@
 <script>
 import { required, minLength } from "vuelidate/lib/validators";
 import Dialog from "./../../../components/Dialog.vue";
+import ContatoService from "./../services/contato-service";
+import SnackBar from "./../../../components/SnackBar.vue";
+import AuthService from "./../../../../auth/services/auth-service";
+import emailjs from "emailjs-com";
 export default {
   name: "Contatos",
   components: {
     Dialog,
+    SnackBar,
   },
   data() {
     return {
@@ -50,6 +67,9 @@ export default {
       },
       showClearDialog: false,
       salvar: false,
+      createWithSuccess: false,
+      mensagem: "",
+      createWithError: false,
     };
   },
   validations() {
@@ -77,8 +97,13 @@ export default {
       return errors;
     },
   },
-
   methods: {
+    showSnackBarSuccess(data) {
+      this.createWithSuccess = data;
+    },
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     option(data) {
       if (data == "nao") {
         this.showClearDialog = false;
@@ -90,10 +115,30 @@ export default {
     clear() {
       this.form.description = "";
     },
-    save() {
-      console.log(this.form.description);
-      this.$v.$reset();
-      this.clear();
+    async save() {
+      try {
+        const response = await ContatoService.createContato(this.form);
+        const user = await AuthService.agricultor();
+
+        var templateParams = {
+          user_name: user.Nome,
+          message: response.createContato.DescrContato,
+        };
+
+        emailjs.send(
+          "service_yhj9lbt",
+          "template_zot1vrj",
+          templateParams,
+          "pdua2Pm4s61rHySot"
+        );
+
+        this.$v.$reset();
+        this.clear();
+        this.createWithSuccess = true;
+      } catch (error) {
+        this.createWithError = true;
+        this.mensagem = error;
+      }
     },
   },
 };

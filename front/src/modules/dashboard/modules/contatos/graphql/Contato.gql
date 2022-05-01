@@ -1,0 +1,11 @@
+mutation CreateContato($description: String!) {
+  createContato(DescrContato: $description) {
+    id
+    DescrContato
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}
