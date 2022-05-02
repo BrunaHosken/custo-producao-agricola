@@ -1,0 +1,21 @@
+mutation CreateCultura(
+  $descricao: String!
+  $quantidade: Float!
+  $unidade: String!
+) {
+  createCultura(
+    DescrCultura: $descricao
+    QtdEstimadaPorHectare: $quantidade
+    Und: $unidade
+  ) {
+    id
+    DescrCultura
+    QtdEstimadaPorHectare
+    Und
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

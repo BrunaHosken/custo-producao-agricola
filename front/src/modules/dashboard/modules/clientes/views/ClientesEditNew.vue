@@ -145,9 +145,6 @@ export default {
     },
   },
   methods: {
-    showSnackBarSuccess(data) {
-      this.createWithSuccess = data;
-    },
     showSnackBarError(data) {
       this.createWithError = data;
     },
@@ -169,7 +166,7 @@ export default {
           ? await clienteService.UpdateCliente(this.form)
           : await clienteService.CreateCliente(this.form);
       } catch (e) {
-        this.mensagem = e;
+        this.mensagem = e.message;
         this.createWithError = true;
       } finally {
         this.editouCultura = false;

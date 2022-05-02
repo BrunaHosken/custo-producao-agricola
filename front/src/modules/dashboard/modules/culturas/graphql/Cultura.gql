@@ -1,0 +1,13 @@
+query Cultura {
+  culturas {
+    id
+    DescrCultura
+    QtdEstimadaPorHectare
+    Und
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

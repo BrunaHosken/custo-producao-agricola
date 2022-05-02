@@ -1,0 +1,13 @@
+mutation DeleteCultura($id: ID) {
+  deleteCultura(where: { id: $id }) {
+    id
+    DescrCultura
+    QtdEstimadaPorHectare
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+    Und
+  }
+}

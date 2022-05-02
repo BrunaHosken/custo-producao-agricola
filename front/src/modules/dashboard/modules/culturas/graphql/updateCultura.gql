@@ -1,0 +1,25 @@
+mutation UpdateCliente(
+  $index: ID!
+  $name: String!
+  $quantidade: Float!
+  $unidade: String!
+) {
+  updateCultura(
+    where: { id: $index }
+    data: {
+      DescrCultura: $name
+      QtdEstimadaPorHectare: $quantidade
+      Und: $unidade
+    }
+  ) {
+    id
+    DescrCultura
+    QtdEstimadaPorHectare
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+    Und
+  }
+}

@@ -137,7 +137,7 @@ export default {
         this.createWithSuccess = true;
       } catch (error) {
         this.createWithError = true;
-        this.mensagem = error;
+        this.mensagem = error.message;
       }
     },
   },

@@ -71,14 +71,26 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <SnackBar
+        :show="createWithError"
+        :mensagem="this.mensagem"
+        color="red"
+        @show="showSnackBarError"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import { required, minLength, minValue } from "vuelidate/lib/validators";
+import culturaService from "./../services/cultura-service";
+
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "CulturasEdit",
+  components: {
+    SnackBar,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -97,6 +109,8 @@ export default {
     return {
       unidades: ["Maço", "Dúzia"],
       editouCultura: false,
+      mensagem: "",
+      createWithError: false,
       form: {
         index: 0,
         name: "",
@@ -123,10 +137,10 @@ export default {
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
         this.form = {
-          index: pValue[0].index,
-          name: pValue[0].name,
-          quantidade: pValue[0].quantidade,
-          unidade: pValue[0].unidade,
+          index: pValue[0].id,
+          name: pValue[0].DescrCultura,
+          quantidade: pValue[0].QtdEstimadaPorHectare,
+          unidade: pValue[0].Und,
         };
       }
     },
@@ -162,14 +176,22 @@ export default {
     },
   },
   methods: {
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     cancelar() {
       this.editouCultura = false;
       this.$emit("showDialogClose", this.editouCultura);
     },
-    salvar() {
-      this.editouCultura = false;
-      console.log(this.form);
-      this.$emit("showDialogClose", this.editouCultura);
+    async salvar() {
+      try {
+        await culturaService.UpdateCultura(this.form);
+        this.editouCultura = false;
+        this.$emit("showDialogClose", this.editouCultura);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      }
     },
   },
 };

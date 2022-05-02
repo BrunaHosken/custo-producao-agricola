@@ -16,7 +16,7 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="name"
+          item-key="id"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
@@ -28,6 +28,12 @@
         </v-data-table>
       </v-card>
     </v-flex>
+    <SnackBar
+      :show="createWithError"
+      :mensagem="this.mensagem"
+      color="red"
+      @show="showSnackBarError"
+    />
 
     <CulturasEdit
       :showDialog="editou"
@@ -45,15 +51,17 @@
 </template>
 
 <script>
-import moment from "moment";
+import culturaService from "./../services/cultura-service";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import CulturasEdit from "./CulturasEdit.vue";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "Culturas",
   components: {
     AppFloatingButton,
     CulturasEdit,
+    SnackBar,
   },
   mixins: [formatCurrentMixin],
 
@@ -72,35 +80,43 @@ export default {
           text: "Cultura",
           align: "start",
 
-          value: "name",
+          value: "DescrCultura",
         },
-        { text: "Quantidade estimada por Hectare", value: "quantidade" },
-        { text: "Unidade", value: "unidade" },
-      ],
-      produtos: [
         {
-          index: 1,
-          name: "Crisântemo",
-          quantidade: 14000,
-          unidade: "Maço",
+          text: "Quantidade estimada por Hectare",
+          value: "QtdEstimadaPorHectare",
         },
+        { text: "Unidade", value: "Und" },
       ],
-
+      produtos: [],
+      mensagem: "",
+      createWithError: false,
       editou: false,
       deletou: false,
     };
   },
-
+  async created() {
+    this.produtos = await culturaService.cultura();
+  },
   methods: {
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     close(item) {
       this.editou = item;
     },
     edicaoItens(item) {
       this.editou = item;
     },
-    deletouItens(item) {
-      this.deletou = item;
-      console.log(this.deletou);
+    async deletouItens(item) {
+      try {
+        await culturaService.DeleteCultura(this.selected);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      } finally {
+        this.deletou = item;
+      }
     },
   },
 };

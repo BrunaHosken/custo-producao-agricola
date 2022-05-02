@@ -81,7 +81,6 @@ export default {
       cliente: false,
       editou: false,
       deletou: false,
-      createWithSuccess: false,
       mensagem: "",
       createWithError: false,
     };
@@ -112,7 +111,7 @@ export default {
       try {
         await clienteService.DeleteCliente(this.selected);
       } catch (e) {
-        this.mensagem = e;
+        this.mensagem = e.message;
         this.createWithError = true;
       } finally {
         this.deletou = item;
