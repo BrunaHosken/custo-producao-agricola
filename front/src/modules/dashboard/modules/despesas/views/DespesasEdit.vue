@@ -119,6 +119,7 @@
 import moment from "moment";
 
 import { required, minValue, minLength } from "vuelidate/lib/validators";
+import despesaService from "./../services/despesa-service";
 export default {
   name: "DespesasEdit",
   props: {
@@ -142,7 +143,7 @@ export default {
       },
       showDateDialog: false,
       dateDialogValue: moment().format("DD-MM-YYYY"),
-      items: ["Fixo", "Variavel"],
+      items: [],
       editouCultura: false,
     };
   },
@@ -172,6 +173,13 @@ export default {
         };
       }
     },
+  },
+  async created() {
+    const response = await despesaService.tipoDespesas();
+    response.forEach((item) => {
+      this.items.push(item.DescrTipoDespesa);
+    });
+    this.form.tipo = this.items[0];
   },
   computed: {
     formattedDate() {

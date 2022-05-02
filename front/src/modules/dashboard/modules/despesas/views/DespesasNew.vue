@@ -129,7 +129,7 @@
 <script>
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
-
+import despesaService from "./../services/despesa-service";
 import Dialog from "./../../../components/Dialog.vue";
 export default {
   name: "DespesasNew",
@@ -139,12 +139,12 @@ export default {
   data() {
     return {
       valid: false,
-      items: ["Fixo", "Variavel"],
+      items: [],
       form: {
         date: moment().format("YYYY-MM-DD"),
         descricao: "",
         valor: 0,
-        tipo: "Fixo",
+        tipo: "",
       },
 
       showDateDialog: false,
@@ -165,6 +165,13 @@ export default {
         },
       },
     };
+  },
+  async created() {
+    const response = await despesaService.tipoDespesas();
+    response.forEach((item) => {
+      this.items.push(item.DescrTipoDespesa);
+    });
+    this.form.tipo = this.items[0];
   },
   computed: {
     formattedDate() {
@@ -215,7 +222,7 @@ export default {
         date: moment().format("YYYY-MM-DD"),
         descricao: "",
         valor: 0,
-        tipo: "Fixo",
+        tipo: this.items[0],
       };
     },
     save() {

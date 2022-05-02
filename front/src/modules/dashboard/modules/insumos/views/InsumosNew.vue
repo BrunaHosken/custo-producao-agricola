@@ -99,7 +99,7 @@
 <script>
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
-
+import insumoService from "./../services/insumo-services";
 import Dialog from "./../../../components/Dialog.vue";
 export default {
   name: "InsumosNew",
@@ -109,12 +109,7 @@ export default {
   data() {
     return {
       valid: false,
-      items: [
-        "Sementes ou Mudas",
-        "Adubos ou Corretivos",
-        "Defensivos",
-        "Materiais",
-      ],
+      items: [],
       unidades: [
         "Milheiro",
         "Toneladas",
@@ -147,6 +142,13 @@ export default {
         },
       },
     };
+  },
+  async created() {
+    const response = await insumoService.tipoInsumos();
+    response.forEach((item) => {
+      this.items.push(item.NomeTipo);
+    });
+    this.form.tipo = this.items[0];
   },
   computed: {
     formattedDate() {
@@ -196,7 +198,7 @@ export default {
       this.form = {
         descricao: "",
         valor: 0,
-        tipo: "Sementes ou Mudas",
+        tipo: this.items[0],
         unidade: "Milheiro",
       };
     },

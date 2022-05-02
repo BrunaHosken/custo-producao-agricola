@@ -131,7 +131,7 @@ export default {
         {
           index: 4,
           name: "Mão de Obra v",
-          tipo: "Variavel",
+          tipo: "Variável",
           data: moment().format("YYYY-MM-DD"),
           valor: 900,
           valorPeriodo: 0,

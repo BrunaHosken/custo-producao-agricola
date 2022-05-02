@@ -12,7 +12,6 @@ const cliente = async (options = {}) => {
 };
 
 const CreateCliente = async (variables) => {
-  console.log(variables);
   const response = await apollo.mutate({
     mutation: createCliente,
     variables,
@@ -29,7 +28,6 @@ const DeleteCliente = async (variables) => {
   });
 };
 const UpdateCliente = async (variables) => {
-  console.log(variables);
   const response = await apollo.mutate({
     mutation: updateCliente,
     variables,

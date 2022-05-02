@@ -9,14 +9,8 @@ function tipoDespesas(_, args, ctx, info) {
 }
 
 function tipoInsumoes(_, args, ctx, info) {
-  const agricultorId = getAgricultorId(ctx);
   return ctx.db.query.tipoInsumoes(
     {
-      where: {
-        Agricultor: {
-          id: agricultorId,
-        },
-      },
       orderBy: "NomeTipo_ASC",
     },
     info

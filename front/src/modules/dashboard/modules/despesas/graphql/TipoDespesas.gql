@@ -1,0 +1,6 @@
+query TipoDespesas {
+  tipoDespesas {
+    id
+    DescrTipoDespesa
+  }
+}

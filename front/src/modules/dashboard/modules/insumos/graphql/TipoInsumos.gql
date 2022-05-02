@@ -1,0 +1,6 @@
+query TipoInsumos {
+  tipoInsumoes {
+    id
+    NomeTipo
+  }
+}

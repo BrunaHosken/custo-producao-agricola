@@ -88,6 +88,7 @@
 
 <script>
 import { required, minLength, minValue } from "vuelidate/lib/validators";
+import insumoService from "./../services/insumo-services";
 export default {
   name: "InsumosEdit",
   props: {
@@ -114,12 +115,7 @@ export default {
         tipo: "Sementes ou Mudas",
         unidade: "Milheiro",
       },
-      items: [
-        "Sementes ou Mudas",
-        "Adubos ou Corretivos",
-        "Defensivos",
-        "Materiais",
-      ],
+      items: [],
       unidades: [
         "Milheiro",
         "Toneladas",
@@ -144,6 +140,13 @@ export default {
         },
       },
     };
+  },
+  async created() {
+    const response = await insumoService.tipoInsumos();
+    response.forEach((item) => {
+      this.items.push(item.NomeTipo);
+    });
+    this.form.tipo = this.items[0];
   },
   watch: {
     formEditou(pValue) {
