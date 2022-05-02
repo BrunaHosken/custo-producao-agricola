@@ -81,6 +81,18 @@
                     outlined
                     prepend-inner-icon="mdi-account"
                     label="Cliente"
+                  >
+                    <v-list-item
+                      slot="prepend-item"
+                      ripple
+                      @click="novoCliente"
+                    >
+                      <v-list-item-action>
+                        <v-icon>mdi-plus</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-title>Novo Cliente</v-list-item-title>
+                    </v-list-item>
+                    <v-divider slot="prepend-item" class="mt-2"></v-divider
                   ></v-autocomplete>
                 </v-col>
 
@@ -137,16 +149,25 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <ClientesEditNew
+        :showDialog="showDialogCliente"
+        @showDialogClose="close"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import moment from "moment";
+import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
+
 import { required, minValue } from "vuelidate/lib/validators";
 import clienteService from "./../../clientes/services/cliente-service";
 export default {
   name: "VendasEdit",
+  components: {
+    ClientesEditNew,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -180,6 +201,7 @@ export default {
       showDateDialog: false,
       dateDialogValue: moment().format("YYYY-MM-DD"),
       editouCultura: false,
+      showDialogCliente: false,
     };
   },
   validations() {
@@ -244,6 +266,13 @@ export default {
     },
   },
   methods: {
+    novoCliente() {
+      this.showDialogCliente = true;
+    },
+    close() {
+      this.showDialogCliente = false;
+      // this.showDialogProduto = false;
+    },
     cancelDateDialog() {
       this.showDateDialog = false;
       this.dateDialogValue = this.form.date;
