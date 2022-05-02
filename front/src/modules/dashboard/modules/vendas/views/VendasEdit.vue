@@ -143,8 +143,8 @@
 
 <script>
 import moment from "moment";
-
 import { required, minValue } from "vuelidate/lib/validators";
+import clienteService from "./../../clientes/services/cliente-service";
 export default {
   name: "VendasEdit",
   props: {
@@ -164,14 +164,14 @@ export default {
         date: moment().format("YYYY-MM-DD"),
         descricao: "Crisântemo",
         valor: 0,
-        cliente: "Feira",
+        cliente: "",
         unidade: "Maço",
         quantidade: 0,
         index: 0,
       },
       items: ["Fixo", "Variavel"],
       cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
-      clientes: ["Feira", "Floricultura do Seu João"],
+      clientes: [],
       loadingCultura: false,
       loadingCliente: false,
       searchCultura: null,
@@ -210,6 +210,13 @@ export default {
         };
       }
     },
+  },
+  async created() {
+    const response = await clienteService.cliente();
+    response.forEach((item) => {
+      this.clientes.push(item.NomeCliente);
+    });
+    this.form.cliente = this.clientes[0];
   },
   computed: {
     formattedDate() {

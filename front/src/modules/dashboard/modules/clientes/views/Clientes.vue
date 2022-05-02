@@ -44,11 +44,6 @@
       @deletou="deletouItens"
     />
     <SnackBar
-      :show="createWithSuccess"
-      :mensagem="this.mensagem"
-      @show="showSnackBarSuccess"
-    />
-    <SnackBar
       :show="createWithError"
       :mensagem="this.mensagem"
       color="red"
@@ -116,8 +111,6 @@ export default {
     async deletouItens(item) {
       try {
         await clienteService.DeleteCliente(this.selected);
-        this.mensagem = "Cliente excluído com sucesso";
-        this.createWithSuccess = true;
       } catch (e) {
         this.mensagem = e;
         this.createWithError = true;

@@ -52,11 +52,6 @@
         </v-card-actions>
       </v-card>
       <SnackBar
-        :show="createWithSuccess"
-        :mensagem="this.mensagem"
-        @show="showSnackBarSuccess"
-      />
-      <SnackBar
         :show="createWithError"
         :mensagem="this.mensagem"
         color="red"
@@ -91,7 +86,6 @@ export default {
   },
   data() {
     return {
-      createWithSuccess: false,
       mensagem: "",
       createWithError: false,
       editouCultura: false,
@@ -175,7 +169,8 @@ export default {
           ? await clienteService.UpdateCliente(this.form)
           : await clienteService.CreateCliente(this.form);
       } catch (e) {
-        console.log(e);
+        this.mensagem = e;
+        this.createWithError = true;
       } finally {
         this.editouCultura = false;
         this.$v.$reset();

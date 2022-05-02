@@ -20,11 +20,10 @@ const CreateCliente = async (variables) => {
   return response.data.createCliente;
 };
 const DeleteCliente = async (variables) => {
-  variables.forEach(async (item) => {
-    console.log(item);
+  variables.forEach(async (variables) => {
     const response = await apollo.mutate({
       mutation: deleteCliente,
-      item,
+      variables,
     });
     return response;
   });

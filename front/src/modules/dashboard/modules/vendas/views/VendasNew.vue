@@ -191,6 +191,7 @@ import { required, minLength, minValue } from "vuelidate/lib/validators";
 import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import Dialog from "./../../../components/Dialog.vue";
+import clienteService from "./../../clientes/services/cliente-service";
 export default {
   name: "VendasNew",
   components: {
@@ -203,7 +204,7 @@ export default {
       valid: false,
       items: ["Fixo", "Variavel"],
       cultura: ["Crisântemo"],
-      clientes: ["Feira", "Floricultura do Seu João"],
+      clientes: [],
       loadingCultura: false,
       loadingCliente: false,
       searchCultura: null,
@@ -213,7 +214,7 @@ export default {
         date: moment().format("YYYY-MM-DD"),
         descricao: "Crisântemo",
         valor: 0,
-        cliente: "Feira",
+        cliente: "",
         unidade: "Maço",
         quantidade: 0,
       },
@@ -264,6 +265,13 @@ export default {
       return errors;
     },
   },
+  async created() {
+    const response = await clienteService.cliente();
+    response.forEach((item) => {
+      this.clientes.push(item.NomeCliente);
+    });
+    this.form.cliente = this.clientes[0];
+  },
   methods: {
     close() {
       this.showDialogCliente = false;
@@ -295,7 +303,7 @@ export default {
         date: moment().format("YYYY-MM-DD"),
         descricao: "Crisântemo",
         valor: 0,
-        cliente: "Feira",
+        cliente: this.clientes[0],
         unidade: "Maço",
         quantidade: 0,
       };
