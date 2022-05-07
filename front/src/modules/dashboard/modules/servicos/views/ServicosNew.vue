@@ -70,6 +70,12 @@
           :showDialog="showClearDialog"
           @option="option"
         />
+        <SnackBar
+          :show="createWithError"
+          :mensagem="this.mensagem"
+          color="red"
+          @show="showSnackBarError"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -78,12 +84,15 @@
 <script>
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
-
+import servicoService from "./../services/servicos-service";
 import Dialog from "./../../../components/Dialog.vue";
+
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "ServicosNew",
   components: {
     Dialog,
+    SnackBar,
   },
   data() {
     return {
@@ -95,6 +104,8 @@ export default {
       },
 
       showClearDialog: false,
+      createWithError: false,
+      mensagem: "",
     };
   },
   validations() {
@@ -137,6 +148,9 @@ export default {
     },
   },
   methods: {
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     option(data) {
       if (data == "nao") {
         this.showClearDialog = false;
@@ -155,10 +169,14 @@ export default {
         valor: 0,
       };
     },
-    save() {
-      console.log(this.form);
-
-      this.$router.go(-1);
+    async save() {
+      try {
+        await servicoService.CreateServico(this.form);
+        this.$router.go(-1);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      }
     },
   },
 };

@@ -1,0 +1,12 @@
+mutation CreateServico($descricao: String!, $valor: Float!) {
+  createServico(DescrServico: $descricao, ValorDiaHomem: $valor) {
+    id
+    DescrServico
+    ValorDiaHomem
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

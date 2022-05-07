@@ -25,15 +25,15 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="name"
+          item-key="id"
           :search="search"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
           multi-sort
         >
-          <template v-slot:[`item.valor`]="{ item }">
-            {{ formatCurrency(item.valor) }}
+          <template v-slot:[`item.ValorDiaHomem`]="{ item }">
+            {{ formatCurrency(item.ValorDiaHomem) }}
           </template>
         </v-data-table>
       </v-card>
@@ -58,7 +58,7 @@
 import ServicosEdit from "./ServicosEdit.vue";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
-
+import servicoService from "./../services/servicos-service";
 export default {
   name: "Servicos",
   components: {
@@ -75,42 +75,23 @@ export default {
           text: "Serviço",
           align: "start",
 
-          value: "name",
+          value: "DescrServico",
         },
 
-        { text: "Valor por dia do empregado", value: "valor" },
+        { text: "Valor por dia do empregado", value: "ValorDiaHomem" },
       ],
-      produtos: [
-        {
-          index: 1,
-          name: "Preparo do Solo",
-          valor: 25,
-        },
-        {
-          index: 2,
-          name: "Calagem",
-          valor: 15,
-        },
-        {
-          index: 3,
-          name: "Adubação",
-          valor: 15,
-        },
-        {
-          index: 4,
-          name: "Plantio",
-          valor: 15,
-        },
-      ],
+      produtos: [],
       editou: false,
       deletou: false,
     };
   },
-
+  async created() {
+    this.produtos = await servicoService.servico();
+  },
   computed: {
     value() {
       return this.produtos.reduce((a, b) => {
-        return a + b.valor;
+        return a + b.ValorDiaHomem;
       }, 0);
     },
   },
@@ -119,9 +100,15 @@ export default {
     edicaoItens(item) {
       this.editou = item;
     },
-    deletouItens(item) {
-      this.deletou = item;
-      console.log(this.deletou);
+    async deletouItens(item) {
+      try {
+        await servicoService.DeleteServico(this.selected);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      } finally {
+        this.deletou = item;
+      }
     },
 
     close(item) {

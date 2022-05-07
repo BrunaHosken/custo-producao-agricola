@@ -1,0 +1,12 @@
+mutation DeleteServico($id: ID) {
+  deleteServico(where: { id: $id }) {
+    id
+    DescrServico
+    ValorDiaHomem
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

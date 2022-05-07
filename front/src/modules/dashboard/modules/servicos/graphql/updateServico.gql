@@ -1,0 +1,15 @@
+mutation UpdateServico($index: ID!, $descricao: String!, $valor: Float!) {
+  updateServico(
+    where: { id: $index }
+    data: { DescrServico: $descricao, ValorDiaHomem: $valor }
+  ) {
+    id
+    DescrServico
+    ValorDiaHomem
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

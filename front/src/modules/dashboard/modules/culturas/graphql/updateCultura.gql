@@ -1,4 +1,4 @@
-mutation UpdateCliente(
+mutation UpdateCultura(
   $index: ID!
   $name: String!
   $quantidade: Float!

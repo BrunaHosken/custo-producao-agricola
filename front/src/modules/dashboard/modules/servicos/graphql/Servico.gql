@@ -1,0 +1,12 @@
+query Servicos {
+  servicoes {
+    id
+    DescrServico
+    ValorDiaHomem
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

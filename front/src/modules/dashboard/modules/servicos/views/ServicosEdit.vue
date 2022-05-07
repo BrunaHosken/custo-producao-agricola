@@ -60,14 +60,26 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <SnackBar
+        :show="createWithError"
+        :mensagem="this.mensagem"
+        color="red"
+        @show="showSnackBarError"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import { required, minLength, minValue } from "vuelidate/lib/validators";
+import servicoService from "./../services/servicos-service";
+import SnackBar from "./../../../components/SnackBar.vue";
+
 export default {
   name: "ServicosEdit",
+  components: {
+    SnackBar,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -85,6 +97,8 @@ export default {
   data() {
     return {
       editouCultura: false,
+      mensagem: "",
+      createWithError: false,
       form: {
         index: 0,
         descricao: "",
@@ -110,9 +124,9 @@ export default {
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
         this.form = {
-          index: pValue[0].index,
-          descricao: pValue[0].name,
-          valor: pValue[0].valor,
+          index: pValue[0].id,
+          descricao: pValue[0].DescrServico,
+          valor: pValue[0].ValorDiaHomem,
         };
       }
     },
@@ -146,14 +160,22 @@ export default {
     },
   },
   methods: {
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     cancelar() {
       this.editouCultura = false;
       this.$emit("showDialogClose", this.editouCultura);
     },
-    salvar() {
-      this.editouCultura = false;
-      console.log(this.form);
-      this.$emit("showDialogClose", this.editouCultura);
+    async salvar() {
+      try {
+        await servicoService.UpdateServico(this.form);
+        this.editouCultura = false;
+        this.$emit("showDialogClose", this.editouCultura);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      }
     },
   },
 };
