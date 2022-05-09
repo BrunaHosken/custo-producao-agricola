@@ -36,10 +36,21 @@
                 </v-card-subtitle>
                 <hr />
                 <v-card-text class="text-center">
-                  <h4 class="mb-2">Etapas</h4>
+                  <v-card-title>
+                    Etapas da Cultura
+                    <v-spacer></v-spacer>
+                    <v-text-field
+                      v-model="searchTable"
+                      append-icon="mdi-magnify"
+                      label="Pesquisar"
+                      hide-details
+                    ></v-text-field>
+                  </v-card-title>
+
                   <v-data-table
                     :headers="headers"
                     :items="card.etapas"
+                    :search="searchTable"
                     :items-per-page="5"
                     class="elevation-1"
                     multi-sort
@@ -126,6 +137,7 @@ export default {
   data() {
     return {
       periodoAtual: "Mensal",
+      searchTable: null,
       headers: [
         {
           text: "Etapa",

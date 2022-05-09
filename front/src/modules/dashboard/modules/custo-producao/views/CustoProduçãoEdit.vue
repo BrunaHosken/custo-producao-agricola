@@ -168,8 +168,16 @@
               </v-row>
 
               <hr />
-              <h3 class="mb-2 mt-2">Etapas da cultura</h3>
-
+              <v-card-title>
+                Etapas da Cultura
+                <v-spacer></v-spacer>
+                <v-text-field
+                  v-model="searchTable"
+                  append-icon="mdi-magnify"
+                  label="Pesquisar"
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
               <div v-if="adicionarNovaEtapa">
                 <v-row class="mt-2">
                   <v-col cols="12" md="4">
@@ -453,6 +461,7 @@
               <v-data-table
                 v-model="selected"
                 v-if="!adicionarNovaEtapa"
+                :search="searchTable"
                 :headers="headers"
                 :items="form.etapas"
                 :items-per-page="5"
@@ -547,7 +556,7 @@ export default {
       valid: false,
       itemsEtapa: ["Insumo", "Serviço"],
       itemsUso: ["Real", "Previsto"],
-
+      searchTable: null,
       headers: [
         {
           text: "Etapa",
