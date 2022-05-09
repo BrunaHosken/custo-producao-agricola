@@ -1,0 +1,8 @@
+mutation DeleteAgricultor($id: ID) {
+  deleteAgricultor(where: { id: $id }) {
+    id
+    Nome
+    Email
+    Senha
+  }
+}

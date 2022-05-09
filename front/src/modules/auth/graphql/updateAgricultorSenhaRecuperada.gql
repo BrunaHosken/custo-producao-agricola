@@ -1,0 +1,8 @@
+mutation UpdateAgricultor($email: String!, $Senha: String!) {
+  resetPassword(Email: $email, Senha: $Senha) {
+    id
+    Nome
+    Email
+    Senha
+  }
+}

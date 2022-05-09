@@ -1,8 +1,8 @@
 import {
   ApolloClient,
+  ApolloLink,
   HttpLink,
   InMemoryCache,
-  ApolloLink,
 } from "apollo-boost";
 
 const AUTH_TOKEN = "apollo-token";
@@ -21,6 +21,13 @@ const onLogin = async (apollo, token) => {
   }
   await resetApolloClient(apollo);
 };
+const onLogout = async (apollo) => {
+  if (typeof window.localStorage !== "undefined") {
+    window.localStorage.removeItem(AUTH_TOKEN);
+  }
+  await resetApolloClient(apollo);
+};
+
 const link = new HttpLink({
   uri: "http://localhost:4000",
 });
@@ -44,4 +51,4 @@ const apollo = new ApolloClient({
 
 export default apollo;
 
-export { AUTH_TOKEN, onLogin };
+export { AUTH_TOKEN, onLogin, onLogout };

@@ -170,8 +170,8 @@ export default {
     mini: false,
     user: {},
   }),
-  async created() {
-    this.user = await AuthService.agricultor();
+  created() {
+    AuthService.agricultor().subscribe((user) => (this.user = user));
   },
 };
 </script>

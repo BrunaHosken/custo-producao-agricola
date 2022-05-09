@@ -12,8 +12,8 @@
             Dados do Usuário
           </v-list-item-title>
           <v-list-item-subtitle>
-            <p>Nome: {{ user.nome }}</p>
-            <p>Email: {{ user.email }}</p>
+            <p>Nome: {{ user.Nome }}</p>
+            <p>Email: {{ user.Email }}</p>
           </v-list-item-subtitle>
         </div>
         <div class="tema" v-show="!editUser">
@@ -55,31 +55,30 @@
           </v-list-item-title>
           <v-list-item-subtitle class="mt-1">
             <v-text-field
+              prepend-inner-icon="mdi-account"
               :error-messages="nameErrors"
-              :success="!$v.user.nome.$invalid"
-              v-model.trim="$v.user.nome.$model"
+              :success="!$v.user.Nome.$invalid"
+              v-model="$v.user.Nome.$model"
               name="name"
               label="Nome"
               type="text"
             ></v-text-field>
 
             <v-text-field
-              :error-messages="emailErrors"
-              :success="!$v.user.email.$invalid"
-              v-model.trim="$v.user.email.$model"
+              v-model="user.Email"
+              prepend-inner-icon="mdi-email"
               name="email"
               label="Email"
               type="email"
               disabled
             ></v-text-field>
-
             <v-text-field
-              :error-messages="senhaErrors"
-              :success="!$v.user.senha.$invalid"
-              v-model.trim="$v.user.senha.$model"
+              v-model.trim="$v.user.Senha.$model"
+              prepend-inner-icon="mdi-lock"
               name="password"
               label="Senha"
-              type="password"
+              :error-messages="senhaErrors"
+              :success="!$v.user.Senha.$invalid"
             ></v-text-field>
           </v-list-item-subtitle>
         </div>
@@ -97,8 +96,8 @@
           </v-btn>
           <v-btn
             v-show="editUser"
-            :disabled="user.senha === ''"
             color="success"
+            :disabled="$v.$invalid"
             @click="save"
           >
             Salvar
@@ -115,53 +114,63 @@
       :showDialog="showClearDialog || showDeleteDialog"
       @option="option"
     />
+    <SnackBar
+      :show="createSnackBar"
+      :mensagem="this.mensagem"
+      :color="color"
+      @show="showSnackBar"
+    />
   </v-card>
 </template>
 
 <script>
 import Dialog from "./../../../components/Dialog.vue";
-
-import { required, minLength, email } from "vuelidate/lib/validators";
+import AuthService from "./../../../../auth/services/auth-service";
+import { required, minLength } from "vuelidate/lib/validators";
+import configuracoesService from "./../services/configuracoes-service";
+import SnackBar from "./../../../components/SnackBar.vue";
+import apollo, { onLogout } from "./../../../../../plugins/apollo";
 export default {
   name: "Configuracoes",
   components: {
     Dialog,
+    SnackBar,
   },
   data() {
     return {
-      user: {
-        nome: "Teste",
-        email: "teste@email.com",
-        senha: "",
-      },
+      user: {},
       editUser: false,
       showClearDialog: false,
       showDeleteDialog: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
     };
   },
   validations() {
     return {
       user: {
-        nome: {
+        Nome: {
           required,
           minLength: minLength(2),
         },
-        email: {
-          required,
-          email,
-        },
-        senha: {
+
+        Senha: {
           required,
           minLength: minLength(6),
         },
       },
     };
   },
-
+  created() {
+    this.user = AuthService.agricultor().subscribe(
+      (user) => (this.user = user)
+    );
+  },
   computed: {
     nameErrors() {
       const errors = [];
-      const nome = this.$v.user.nome;
+      const nome = this.$v.user.Nome;
       if (!nome.$dirty) {
         return errors;
       }
@@ -172,66 +181,77 @@ export default {
         );
       return errors;
     },
-    emailErrors() {
-      const errors = [];
-      const email = this.$v.user.email;
-      if (!email.$dirty) {
-        return errors;
-      }
-      !email.required && errors.push("Email é obrigatório!");
-      !email.email && errors.push("Insira um email valido!");
-      return errors;
-    },
+
     senhaErrors() {
       const errors = [];
-      const senha = this.$v.user.senha;
-      if (!senha.$dirty) {
+
+      const password = this.$v.user.Senha;
+
+      if (!password.$dirty) {
         return errors;
       }
-      !senha.required && errors.push("Senha é obrigatória!");
-      !senha.minLength &&
+
+      !password.required && errors.push("Senha é obrigatória!");
+      !password.minLength &&
         errors.push(
-          `Insira pelo menos ${senha.$params.minLength.min} caracteres!`
+          `Insira pelo menos ${password.$params.minLength.min} caracteres!`
         );
       return errors;
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     buttonEditUser() {
       this.editUser = true;
-      this.user.senha = "";
-    },
-    save() {
-      this.editUser = false;
       this.$v.$reset();
+      this.user.Senha = "";
+    },
+    async save() {
+      try {
+        await configuracoesService.UpdateAgricultor(this.user);
+        this.editUser = false;
+        this.$v.$reset();
+        this.createSnackBar = true;
+        this.mensagem =
+          "Conta alterada com sucesso. Lembre-se de no próximo Login utilizar essa nova senha!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
     clear() {
-      this.user = {
-        nome: "",
-        email: "",
-        senha: "",
-      };
+      AuthService.agricultor().subscribe((user) => (this.user = user));
+      this.user.Senha = "";
     },
-    cancel() {
+    async cancel() {
       this.editUser = false;
-      this.user = {
-        nome: "Teste",
-        email: "teste@email.com",
-        senha: "",
-      };
+      this.clear();
+      this.$v.$reset();
     },
-    option(data) {
-      if (data == "nao") {
-        if (this.showClearDialog) this.showClearDialog = false;
-        this.showDeleteDialog = false;
-      } else {
-        if (this.showClearDialog) {
-          this.clear();
-          this.showClearDialog = false;
+    async option(data) {
+      try {
+        if (data == "nao") {
+          if (this.showClearDialog) this.showClearDialog = false;
+          this.showDeleteDialog = false;
         } else {
-          console.log("conta deletada");
-          this.$router.push("/login");
+          if (this.showClearDialog) {
+            this.clear();
+            this.showClearDialog = false;
+          } else {
+            await configuracoesService.DeleteAgricultor(this.user);
+            await onLogout(apollo);
+            this.createSnackBar = true;
+            this.mensagem = "Conta deletada com sucesso!";
+            this.$router.push("/login");
+          }
         }
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
       }
     },
   },

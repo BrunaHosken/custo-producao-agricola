@@ -1,6 +1,9 @@
 import apollo, { onLogin } from "./../../../plugins/apollo";
 import LoginMutation from "./../graphql/Login.gql";
 import AgricultorQuery from "./../graphql/Agricultor.gql";
+import { from } from "rxjs";
+import { map } from "rxjs/operators";
+import updateAgricultor from "./../graphql/updateAgricultorSenhaRecuperada.gql";
 const login = async (variables) => {
   const response = await apollo.mutate({
     mutation: LoginMutation,
@@ -11,15 +14,25 @@ const login = async (variables) => {
   return response.data.login;
 };
 
-const agricultor = async (options = {}) => {
-  const response = await apollo.query({
+const agricultor = (options = {}) => {
+  const response = apollo.watchQuery({
     query: AgricultorQuery,
     ...options,
   });
-  return response.data.agricultor;
+  return from(response).pipe(map((res) => res.data.agricultor));
+};
+
+const UpdateAgricultor = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: updateAgricultor,
+    variables,
+  });
+
+  return response.data.resetPassword;
 };
 
 export default {
   login,
   agricultor,
+  UpdateAgricultor,
 };

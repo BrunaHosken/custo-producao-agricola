@@ -26,17 +26,6 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                v-if="!isLogin && !isForgot"
-                v-model="user.name"
-                prepend-inner-icon="mdi-account"
-                name="name"
-                label="Nome"
-                type="text"
-                :error-messages="nameErrors"
-                :success="!$v.user.name.$invalid"
-                v-model.trim="$v.user.name.$model"
-              ></v-text-field>
-              <v-text-field
                 v-model="user.email"
                 prepend-inner-icon="mdi-email"
                 name="email"
@@ -47,6 +36,7 @@
                 v-model.trim="$v.user.email.$model"
               ></v-text-field>
               <v-text-field
+                v-if="!isForgot"
                 v-model="user.password"
                 prepend-inner-icon="mdi-lock"
                 name="password"
@@ -56,10 +46,27 @@
                 :success="!$v.user.password.$invalid"
                 v-model.trim="$v.user.password.$model"
               ></v-text-field>
+              <v-text-field
+                v-if="newPassword"
+                v-model="user.Senha"
+                prepend-inner-icon="mdi-lock"
+                name="password"
+                label="Nova Senha"
+                type="password"
+                :error-messages="newPasswordErrors"
+                :success="!$v.user.Senha.$invalid"
+                v-model.trim="$v.user.Senha.$model"
+              ></v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" text class="ml-2" @click="forgotPassword">
+            <v-btn
+              v-if="!newPassword"
+              color="primary"
+              text
+              class="ml-2"
+              @click="forgotPassword"
+            >
               {{ texts.button }}
             </v-btn>
 
@@ -79,10 +86,10 @@
             v-model="showSnackBar"
             bottom
             right
-            color="red"
+            :color="color"
             class="mb-4"
           >
-            {{ error }}
+            {{ mensagem }}
             <template v-slot:action="{ attrs }">
               <v-btn
                 color="white"
@@ -105,20 +112,23 @@
 import { required, email, minLength } from "vuelidate/lib/validators";
 import AuthService from "./../services/auth-service";
 import { formatError } from "@/utils";
-
+import emailjs from "emailjs-com";
+import ConfigurationService from "./../../dashboard/modules/configuracoes/services/configuracoes-service";
 export default {
   name: "Login",
   data: () => ({
     isLogin: true,
     isLoading: false,
-    error: undefined,
+    mensagem: undefined,
     showSnackBar: false,
     user: {
-      name: "",
       email: "",
       password: "",
+      Senha: "",
     },
     isForgot: false,
+    newPassword: false,
+    color: "red",
   }),
 
   validations() {
@@ -137,12 +147,22 @@ export default {
     if (this.isLogin) {
       return validators;
     }
+    if (this.isForgot) {
+      return {
+        user: {
+          email: {
+            required,
+            email,
+          },
+        },
+      };
+    }
     return {
       user: {
         ...validators.user,
-        name: {
+        Senha: {
           required,
-          minLength: minLength(2),
+          minLength: minLength(6),
         },
       },
     };
@@ -151,7 +171,9 @@ export default {
     texts() {
       if (this.isLogin)
         return { toolbar: "Entrar", button: "Recuperar a senha" };
-      return { toolbar: "Nova Senha", button: "Cancelar" };
+      if (!this.newPassword)
+        return { toolbar: "Nova Senha", button: "Cancelar" };
+      return { toolbar: "Cadastrar e Entrar" };
     },
 
     emailErrors() {
@@ -164,22 +186,9 @@ export default {
       !email.email && errors.push("Insira um email valido!");
       return errors;
     },
-    nameErrors() {
+    newPasswordErrors() {
       const errors = [];
-      const name = this.$v.user.name;
-      if (!name.$dirty) {
-        return errors;
-      }
-      !name.required && errors.push("Nome é obrigatório!");
-      !name.minLength &&
-        errors.push(
-          `Insira pelo menos ${name.$params.minLength.min} caracteres!`
-        );
-      return errors;
-    },
-    passwordErrors() {
-      const errors = [];
-      const password = this.$v.user.password;
+      const password = this.$v.user.Senha;
       if (!password.$dirty) {
         return errors;
       }
@@ -190,26 +199,84 @@ export default {
         );
       return errors;
     },
+    passwordErrors() {
+      const errors = [];
+
+      const password = this.$v.user.password;
+      if (!password.$dirty) {
+        return errors;
+      }
+      !password.required && errors.push("Senha é obrigatória!");
+      !password.minLength &&
+        errors.push(
+          `Insira pelo menos ${password.$params.minLength.min} caracteres!`
+        );
+
+      return errors;
+    },
   },
   methods: {
     forgotPassword() {
       this.isForgot = !this.isForgot;
       this.isLogin = !this.isLogin;
     },
-    newUser() {
-      this.isForgot = false;
-      this.isLogin = !this.isLogin;
-    },
+
     async submit() {
-      this.isLoading = true;
-      try {
-        await AuthService.login(this.user);
-        this.$router.push(this.$route.query.redirect || "/dashboard");
-      } catch (error) {
-        this.error = formatError(error.message);
-        this.showSnackBar = true;
-      } finally {
-        this.isLoading = false;
+      if (this.isLogin) {
+        this.isLoading = true;
+        try {
+          await AuthService.login(this.user);
+          this.$router.push(this.$route.query.redirect || "/dashboard");
+        } catch (error) {
+          this.mensagem = formatError(error.message);
+          this.showSnackBar = true;
+        } finally {
+          this.isLoading = false;
+        }
+      } else if (this.isForgot) {
+        try {
+          this.user.Senha = Math.random().toString(36).substring(2, 8);
+          await AuthService.UpdateAgricultor(this.user);
+
+          var templateParams = {
+            user_mail: this.user.email,
+            senha: this.user.Senha,
+          };
+
+          emailjs.send(
+            "service_yhj9lbt",
+            "template_jj8ineb",
+            templateParams,
+            "pdua2Pm4s61rHySot"
+          );
+          this.showSnackBar = true;
+          this.mensagem = "Nova senha enviada para o email informado!";
+          this.isForgot = false;
+          this.newPassword = true;
+          this.color = "success";
+          this.user.password = "";
+          this.user.Senha = "";
+        } catch (error) {
+          this.mensagem = formatError(error.message);
+          this.showSnackBar = true;
+        }
+      } else if (this.newPassword) {
+        try {
+          const data = await AuthService.login(this.user);
+          this.user.Nome = data.agricultor.Nome;
+          this.user.id = data.agricultor.id;
+
+          await ConfigurationService.UpdateAgricultor(this.user);
+          this.$router
+            .push(this.$route.query.redirect || "/dashboard")
+            .catch(() => {});
+          this.$v.$reset();
+          this.isLogin = true;
+        } catch (error) {
+          this.color = "red";
+          this.mensagem = formatError(error.message);
+          this.showSnackBar = true;
+        }
       }
     },
   },

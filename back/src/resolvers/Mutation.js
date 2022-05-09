@@ -4,6 +4,28 @@ const { getAgricultorId } = require("../utils");
 const JWT_SECRET = process.env.JWT_SECRET;
 const moment = require("moment");
 
+async function resetPassword(_, args, ctx, info) {
+  console.log(args);
+  const agricultor = await ctx.db.query.agricultor({
+    where: {
+      Email: args.Email,
+    },
+  });
+  console.log(agricultor.id);
+  const Senha = await bcrypt.hash(args.Senha, 10);
+  console.log(Senha);
+  return ctx.db.mutation.updateAgricultor(
+    {
+      where: {
+        id: agricultor.id,
+      },
+      data: {
+        Senha: Senha,
+      },
+    },
+    info
+  );
+}
 async function signup(_, args, ctx, info) {
   const Senha = await bcrypt.hash(args.Senha, 10);
   const agricultor = await ctx.db.mutation.createAgricultor({
@@ -367,17 +389,23 @@ function deleteAgricultor(_, args, ctx, info) {
     info
   );
 }
-function updateAgricultor(_, args, ctx, info) {
+async function updateAgricultor(_, args, ctx, info) {
+  const Senha = await bcrypt.hash(args.data.Senha, 10);
   const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.updateAgricultor(
     {
       where: {
         id: agricultorId,
       },
+      data: {
+        Nome: args.data.Nome,
+        Senha: Senha,
+      },
     },
     info
   );
 }
+
 function updateCliente(_, args, ctx, info) {
   return ctx.db.mutation.updateCliente(
     {
@@ -687,4 +715,5 @@ module.exports = {
   deleteUsoInsumoReal,
   deleteVenda,
   deleteVendaItem,
+  resetPassword,
 };

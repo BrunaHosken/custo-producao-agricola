@@ -17,7 +17,7 @@
 </template>
 <script>
 // import { mapState } from "vuex";
-// import apollo, { onLogout } from "./../../../plugins/apollo";
+import apollo, { onLogout } from "./../../../plugins/apollo";
 import Dialog from "./Dialog.vue";
 export default {
   name: "AppToolbar",
@@ -91,11 +91,12 @@ export default {
   //   ...mapState(["title"]),
   // },
   methods: {
-    option(data) {
+    async option(data) {
       if (data == "nao") {
         this.showLogoutDialog = false;
       } else {
         this.$router.push("/login");
+        await onLogout(apollo);
         this.showLogoutDialog = false;
       }
     },

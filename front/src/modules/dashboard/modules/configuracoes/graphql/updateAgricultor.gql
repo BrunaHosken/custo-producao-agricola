@@ -1,0 +1,8 @@
+mutation UpdateAgricultor($id: ID!, $Nome: String!, $Senha: String!) {
+  updateAgricultor(where: { id: $id }, data: { Nome: $Nome, Senha: $Senha }) {
+    id
+    Nome
+    Email
+    Senha
+  }
+}

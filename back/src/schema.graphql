@@ -8,6 +8,7 @@ type Agricultor {
   id: ID!
   Nome: String!
   Email: String!
+  Senha: String!
 }
 type Contato {
   id: ID!
@@ -504,6 +505,7 @@ input CulturaCreateOneInput {
 type Mutation {
   login(Email: String!, Senha: String!): AuthPayload
   signup(Email: String!, Senha: String!, Nome: String!): AuthPayload
+  resetPassword(Email: String!, Senha: String!): Agricultor
   createContato(DescrContato: String!): Contato!
   createTipoDespesa(DescrTipoDespesa: String!): TipoDespesa!
   createDespesaRealizada(

@@ -33,7 +33,6 @@ export default {
   },
   watch: {
     show(pValue) {
-      console.log(pValue);
       this.showSnackBar = this.show;
     },
     showSnackBar(pValue) {
