@@ -97,11 +97,11 @@ type Insumo {
   PrecoUnit: Float!
   Und: String!
   TipoInsumo: TipoInsumo
+  Agricultor: Agricultor
 }
 type TipoInsumo {
   id: ID! @unique
   NomeTipo: String!
-  Agricultor: Agricultor
 }
 type Servico {
   id: ID! @unique

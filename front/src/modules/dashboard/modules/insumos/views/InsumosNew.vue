@@ -32,6 +32,8 @@
                     <v-select
                       v-model="form.tipo"
                       :items="items"
+                      item-text="label"
+                      item-value="id"
                       label="Tipo de Insumo"
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
@@ -111,13 +113,13 @@ export default {
       valid: false,
       items: [],
       unidades: [
-        "Milheiro",
-        "Toneladas",
-        "Quilograma/Litro",
-        "Maço",
-        "Quilograma",
         "Litros",
+        "Maço",
+        "Milheiro",
+        "Quilograma/Litro",
+        "Quilograma",
         "Quilowatt",
+        "Toneladas",
       ],
       form: {
         descricao: "",
@@ -146,9 +148,11 @@ export default {
   async created() {
     const response = await insumoService.tipoInsumos();
     response.forEach((item) => {
-      this.items.push(item.NomeTipo);
+      this.items.push({ label: item.NomeTipo, id: item.id });
     });
+    console.log(this.items);
     this.form.tipo = this.items[0];
+    console.log(this.form.tipo);
   },
   computed: {
     formattedDate() {
@@ -199,7 +203,7 @@ export default {
         descricao: "",
         valor: 0,
         tipo: this.items[0],
-        unidade: "Milheiro",
+        unidade: "Litros",
       };
     },
     save() {

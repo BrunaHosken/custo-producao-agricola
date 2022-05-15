@@ -182,16 +182,10 @@ function createCultura(
   );
 }
 function createTipoInsumo(_, { NomeTipo }, ctx, info) {
-  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createTipoInsumo(
     {
       data: {
         NomeTipo,
-        Agricultor: {
-          connect: {
-            id: agricultorId,
-          },
-        },
       },
     },
     info
@@ -215,6 +209,7 @@ function createServico(_, { DescrServico, ValorDiaHomem }, ctx, info) {
   );
 }
 function createInsumo(_, args, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createInsumo(
     {
       data: {
@@ -226,6 +221,11 @@ function createInsumo(_, args, ctx, info) {
         DescrInsumo: args.DescrInsumo,
         PrecoUnit: args.PrecoUnit,
         Und: args.Und,
+        Agricultor: {
+          connect: {
+            id: agricultorId,
+          },
+        },
       },
     },
     info

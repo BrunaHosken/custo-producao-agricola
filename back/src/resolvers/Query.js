@@ -93,7 +93,18 @@ function culturaDesenvolvidas(_, args, ctx, info) {
   );
 }
 function insumoes(_, args, ctx, info) {
-  return ctx.db.query.insumoes({ orderBy: "DescrInsumo_ASC" }, info);
+  const agricultorId = getAgricultorId(ctx);
+  return ctx.db.query.insumoes(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "DescrInsumo_ASC",
+    },
+    info
+  );
 }
 function vendaItems(_, args, ctx, info) {
   return ctx.db.query.vendaItems({ orderBy: "Qtd_ASC" }, info);

@@ -55,7 +55,6 @@ type Cultura {
 type TipoInsumo {
   id: ID!
   NomeTipo: String!
-  Agricultor: Agricultor
 }
 type Servico {
   id: ID!
@@ -69,6 +68,7 @@ type Insumo {
   PrecoUnit: Float!
   Und: String!
   TipoInsumo: TipoInsumo
+  Agricultor: Agricultor
 }
 type UsoInsumoPrevisto {
   id: ID!
@@ -226,19 +226,20 @@ input InsumoUpdateOneRequiredInput {
 }
 input TipoInsumoCreateInput {
   NomeTipo: String!
-  Agricultor: AgricultorCreateOneInput
 }
 input InsumoCreateInput {
   DescrInsumo: String!
   PrecoUnit: Float!
   Und: String!
   TipoInsumo: TipoInsumoCreateOneInput
+  Agricultor: AgricultorCreateOneInput
 }
 input InsumoUpdateDataInput {
   DescrInsumo: String
   PrecoUnit: Float
   Und: String
   TipoInsumo: TipoInsumoUpdateOneInput
+  Agricultor: AgricultorUpdateOneInput
 }
 input InsumoUpsertNestedInput {
   update: InsumoUpdateDataInput!
@@ -400,7 +401,6 @@ input TipoInsumoUpsertNestedInput {
 
 input TipoInsumoUpdateDataInput {
   NomeTipo: String
-  Agricultor: AgricultorUpdateOneInput
 }
 input AgricultorUpdateOneInput {
   create: AgricultorCreateInput

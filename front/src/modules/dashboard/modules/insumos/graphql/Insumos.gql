@@ -1,0 +1,16 @@
+query insumos {
+  insumoes {
+    id
+    DescrInsumo
+    PrecoUnit
+    Und
+    TipoInsumo {
+      id
+      NomeTipo
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

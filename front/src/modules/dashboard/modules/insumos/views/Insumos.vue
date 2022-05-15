@@ -25,15 +25,15 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="name"
+          item-key="id"
           :search="search"
           multi-select
           loading="false"
           loading-text="Loading... Please wait"
           multi-sort
         >
-          <template v-slot:[`item.preco`]="{ item }">
-            {{ formatCurrency(item.preco) }}
+          <template v-slot:[`item.PrecoUnit`]="{ item }">
+            {{ formatCurrency(item.PrecoUnit) }}
           </template>
         </v-data-table>
       </v-card>
@@ -55,8 +55,7 @@
 </template>
 
 <script>
-import moment from "moment";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import insumoService from "./../services/insumo-services";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import InsumosEdit from "./InsumosEdit.vue";
@@ -76,45 +75,14 @@ export default {
           text: "Insumo",
           align: "start",
 
-          value: "name",
+          value: "DescrInsumo",
         },
-        { text: "Tipo", value: "tipo" },
-        { text: "Unidade", value: "unidade" },
+        { text: "Tipo", value: "TipoInsumo.NomeTipo" },
+        { text: "Unidade", value: "Und" },
 
-        { text: "Preço Unitário", value: "preco" },
+        { text: "Preço Unitário", value: "PrecoUnit" },
       ],
-      produtos: [
-        {
-          index: 1,
-          name: "Mudas",
-          tipo: "Sementes ou Mudas",
-          unidade: "Milheiro",
-          preco: 35,
-        },
-        {
-          index: 2,
-          name: "Calcário",
-          tipo: "Adubos ou Corretivos",
-          unidade: "Toneladas",
-          preco: 100,
-        },
-        {
-          index: 3,
-          name: "Fungicidas",
-          tipo: "Defensivos",
-          unidade: "Quilograma/Litro",
-          preco: 45,
-        },
-        {
-          index: 4,
-          name: "Frete",
-          tipo: "Materiais",
-          unidade: "Maço",
-          preco: 0.5,
-        },
-      ],
-      total: 0,
-      totalAnual: 0,
+      produtos: [],
       produtosEdicao: [],
       editou: false,
       deletou: false,
@@ -128,6 +96,11 @@ export default {
       }, 0);
     },
   },
+  async created() {
+    console.log("oi");
+    this.produtos = await insumoService.insumos();
+    console.log(this.produtos);
+  },
 
   methods: {
     close(item) {
@@ -139,32 +112,6 @@ export default {
     deletouItens(item) {
       this.deletou = item;
       console.log(this.deletou);
-    },
-    calculaValorAnual(item) {
-      return item.tipo === "Fixo" ? item.valor * 12 : 0;
-    },
-    calculaTotalMêsFixo() {
-      return this.produtos.reduce((a, b) => {
-        return b.tipo === "Fixo"
-          ? this.search === "variavel"
-            ? 0
-            : a + b.valor
-          : a;
-      }, 0);
-    },
-    calculaTotalMêsVariavel() {
-      return this.produtos.reduce((a, b) => {
-        return b.tipo === "Variavel"
-          ? this.search === "fixo"
-            ? 0
-            : a + b.valor
-          : a;
-      }, 0);
-    },
-    calculaTotalAnual() {
-      return this.produtos.reduce((a, b) => {
-        return b.tipo === "Fixo" ? a + b.valor * 12 : a;
-      }, 0);
     },
   },
 };
