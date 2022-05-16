@@ -1,0 +1,31 @@
+mutation UpdateInsumo(
+  $index: ID!
+  $descricao: String!
+  $valor: Float!
+  $unidade: String!
+  $tipo: String!
+) {
+  updateInsumo(
+    where: { id: $index }
+    data: {
+      DescrInsumo: $descricao
+      PrecoUnit: $valor
+      Und: $unidade
+      TipoInsumo: { update: { NomeTipo: $tipo } }
+    }
+  ) {
+    id
+    DescrInsumo
+    PrecoUnit
+    Und
+    TipoInsumo {
+      id
+      NomeTipo
+    }
+    Agricultor {
+      id
+      Nome
+      Email
+    }
+  }
+}

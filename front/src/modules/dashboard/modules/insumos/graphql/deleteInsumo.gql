@@ -1,0 +1,16 @@
+mutation DeleteInsumo($id: ID) {
+  deleteInsumo(where: { id: $id }) {
+    id
+    DescrInsumo
+    PrecoUnit
+    Und
+    TipoInsumo {
+      id
+      NomeTipo
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

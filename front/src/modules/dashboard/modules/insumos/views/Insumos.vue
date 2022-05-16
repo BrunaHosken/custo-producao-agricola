@@ -51,6 +51,12 @@
       @edicao="edicaoItens"
       @deletou="deletouItens"
     />
+    <SnackBar
+      :show="createWithError"
+      :mensagem="this.mensagem"
+      color="red"
+      @show="showSnackBarError"
+    />
   </v-layout>
 </template>
 
@@ -59,11 +65,13 @@ import insumoService from "./../services/insumo-services";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import InsumosEdit from "./InsumosEdit.vue";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "Insumos",
   components: {
     AppFloatingButton,
     InsumosEdit,
+    SnackBar,
   },
   mixins: [formatCurrentMixin],
   data() {
@@ -85,6 +93,8 @@ export default {
       produtos: [],
       produtosEdicao: [],
       editou: false,
+      mensagem: "",
+      createWithError: false,
       deletou: false,
     };
   },
@@ -97,21 +107,28 @@ export default {
     },
   },
   async created() {
-    console.log("oi");
     this.produtos = await insumoService.insumos();
-    console.log(this.produtos);
   },
 
   methods: {
+    showSnackBarError(data) {
+      this.createWithError = data;
+    },
     close(item) {
       this.editou = item;
     },
     edicaoItens(item) {
       this.editou = item;
     },
-    deletouItens(item) {
-      this.deletou = item;
-      console.log(this.deletou);
+    async deletouItens(item) {
+      try {
+        await insumoService.DeleteInsumo(this.selected);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createWithError = true;
+      } finally {
+        this.deletou = item;
+      }
     },
   },
 };

@@ -1,0 +1,26 @@
+mutation CreateInsumo(
+  $descricao: String!
+  $valor: Float!
+  $tipo: ID!
+  $unidade: String!
+) {
+  createInsumo(
+    DescrInsumo: $descricao
+    PrecoUnit: $valor
+    Und: $unidade
+    TipoInsumoId: $tipo
+  ) {
+    id
+    DescrInsumo
+    PrecoUnit
+    Und
+    TipoInsumo {
+      id
+      NomeTipo
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

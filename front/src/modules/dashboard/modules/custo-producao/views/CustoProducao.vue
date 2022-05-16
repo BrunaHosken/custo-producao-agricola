@@ -241,28 +241,22 @@ export default {
     },
     close(item) {
       this.editou = item;
-      console.log(item);
     },
     editar(item) {
-      console.log(item);
       this.culturaDesenvolvida = item;
       this.editou = true;
     },
     option(data) {
-      console.log(data);
       if (data === "sim") {
-        console.log("deletou");
         this.showDeleteDialog = false;
       } else {
         this.showDeleteDialog = false;
       }
     },
     excluir(item) {
-      console.log(item);
-      this.message = `Deseja realmente a cultura desenvolvida do ${item.cultura}?`;
+      this.message = `Deseja realmente excluir a cultura desenvolvida do ${item.cultura}?`;
       this.showDeleteDialog = true;
       this.culturaDesenvolvida = item;
-      console.log(this.culturaDesenvolvida);
     },
     novo() {
       this.$router.push("/dashboard/custo-producao/new");
@@ -282,9 +276,6 @@ export default {
     },
     totalEtapa(quantidade, valor) {
       return quantidade * valor;
-    },
-    clicou(pValue) {
-      console.log(pValue);
     },
     period(pValue) {
       this.periodoAtual = pValue;

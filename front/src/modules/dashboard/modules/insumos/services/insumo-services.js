@@ -1,5 +1,8 @@
 import TipoInsumo from "./../graphql/TipoInsumos.gql";
 import InsumoQuery from "./../graphql/Insumos.gql";
+import createInsumo from "./../graphql/createInsumo.gql";
+import updateInsumo from "./../graphql/updateInsumo.gql";
+import deleteInsumo from "./../graphql/deleteInsumo.gql";
 import apollo from "../../../../../plugins/apollo";
 
 const tipoInsumos = async (options = {}) => {
@@ -10,13 +13,44 @@ const tipoInsumos = async (options = {}) => {
   return response.data.tipoInsumoes;
 };
 const insumos = async (options = {}) => {
-  console.log("OI");
   const response = await apollo.query({
     query: InsumoQuery,
     ...options,
   });
-  console.log(response);
   return response.data.insumoes;
 };
+const CreateInsumo = async (variables) => {
+  variables.valor = parseFloat(variables.valor);
+  variables.tipo = variables.tipo.id;
+  console.log(variables);
+  const response = await apollo.mutate({
+    mutation: createInsumo,
+    variables,
+  });
+  return response.data.createInsumo;
+};
+const UpdateInsumo = async (variables) => {
+  variables.valor = parseFloat(variables.valor);
+  const response = await apollo.mutate({
+    mutation: updateInsumo,
+    variables,
+  });
+  return response.data.updateInsumo;
+};
 
-export default { tipoInsumos, insumos };
+const DeleteInsumo = async (variables) => {
+  variables.forEach(async (variables) => {
+    const response = await apollo.mutate({
+      mutation: deleteInsumo,
+      variables,
+    });
+    return response;
+  });
+};
+export default {
+  tipoInsumos,
+  insumos,
+  CreateInsumo,
+  UpdateInsumo,
+  DeleteInsumo,
+};

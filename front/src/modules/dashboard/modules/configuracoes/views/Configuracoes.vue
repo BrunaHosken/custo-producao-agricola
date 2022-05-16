@@ -184,13 +184,10 @@ export default {
 
     senhaErrors() {
       const errors = [];
-
       const password = this.$v.user.Senha;
-
       if (!password.$dirty) {
         return errors;
       }
-
       !password.required && errors.push("Senha é obrigatória!");
       !password.minLength &&
         errors.push(

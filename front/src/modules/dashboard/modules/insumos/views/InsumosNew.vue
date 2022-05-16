@@ -93,6 +93,12 @@
           :showDialog="showClearDialog"
           @option="option"
         />
+        <SnackBar
+          :show="createSnackBar"
+          :mensagem="this.mensagem"
+          :color="color"
+          @show="showSnackBar"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -102,11 +108,13 @@
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 import insumoService from "./../services/insumo-services";
+import SnackBar from "./../../../components/SnackBar.vue";
 import Dialog from "./../../../components/Dialog.vue";
 export default {
   name: "InsumosNew",
   components: {
     Dialog,
+    SnackBar,
   },
   data() {
     return {
@@ -124,10 +132,12 @@ export default {
       form: {
         descricao: "",
         valor: 0,
-        tipo: "Sementes ou Mudas",
-        unidade: "Milheiro",
+        tipo: "",
+        unidade: "",
       },
-
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
       showClearDialog: false,
     };
   },
@@ -150,9 +160,8 @@ export default {
     response.forEach((item) => {
       this.items.push({ label: item.NomeTipo, id: item.id });
     });
-    console.log(this.items);
     this.form.tipo = this.items[0];
-    console.log(this.form.tipo);
+    this.form.unidade = this.unidades[0];
   },
   computed: {
     formattedDate() {
@@ -183,6 +192,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     option(data) {
       if (data == "nao") {
         this.showClearDialog = false;
@@ -203,14 +215,20 @@ export default {
         descricao: "",
         valor: 0,
         tipo: this.items[0],
-        unidade: "Litros",
+        unidade: this.unidades[0],
       };
     },
-    save() {
-      console.log(this.form);
-      // this.$v.$reset();
-      // this.clear();
-      this.$router.go(-1);
+    async save() {
+      try {
+        await insumoService.CreateInsumo(this.form);
+        this.$router.go(-1);
+        this.createSnackBar = true;
+        this.mensagem = "Insumo criado com sucesso!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };
