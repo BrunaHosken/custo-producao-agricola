@@ -102,7 +102,7 @@ export default {
         { text: "Tipo", value: "TipoDespesa.DescrTipoDespesa" },
         { text: "Data da Despesa", value: "Data" },
         { text: "Valor", value: "Valor" },
-        { text: "Valor no Período", value: "valorPeriodo" },
+        { text: "Valor no Ano", value: "valorPeriodo" },
       ],
       produtos: [],
       total: 0,
@@ -118,18 +118,18 @@ export default {
     valuePeriod() {
       let valorPeriod = 0;
       for (var prop in this.produtos) {
-        if (this.produtos[prop].tipo === "Fixo") {
+        if (this.produtos[prop].TipoDespesa.DescrTipoDespesa === "Fixo") {
           if (this.periodSelected === "Mensal") {
-            valorPeriod += this.produtos[prop].valor;
+            valorPeriod += this.produtos[prop].Valor;
           }
           if (this.periodSelected === "Semanal") {
-            valorPeriod += this.produtos[prop].valor * 4;
+            valorPeriod += this.produtos[prop].Valor * 4;
           }
           if (this.periodSelected === "Anual") {
-            valorPeriod += this.produtos[prop].valor * 12;
+            valorPeriod += this.produtos[prop].Valor * 12;
           }
         }
-        if (this.produtos[prop].tipo === "Variavel") {
+        if (this.produtos[prop].TipoDespesa.DescrTipoDespesa === "Variavel") {
           valorPeriod += this.produtos[prop].valor;
         }
       }
@@ -144,7 +144,6 @@ export default {
         currentDate: this.currentDate,
       };
       this.produtos = await despesasService.despesas(variables);
-      console.log(this.produtos);
     },
     date(pValue) {
       this.currentDate = pValue;
@@ -157,7 +156,6 @@ export default {
       this.editou = item;
     },
     formatDateTable(value) {
-      console.log(value);
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
 
@@ -166,7 +164,6 @@ export default {
     },
     deletouItens(item) {
       this.deletou = item;
-      console.log(this.deletou);
     },
     calculaValorPeriodo(item) {
       return item.TipoDespesa.DescrTipoDespesa === "Fixo"
