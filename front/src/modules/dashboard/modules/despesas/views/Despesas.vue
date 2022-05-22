@@ -130,7 +130,7 @@ export default {
           }
         }
         if (this.produtos[prop].TipoDespesa.DescrTipoDespesa === "Variavel") {
-          valorPeriod += this.produtos[prop].valor;
+          valorPeriod += this.produtos[prop].Valor;
         }
       }
       return valorPeriod;

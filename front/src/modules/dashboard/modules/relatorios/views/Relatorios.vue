@@ -45,7 +45,7 @@
             :items="produtos"
             :search="search"
             :loading="false"
-            item-key="text"
+            item-key="id"
             loading-text="Loading... Please wait"
             multi-sort
           >
@@ -61,7 +61,21 @@
             <template v-slot:[`item.lucroMaco`]="{ item }">
               {{ formatCurrency(item.lucroMaco) }}
             </template>
-            <template v-slot:[`item.despesas`]="{ item }">
+            <template v-slot:[`body.append`]>
+              <tr>
+                <td class="font-weight-black">
+                  Despesas: {{ formatCurrency(despesas) }}
+                </td>
+                <td colspan="3"></td>
+                <td colspan="4">
+                  Total do período:
+                  <v-chip :color="getColor(total)" dark>
+                    {{ formatCurrency(total) }}
+                  </v-chip>
+                </td>
+              </tr>
+            </template>
+            <!-- <template v-slot:[`item.despesas`]="{ item }">
               {{ formatCurrency(item.despesas) }}
             </template>
 
@@ -69,7 +83,7 @@
               <v-chip :color="getColor(item)" dark>
                 {{ formatCurrency(produtos.total) }}
               </v-chip>
-            </template>
+            </template> -->
           </v-data-table>
         </v-card>
       </v-flex>
@@ -97,56 +111,44 @@ export default {
       {
         text: "Produto",
         value: "name",
-        align: "center",
       },
       {
         text: "Lucro",
-        align: "center",
-
         value: "lucro",
       },
       {
         text: "Cultura Desenvolvida",
-        align: "center",
-
         value: "custoProducao",
       },
       {
         text: "Valor Venda",
-        align: "center",
-
         value: "venda",
       },
       {
         text: "Lucro Maço",
-        align: "center",
-
         value: "lucroMaco",
-      },
-      {
-        text: "Despesas Totais",
-        align: "center",
-
-        value: "despesas",
-      },
-      {
-        text: "Total Mês",
-        align: "center",
-
-        value: "total",
       },
     ],
     produtos: [
       {
+        id: 0,
         name: "Crisântemo",
         lucro: 246960,
         custoProducao: 2.59,
         venda: 7,
         lucroMaco: 88.2,
-        despesas: 2700,
-        total: 0,
+      },
+      {
+        id: 1,
+        name: "Crisântemo",
+        lucro: 246960,
+        custoProducao: 2.59,
+        venda: 7,
+        lucroMaco: 88.2,
       },
     ],
+    despesas: 10000,
+    total: 0,
   }),
   computed: {},
   mounted() {
@@ -157,14 +159,18 @@ export default {
   },
   destroyed() {},
   methods: {
-    qtdEstoque(data) {
-      const estoque = data.lucro - data.despesas;
-      this.produtos.total = estoque;
-      return estoque;
+    calculaTotalLucro(data) {
+      let lucros = 0;
+      for (var prop in this.produtos) {
+        lucros += this.produtos[prop].lucro;
+      }
+      this.total = lucros - this.despesas;
+      return this.total;
     },
     getColor(data) {
-      const total = this.qtdEstoque(data);
-      if (total === 0) return "error";
+      const total = this.calculaTotalLucro(data);
+
+      if (total <= 0) return "error";
       else return "success";
     },
     setChartsBar() {

@@ -112,7 +112,6 @@ export default {
       this.periodoAtual = pValue;
     },
     receitaBruta(card, index) {
-      console.log(this.cards[index]);
       return this.cards[index].vendido * this.cards[index].valorVenda;
     },
     custoProducao(card, index) {
