@@ -6,6 +6,7 @@
         format="MM-YYYY"
         month="02"
         @period="period"
+        @date="date"
       />
       <TotalBalance class="mt-5 mb-3" :value="valuePeriod" />
     </v-flex>
@@ -20,7 +21,7 @@
       </v-card>
       <v-card v-else elevation="24" outlined>
         <v-card-title>
-          Despesas do Mês {{ valuePeriod }}
+          Despesas do Mês
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -41,11 +42,11 @@
           loading-text="Loading... Please wait"
           multi-sort
         >
-          <template v-slot:[`item.data`]="{ item }">
-            {{ formatDateTable(item.data) }}
+          <template v-slot:[`item.Data`]="{ item }">
+            {{ formatDateTable(item.Data) }}
           </template>
-          <template v-slot:[`item.valor`]="{ item }">
-            {{ formatCurrency(item.valor) }}
+          <template v-slot:[`item.Valor`]="{ item }">
+            {{ formatCurrency(item.Valor) }}
           </template>
           <template v-slot:[`item.valorPeriodo`]="{ item }">
             {{ formatCurrency(calculaValorPeriodo(item)) }}
@@ -73,7 +74,7 @@
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import moment from "moment";
 import DespesasEdit from "./DespesasEdit.vue";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import despesasService from "./../services/despesa-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import TotalBalance from "./../../components/TotalBalance.vue";
@@ -96,52 +97,20 @@ export default {
           text: "Despesa",
           align: "start",
 
-          value: "name",
+          value: "DescrDetalhada",
         },
-        { text: "Tipo", value: "tipo" },
-        { text: "Data da Despesa", value: "data" },
-        { text: "Valor", value: "valor" },
+        { text: "Tipo", value: "TipoDespesa.DescrTipoDespesa" },
+        { text: "Data da Despesa", value: "Data" },
+        { text: "Valor", value: "Valor" },
         { text: "Valor no Período", value: "valorPeriodo" },
       ],
-      produtos: [
-        {
-          index: 1,
-          name: "Manutenção Familiar",
-          tipo: "Fixo",
-          data: moment().format("YYYY-MM-DD"),
-          valor: 1400,
-          valorPeriodo: 0,
-        },
-        {
-          index: 2,
-          name: "Taxa e impostos",
-          tipo: "Fixo",
-          data: moment().format("YYYY-MM-DD"),
-          valor: 400,
-          valorPeriodo: 0,
-        },
-        {
-          index: 3,
-          name: "Mão de Obra",
-          tipo: "Fixo",
-          data: moment().format("YYYY-MM-DD"),
-          valor: 900,
-          valorPeriodo: 0,
-        },
-        {
-          index: 4,
-          name: "Mão de Obra v",
-          tipo: "Variável",
-          data: moment().format("YYYY-MM-DD"),
-          valor: 900,
-          valorPeriodo: 0,
-        },
-      ],
+      produtos: [],
       total: 0,
       periodSelected: "",
       produtosEdicao: [],
       editou: false,
       deletou: false,
+      currentDate: "",
     };
   },
 
@@ -169,6 +138,18 @@ export default {
   },
 
   methods: {
+    async searchDespesa() {
+      const variables = {
+        periodSelected: this.periodSelected,
+        currentDate: this.currentDate,
+      };
+      this.produtos = await despesasService.despesas(variables);
+      console.log(this.produtos);
+    },
+    date(pValue) {
+      this.currentDate = pValue;
+      this.searchDespesa();
+    },
     period(value) {
       this.periodSelected = value;
     },
@@ -176,7 +157,8 @@ export default {
       this.editou = item;
     },
     formatDateTable(value) {
-      return moment(value).format("DD/MM/YYYY");
+      console.log(value);
+      return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
 
     edicaoItens(item) {
@@ -187,15 +169,15 @@ export default {
       console.log(this.deletou);
     },
     calculaValorPeriodo(item) {
-      return item.tipo === "Fixo"
+      return item.TipoDespesa.DescrTipoDespesa === "Fixo"
         ? this.periodSelected === "Mensal"
-          ? item.valor
+          ? item.Valor
           : this.periodSelected === "Semanal"
-          ? item.valor * 4
+          ? item.Valor * 4
           : this.periodSelected === "Anual"
-          ? item.valor * 12
+          ? item.Valor * 12
           : 0
-        : item.valor;
+        : item.Valor;
     },
     calculaTotalMêsFixo() {
       return this.produtos.reduce((a, b) => {

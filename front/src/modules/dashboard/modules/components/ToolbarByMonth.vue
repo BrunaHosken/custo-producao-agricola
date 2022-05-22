@@ -63,12 +63,13 @@ export default {
       periodSelected: "Mensal",
       periods: ["Semanal", "Mensal", "Anual"],
       currentPeriod: "",
+      currentDate: "",
     };
   },
 
   created() {
     this.period();
-    this.emit();
+    this.emitPeriod();
   },
   methods: {
     period() {
@@ -82,18 +83,19 @@ export default {
       }
       if (this.periodSelected === "Semanal") {
         let formato = "DD/MM/YYYY";
-        let inicio = moment().day(0).format(formato);
-        let fim = moment().day(6).format(formato);
+        let inicio = this.date.day(0).format(formato);
+        let fim = this.date.day(6).format(formato);
         this.currentPeriod = `${inicio} - ${fim}`;
         this.emitPeriod();
       }
     },
     emitPeriod() {
+      let formato = "DD-MM-YYYY";
+      this.currentDate = this.date.format(formato);
       this.$emit("period", this.periodSelected);
+      this.$emit("date", this.currentDate);
     },
-    emit() {
-      this.$emit("date", this.date.format(this.format));
-    },
+
     decrement() {
       if (this.periodSelected === "Anual") {
         this.currentPeriod = this.date.subtract(1, "Y").format("YYYY");
@@ -103,11 +105,12 @@ export default {
       }
       if (this.periodSelected === "Semanal") {
         let formato = "DD/MM/YYYY";
+
         let inicio = this.date.day(0).subtract(7, "d").format(formato);
         let fim = this.date.day(6).format(formato);
         this.currentPeriod = `${inicio} - ${fim}`;
       }
-      this.emit();
+      this.emitPeriod();
     },
     increment() {
       if (this.periodSelected === "Anual") {
@@ -122,7 +125,7 @@ export default {
         let fim = this.date.day(6).format(formato);
         this.currentPeriod = `${inicio} - ${fim}`;
       }
-      this.emit();
+      this.emitPeriod();
     },
   },
 };

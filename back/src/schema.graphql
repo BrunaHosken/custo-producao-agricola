@@ -657,7 +657,7 @@ type Query {
   clientes: [Cliente!]!
   culturas: [Cultura!]!
   vendas: [Venda!]!
-  despesaRealizadas: [DespesaRealizada!]!
+  despesaRealizadas(date: String, type: String): [DespesaRealizada!]!
   culturaDesenvolvidas: [CulturaDesenvolvida!]!
   insumoes: [Insumo!]!
   vendaItems: [VendaItem!]!

@@ -1,0 +1,16 @@
+query despesas($currentDate: String, $periodSelected: String) {
+  despesaRealizadas(date: $currentDate, type: $periodSelected) {
+    id
+    Data
+    DescrDetalhada
+    Valor
+    Agricultor {
+      id
+      Nome
+    }
+    TipoDespesa {
+      id
+      DescrTipoDespesa
+    }
+  }
+}

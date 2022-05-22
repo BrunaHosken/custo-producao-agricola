@@ -1,4 +1,5 @@
 const { getAgricultorId } = require("./../utils");
+const moment = require("moment");
 function agricultor(_, args, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
   return ctx.db.query.agricultor({ where: { id: agricultorId } }, info);
@@ -62,17 +63,43 @@ function culturas(_, args, ctx, info) {
 function vendas(_, args, ctx, info) {
   return ctx.db.query.vendas({ orderBy: "Data_ASC" }, info);
 }
-function despesaRealizadas(_, args, ctx, info) {
+function despesaRealizadas(_, { date, type }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
+  let AND = [
+    {
+      Agricultor: {
+        id: agricultorId,
+      },
+    },
+  ];
+
+  if (date) {
+    if (type === "Semanal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("week").toISOString();
+      const endDate = period.endOf("week").toISOString();
+
+      AND = [...AND, { Data_gte: startDate }, { Data_lte: endDate }];
+    }
+    if (type === "Mensal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("month").toISOString();
+      const endDate = period.endOf("month").toISOString();
+
+      AND = [...AND, { Data_gte: startDate }, { Data_lte: endDate }];
+    }
+    if (type === "Anual") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("year").toISOString();
+      const endDate = period.endOf("year").toISOString();
+
+      AND = [...AND, { Data_gte: startDate }, { Data_lte: endDate }];
+    }
+  }
   return ctx.db.query.despesaRealizadas(
     {
-      where: {
-        Agricultor: {
-          id: agricultorId,
-        },
-      },
-
-      orderBy: "DescrDetalhada_ASC",
+      where: { AND },
+      orderBy: "Data_ASC",
     },
     info
   );
