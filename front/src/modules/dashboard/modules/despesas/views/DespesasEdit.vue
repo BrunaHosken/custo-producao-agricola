@@ -237,7 +237,6 @@ export default {
     async salvar() {
       try {
         await despesaService.UpdateDespesa(this.form);
-        this.$router.go(-1);
         this.createSnackBar = true;
         this.mensagem = "Despesa atualizada com sucesso!";
         this.editouCultura = false;

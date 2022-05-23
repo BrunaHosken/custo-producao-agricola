@@ -1,5 +1,5 @@
 mutation CreateDespesaRealizada(
-  $date: Date!
+  $date: DateTime!
   $descricao: String!
   $valor: Float!
   $tipo: ID!

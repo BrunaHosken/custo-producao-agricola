@@ -1,6 +1,6 @@
 mutation UpdateDespesa(
   $index: ID!
-  $date: Date
+  $date: DateTime!
   $descricao: String!
   $valor: Float!
   $tipo: String!
