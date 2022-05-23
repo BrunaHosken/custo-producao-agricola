@@ -832,8 +832,6 @@ export default {
       this.dateDialogValueInitialEtapa = this.formEtapa.mesInicio;
     },
     formatDateTable(value) {
-      console.log(value);
-      console.log(moment(value).format("YYYY-MM-DD"));
       return moment(value).format("DD/MM/YYYY");
     },
     deleteItem(item) {
@@ -842,7 +840,6 @@ export default {
     salvarEtapa() {
       this.adicionarNovaEtapa = false;
       this.$v.$reset();
-      console.log(this.formEtapa);
     },
     adicionarEtapa() {
       this.adicionarNovaEtapa = true;
@@ -923,7 +920,6 @@ export default {
       };
     },
     save() {
-      console.log(this.form);
       // this.$v.$reset();
       // this.clear();
       this.$router.go(-1);

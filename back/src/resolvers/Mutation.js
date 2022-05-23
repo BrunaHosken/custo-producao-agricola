@@ -5,15 +5,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const moment = require("moment");
 
 async function resetPassword(_, args, ctx, info) {
-  console.log(args);
   const agricultor = await ctx.db.query.agricultor({
     where: {
       Email: args.Email,
     },
   });
-  console.log(agricultor.id);
   const Senha = await bcrypt.hash(args.Senha, 10);
-  console.log(Senha);
   return ctx.db.mutation.updateAgricultor(
     {
       where: {
@@ -124,7 +121,6 @@ function createDespesaRealizada(_, args, ctx, info) {
 }
 function createCliente(_, { NomeCliente }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
-  console.log(NomeCliente);
   return ctx.db.mutation.createCliente(
     {
       data: {
@@ -417,7 +413,6 @@ function updateCliente(_, args, ctx, info) {
   );
 }
 function deleteCliente(_, args, ctx, info) {
-  console.log(args);
   return ctx.db.mutation.deleteCliente(
     {
       where: {
@@ -488,6 +483,7 @@ function updateCulturaEtapa(_, args, ctx, info) {
   );
 }
 function updateDespesaRealizada(_, args, ctx, info) {
+  console.log(args);
   return ctx.db.mutation.updateDespesaRealizada(
     {
       where: {

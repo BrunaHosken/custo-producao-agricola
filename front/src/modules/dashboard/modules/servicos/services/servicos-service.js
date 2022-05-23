@@ -30,7 +30,6 @@ const DeleteServico = async (variables) => {
   });
 };
 const UpdateServico = async (variables) => {
-  console.log(variables);
   variables.valor = parseFloat(variables.valor);
   const response = await apollo.mutate({
     mutation: updateServico,

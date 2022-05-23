@@ -1,0 +1,16 @@
+mutation DeleteDespesa($id: ID) {
+  deleteDespesaRealizada(where: { id: $id }) {
+    id
+    DescrDetalhada
+    Data
+    Valor
+    TipoDespesa {
+      id
+      DescrTipoDespesa
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

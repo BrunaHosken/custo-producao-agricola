@@ -170,7 +170,6 @@ export default {
     },
     deletouItens(item) {
       this.deletou = item;
-      console.log(this.deletou);
     },
     calculaTotal(vendida, total) {
       return vendida * total;

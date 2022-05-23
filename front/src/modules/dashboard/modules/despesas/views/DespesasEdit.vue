@@ -62,6 +62,8 @@
                   <v-select
                     v-model="form.tipo"
                     label="Tipo de Despesa"
+                    item-text="label"
+                    item-value="label"
                     prepend-inner-icon="mdi-format-list-bulleted-type"
                     outlined
                     :items="items"
@@ -111,6 +113,12 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <SnackBar
+        :show="createSnackBar"
+        :mensagem="this.mensagem"
+        :color="color"
+        @show="showSnackBar"
+      />
     </v-flex>
   </v-dialog>
 </template>
@@ -120,8 +128,10 @@ import moment from "moment";
 
 import { required, minValue, minLength } from "vuelidate/lib/validators";
 import despesaService from "./../services/despesa-service";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "DespesasEdit",
+  components: { SnackBar },
   props: {
     showDialog: {
       type: Boolean,
@@ -136,14 +146,17 @@ export default {
     return {
       form: {
         index: 0,
-        date: moment().format("DD-MM-YYYY"),
+        date: moment().format("YYYY-MM-DD"),
         descricao: "",
         valor: 0,
         tipo: "",
       },
       showDateDialog: false,
-      dateDialogValue: moment().format("DD-MM-YYYY"),
+      dateDialogValue: moment().format("YYYY-MM-DD"),
       items: [],
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
       editouCultura: false,
     };
   },
@@ -165,11 +178,11 @@ export default {
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
         this.form = {
-          index: pValue[0].index,
-          date: pValue[0].data,
-          descricao: pValue[0].name,
-          valor: pValue[0].valor,
-          tipo: pValue[0].tipo,
+          index: pValue[0].id,
+          date: moment(pValue[0].Data.substr(0, 10)).format("YYYY-MM-DD"),
+          descricao: pValue[0].DescrDetalhada,
+          valor: pValue[0].Valor,
+          tipo: pValue[0].TipoDespesa.DescrTipoDespesa,
         };
       }
     },
@@ -177,7 +190,7 @@ export default {
   async created() {
     const response = await despesaService.tipoDespesas();
     response.forEach((item) => {
-      this.items.push(item.DescrTipoDespesa);
+      this.items.push({ label: item.DescrTipoDespesa, id: item.id });
     });
     this.form.tipo = this.items[0];
   },
@@ -210,6 +223,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     cancelDateDialog() {
       this.showDateDialog = false;
       this.dateDialogValue = this.formEditou.date;
@@ -218,10 +234,19 @@ export default {
       this.editouCultura = false;
       this.$emit("showDialogClose", this.editouCultura);
     },
-    salvar() {
-      this.editouCultura = false;
-      console.log(this.form);
-      this.$emit("showDialogClose", this.editouCultura);
+    async salvar() {
+      try {
+        await despesaService.UpdateDespesa(this.form);
+        this.$router.go(-1);
+        this.createSnackBar = true;
+        this.mensagem = "Despesa atualizada com sucesso!";
+        this.editouCultura = false;
+        this.$emit("showDialogClose", this.editouCultura);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };

@@ -283,7 +283,7 @@ export default {
     },
     salvar() {
       this.editouCultura = false;
-      console.log(this.form);
+
       this.$emit("showDialogClose", this.editouCultura);
     },
   },

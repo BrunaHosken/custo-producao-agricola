@@ -1,0 +1,30 @@
+mutation UpdateDespesa(
+  $index: ID!
+  $date: Date
+  $descricao: String!
+  $valor: Float!
+  $tipo: String!
+) {
+  updateDespesaRealizada(
+    where: { id: $index }
+    data: {
+      DescrDetalhada: $descricao
+      Data: $date
+      Valor: $valor
+      TipoDespesa: { update: { DescrTipoDespesa: $tipo } }
+    }
+  ) {
+    id
+    DescrDetalhada
+    Data
+    Valor
+    TipoDespesa {
+      id
+      DescrTipoDespesa
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

@@ -706,8 +706,6 @@ export default {
       }
     },
     formEditou(pValue) {
-      console.log("o que vem", pValue);
-      console.log("o que preciso", this.form);
       if (pValue) {
         this.preencheForm();
       }
@@ -828,7 +826,6 @@ export default {
     salvarEtapa() {
       this.adicionarNovaEtapa = false;
       this.$v.$reset();
-      console.log(this.formEtapa);
     },
     adicionarEtapa() {
       this.adicionarNovaEtapa = true;
@@ -861,7 +858,7 @@ export default {
     },
     salvar() {
       this.editouCustoProducao = false;
-      console.log(this.form);
+
       this.$emit("showDialogClose", this.editouCustoProducao);
       this.clean();
     },
@@ -926,7 +923,6 @@ export default {
       this.clearEtapa = false;
     },
     clean() {
-      console.log("OI");
       this.form = {
         mesInicio: moment().format("YYYY-MM-DD"),
         mesFinal: moment().format("YYYY-MM-DD"),
@@ -941,7 +937,6 @@ export default {
       };
     },
     save() {
-      console.log(this.form);
       // this.$v.$reset();
       // this.clear();
       this.$router.go(-1);

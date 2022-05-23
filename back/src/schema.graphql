@@ -293,7 +293,7 @@ input CulturaEtapaUpdateInput {
 
 input DespesaRealizadaUpdateInput {
   DescrDetalhada: String
-  Data: Date!
+  Data: Date
   Valor: Float
   Agricultor: AgricultorUpdateOneRequiredInput
   TipoDespesa: TipoDespesaUpdateOneRequiredInput

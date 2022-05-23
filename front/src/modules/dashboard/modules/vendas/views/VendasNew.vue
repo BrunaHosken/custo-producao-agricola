@@ -309,7 +309,6 @@ export default {
       };
     },
     save() {
-      console.log(this.form);
       // this.$v.$reset();
       // this.clear();
       this.$router.go(-1);

@@ -216,7 +216,6 @@ export default {
     },
     async salvar() {
       try {
-        console.log(this.form);
         await insumoService.UpdateInsumo(this.form);
         this.editouCultura = false;
         this.$emit("showDialogClose", this.editouCultura);

@@ -60,6 +60,8 @@
                     <v-select
                       v-model="form.tipo"
                       :items="items"
+                      item-text="label"
+                      item-value="id"
                       label="Tipo de Despesa"
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
@@ -121,6 +123,12 @@
           :showDialog="showClearDialog"
           @option="option"
         />
+        <SnackBar
+          :show="createSnackBar"
+          :mensagem="this.mensagem"
+          :color="color"
+          @show="showSnackBar"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -130,11 +138,13 @@
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 import despesaService from "./../services/despesa-service";
+import SnackBar from "./../../../components/SnackBar.vue";
 import Dialog from "./../../../components/Dialog.vue";
 export default {
   name: "DespesasNew",
   components: {
     Dialog,
+    SnackBar,
   },
   data() {
     return {
@@ -146,7 +156,9 @@ export default {
         valor: 0,
         tipo: "",
       },
-
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
       showDateDialog: false,
       dateDialogValue: moment().format("YYYY-MM-DD"),
       showClearDialog: false,
@@ -169,7 +181,7 @@ export default {
   async created() {
     const response = await despesaService.tipoDespesas();
     response.forEach((item) => {
-      this.items.push(item.DescrTipoDespesa);
+      this.items.push({ label: item.DescrTipoDespesa, id: item.id });
     });
     this.form.tipo = this.items[0];
   },
@@ -202,6 +214,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     option(data) {
       if (data == "nao") {
         this.showClearDialog = false;
@@ -225,11 +240,17 @@ export default {
         tipo: this.items[0],
       };
     },
-    save() {
-      console.log(this.form);
-      // this.$v.$reset();
-      // this.clear();
-      this.$router.go(-1);
+    async save() {
+      try {
+        await despesaService.CreateDespesa(this.form);
+        this.$router.go(-1);
+        this.createSnackBar = true;
+        this.mensagem = "Despesa criada com sucesso!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };

@@ -1,0 +1,26 @@
+mutation CreateDespesaRealizada(
+  $date: Date!
+  $descricao: String!
+  $valor: Float!
+  $tipo: ID!
+) {
+  createDespesaRealizada(
+    DescrDetalhada: $descricao
+    Data: $date
+    Valor: $valor
+    TipoDespesaId: $tipo
+  ) {
+    id
+    DescrDetalhada
+    Data
+    Valor
+    TipoDespesa {
+      id
+      DescrTipoDespesa
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

@@ -8,7 +8,11 @@
         @period="period"
         @date="date"
       />
-      <TotalBalance class="mt-5 mb-3" :value="valuePeriod" />
+      <TotalBalance
+        class="mt-5 mb-3"
+        :value="valuePeriod"
+        title="Despesas do Período"
+      />
     </v-flex>
     <v-flex xs12>
       <v-card v-if="produtos.length === 0">
@@ -35,7 +39,7 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="name"
+          item-key="id"
           :search="search"
           multi-select
           loading="false"
@@ -67,6 +71,12 @@
       @edicao="edicaoItens"
       @deletou="deletouItens"
     />
+    <SnackBar
+      :show="createSnackBar"
+      :mensagem="this.mensagem"
+      :color="color"
+      @show="showSnackBar"
+    />
   </v-layout>
 </template>
 
@@ -78,12 +88,13 @@ import despesasService from "./../services/despesa-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import TotalBalance from "./../../components/TotalBalance.vue";
-
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "Despesas",
   components: {
     ToolbarByMonth,
     DespesasEdit,
+    SnackBar,
     AppFloatingButton,
     TotalBalance,
   },
@@ -102,7 +113,7 @@ export default {
         { text: "Tipo", value: "TipoDespesa.DescrTipoDespesa" },
         { text: "Data da Despesa", value: "Data" },
         { text: "Valor", value: "Valor" },
-        { text: "Valor no Ano", value: "valorPeriodo" },
+        { text: "Valor do período", value: "valorPeriodo" },
       ],
       produtos: [],
       total: 0,
@@ -110,6 +121,9 @@ export default {
       produtosEdicao: [],
       editou: false,
       deletou: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
       currentDate: "",
     };
   },
@@ -129,7 +143,7 @@ export default {
             valorPeriod += this.produtos[prop].Valor * 12;
           }
         }
-        if (this.produtos[prop].TipoDespesa.DescrTipoDespesa === "Variavel") {
+        if (this.produtos[prop].TipoDespesa.DescrTipoDespesa === "Variável") {
           valorPeriod += this.produtos[prop].Valor;
         }
       }
@@ -138,6 +152,9 @@ export default {
   },
 
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     async searchDespesa() {
       const variables = {
         periodSelected: this.periodSelected,
@@ -162,8 +179,18 @@ export default {
     edicaoItens(item) {
       this.editou = item;
     },
-    deletouItens(item) {
-      this.deletou = item;
+    async deletouItens(item) {
+      try {
+        await despesasService.DeleteDespesa(this.selected);
+        this.mensagem = "Despesa deletada com sucesso!";
+        this.createSnackBar = true;
+      } catch (e) {
+        this.mensagem = e.message;
+        this.color = "delete";
+        this.createSnackBar = true;
+      } finally {
+        this.deletou = item;
+      }
     },
     calculaValorPeriodo(item) {
       return item.TipoDespesa.DescrTipoDespesa === "Fixo"
@@ -176,24 +203,7 @@ export default {
           : 0
         : item.Valor;
     },
-    calculaTotalMêsFixo() {
-      return this.produtos.reduce((a, b) => {
-        return b.tipo === "Fixo"
-          ? this.search === "variavel"
-            ? 0
-            : a + b.valor
-          : a;
-      }, 0);
-    },
-    calculaTotalMêsVariavel() {
-      return this.produtos.reduce((a, b) => {
-        return b.tipo === "Variavel"
-          ? this.search === "fixo"
-            ? 0
-            : a + b.valor
-          : a;
-      }, 0);
-    },
+
     calculaTotalAnual() {
       return this.produtos.reduce((a, b) => {
         return b.tipo === "Fixo" ? a + b.valor * 12 : a;

@@ -2,7 +2,7 @@
   <v-card elevation="24" outlined>
     <v-card-title primary-title>
       <div class="text-center ma-auto">
-        <p class="subheading">Saldo do Período</p>
+        <p class="subheading">{{ title }}</p>
         <h1 class="display-2">{{ totalInCurrency }}</h1>
       </div>
     </v-card-title>
@@ -18,6 +18,10 @@ export default {
     value: {
       type: Number,
       default: 0,
+    },
+    title: {
+      type: String,
+      default: "",
     },
   },
   data: () => ({
