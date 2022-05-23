@@ -63,7 +63,7 @@
                     v-model="form.tipo"
                     label="Tipo de Despesa"
                     item-text="label"
-                    item-value="label"
+                    item-value="id"
                     prepend-inner-icon="mdi-format-list-bulleted-type"
                     outlined
                     :items="items"
@@ -182,7 +182,7 @@ export default {
           date: moment(pValue[0].Data.substr(0, 10)).format("YYYY-MM-DD"),
           descricao: pValue[0].DescrDetalhada,
           valor: pValue[0].Valor,
-          tipo: pValue[0].TipoDespesa.DescrTipoDespesa,
+          tipo: pValue[0].TipoDespesa.id,
         };
       }
     },

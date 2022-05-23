@@ -3,7 +3,7 @@ mutation UpdateDespesa(
   $date: DateTime!
   $descricao: String!
   $valor: Float!
-  $tipo: String!
+  $tipo: ID!
 ) {
   updateDespesaRealizada(
     where: { id: $index }
@@ -11,7 +11,7 @@ mutation UpdateDespesa(
       DescrDetalhada: $descricao
       Data: $date
       Valor: $valor
-      TipoDespesa: { update: { DescrTipoDespesa: $tipo } }
+      TipoDespesa: { connect: { id: $tipo } }
     }
   ) {
     id

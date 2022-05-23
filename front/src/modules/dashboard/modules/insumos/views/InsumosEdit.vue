@@ -35,7 +35,7 @@
                     v-model="form.tipo"
                     label="Tipo de Insumo"
                     item-text="label"
-                    item-value="label"
+                    item-value="id"
                     prepend-inner-icon="mdi-format-list-bulleted-type"
                     outlined
                     :items="items"
@@ -170,7 +170,7 @@ export default {
           index: pValue[0].id,
           descricao: pValue[0].DescrInsumo,
           valor: pValue[0].PrecoUnit,
-          tipo: pValue[0].TipoInsumo.NomeTipo,
+          tipo: pValue[0].TipoInsumo.id,
           unidade: pValue[0].Und,
         };
       }

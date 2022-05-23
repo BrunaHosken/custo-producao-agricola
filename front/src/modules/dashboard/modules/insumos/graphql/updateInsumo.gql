@@ -3,7 +3,7 @@ mutation UpdateInsumo(
   $descricao: String!
   $valor: Float!
   $unidade: String!
-  $tipo: String!
+  $tipo: ID!
 ) {
   updateInsumo(
     where: { id: $index }
@@ -11,7 +11,7 @@ mutation UpdateInsumo(
       DescrInsumo: $descricao
       PrecoUnit: $valor
       Und: $unidade
-      TipoInsumo: { update: { NomeTipo: $tipo } }
+      TipoInsumo: { connect: { id: $tipo } }
     }
   ) {
     id

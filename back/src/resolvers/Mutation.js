@@ -483,7 +483,6 @@ function updateCulturaEtapa(_, args, ctx, info) {
   );
 }
 function updateDespesaRealizada(_, args, ctx, info) {
-  console.log(args);
   return ctx.db.mutation.updateDespesaRealizada(
     {
       where: {
