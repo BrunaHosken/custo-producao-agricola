@@ -52,7 +52,6 @@ import { required, minLength } from "vuelidate/lib/validators";
 import Dialog from "./../../../components/Dialog.vue";
 import ContatoService from "./../services/contato-service";
 import SnackBar from "./../../../components/SnackBar.vue";
-import AuthService from "./../../../../auth/services/auth-service";
 import emailjs from "emailjs-com";
 export default {
   name: "Contatos",
@@ -118,7 +117,7 @@ export default {
     async save() {
       try {
         const response = await ContatoService.createContato(this.form);
-        const user = await AuthService.agricultor();
+        const user = await ContatoService.agricultor();
 
         var templateParams = {
           user_name: user.Nome,
