@@ -122,7 +122,7 @@
                 </v-row>
 
                 <v-row class="mt-4">
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="6">
                     <v-autocomplete
                       v-model="form.culturaDescricao"
                       :loading="loadingCultura"
@@ -145,7 +145,7 @@
                       <v-divider slot="prepend-item" class="mt-2"></v-divider>
                     </v-autocomplete>
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="6">
                     <v-text-field
                       :error-messages="terrenoErrors"
                       :success="!$v.form.terreno.$invalid"
@@ -155,7 +155,9 @@
                       prepend-inner-icon="mdi-numeric"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" md="4">
+                </v-row>
+                <v-row class="mt-0">
+                  <v-col cols="12" md="6">
                     <v-text-field
                       :error-messages="valueErrors"
                       :success="!$v.form.quantidade.$invalid"
@@ -165,12 +167,22 @@
                       prepend-inner-icon="mdi-numeric"
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="12" md="6">
+                    <v-select
+                      v-model="form.unidade"
+                      :items="unidades"
+                      label="Unidade da Cultura"
+                      prepend-inner-icon="mdi-format-list-numbered"
+                      outlined
+                    ></v-select>
+                  </v-col>
                 </v-row>
                 <hr />
                 <v-card-title>
                   Etapas da Cultura
                   <v-spacer></v-spacer>
                   <v-text-field
+                    v-if="!adicionarNovaEtapa"
                     v-model="searchTable"
                     append-icon="mdi-magnify"
                     label="Pesquisar"
@@ -436,10 +448,10 @@
                     color="success"
                     class="ma-2"
                     title="Adicionar"
-                    :disabled="$v.$invalid"
                     @click="salvarEtapa"
                     >Salvar</v-btn
                   >
+                  <!-- :disabled="$v.$invalid" -->
                 </v-row>
                 <v-row v-if="!adicionarNovaEtapa" class="mt-0 mb-3">
                   <v-spacer></v-spacer>
@@ -629,6 +641,7 @@ export default {
         culturaDescricao: "Crisântemo",
         quantidade: 0,
         terreno: 0,
+        unidade: "Dúzia",
         etapas: [],
       },
       showDialogProduto: false,
@@ -656,6 +669,7 @@ export default {
       showDialogEtapas: false,
       adicionarNovaEtapa: false,
       formEtapa: {
+        index: 0,
         mesInicio: new Date().toISOString().substr(0, 7),
         mesFinal: new Date(new Date().setMonth(new Date().getMonth() + 1))
           .toISOString()
@@ -838,8 +852,15 @@ export default {
       console.log(item);
     },
     salvarEtapa() {
+      console.log(this.formEtapa.index);
+      this.formEtapa.index += 1;
+      console.log(this.formEtapa.index);
+      this.form.etapas.push(this.formEtapa);
       this.adicionarNovaEtapa = false;
       this.$v.$reset();
+      console.log(this.formEtapa.index);
+      this.cleanEtapa();
+      console.log(this.formEtapa.index);
     },
     adicionarEtapa() {
       this.adicionarNovaEtapa = true;
@@ -853,6 +874,7 @@ export default {
     close() {
       this.showDialogProduto = false;
       this.showDialogInsumo = false;
+      this.showDialogServico = false;
     },
     novaCultura() {
       this.showDialogProduto = true;

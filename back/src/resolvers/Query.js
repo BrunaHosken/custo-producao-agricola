@@ -134,7 +134,17 @@ function insumoes(_, args, ctx, info) {
   );
 }
 function vendaItems(_, args, ctx, info) {
-  return ctx.db.query.vendaItems({ orderBy: "Qtd_ASC" }, info);
+  return ctx.db.query.vendaItems(
+    {
+      where: {
+        Agricultor: {
+          id: agricultorId,
+        },
+      },
+      orderBy: "Qtd_ASC",
+    },
+    info
+  );
 }
 function culturaEtapas(_, args, ctx, info) {
   return ctx.db.query.culturaEtapas({ orderBy: "DescrEtapa_ASC" }, info);

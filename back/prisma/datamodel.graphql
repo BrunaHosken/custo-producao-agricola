@@ -46,6 +46,7 @@ type VendaItem {
   PrecoUnit: Float!
   Venda: Venda
   CulturaDesenvolvida: CulturaDesenvolvida
+  Agricultor: Agricultor
 }
 type Venda {
   id: ID! @unique

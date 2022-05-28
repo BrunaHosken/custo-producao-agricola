@@ -44,6 +44,7 @@ type VendaItem {
   PrecoUnit: Float!
   CulturaDesenvolvida: CulturaDesenvolvida
   Venda: Venda
+  Agricultor: Agricultor
 }
 type Cultura {
   id: ID!
@@ -322,6 +323,7 @@ input VendaItemUpdateInput {
   PrecoUnit: Float
   Venda: VendaUpdateOneRequiredInput
   CulturaDesenvolvida: CulturaDesenvolvidaUpdateOneRequiredInput
+  Agricultor: AgricultorUpdateOneInput
 }
 input VendaItemWhereUniqueInput {
   id: ID

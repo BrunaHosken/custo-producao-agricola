@@ -234,13 +234,9 @@ function createCulturaDesenvolvida(_, args, ctx, info) {
     throw new Error("Data inválida!");
   }
   const agricultorId = getAgricultorId(ctx);
+  console.log(agricultorId);
   return ctx.db.mutation.createCulturaDesenvolvida({
     data: {
-      Agricultor: {
-        connect: {
-          id: agricultorId,
-        },
-      },
       Cultura: {
         connect: {
           id: args.CulturaId,
@@ -251,6 +247,11 @@ function createCulturaDesenvolvida(_, args, ctx, info) {
       DataColheita: args.DataColheita,
       QtdColhida: args.QtdColhida,
       Unidade: args.Unidade,
+      Agricultor: {
+        connect: {
+          id: agricultorId,
+        },
+      },
     },
   });
 }
