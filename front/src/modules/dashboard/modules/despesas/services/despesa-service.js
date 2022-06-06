@@ -29,6 +29,7 @@ const UpdateDespesa = async (variables) => {
 };
 const CreateDespesa = async (variables) => {
   variables.valor = parseFloat(variables.valor);
+  variables.tipo = variables.tipo.id;
   const response = await apollo.mutate({
     mutation: createDespesa,
     variables,

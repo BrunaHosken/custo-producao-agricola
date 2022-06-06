@@ -104,16 +104,53 @@ function despesaRealizadas(_, { date, type }, ctx, info) {
     info
   );
 }
-function culturaDesenvolvidas(_, args, ctx, info) {
+function culturaDesenvolvidas(_, { date, type }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
+  let AND = [
+    {
+      Agricultor: {
+        id: agricultorId,
+      },
+    },
+  ];
+  if (date) {
+    if (type === "Semanal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("week").toISOString();
+      const endDate = period.endOf("week").toISOString();
+
+      AND = [
+        ...AND,
+        { DataInicio_gte: startDate },
+        { DataInicio_lte: endDate },
+      ];
+    }
+    if (type === "Mensal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("month").toISOString();
+      const endDate = period.endOf("month").toISOString();
+
+      AND = [
+        ...AND,
+        { DataInicio_gte: startDate },
+        { DataInicio_lte: endDate },
+      ];
+    }
+    if (type === "Anual") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("year").toISOString();
+      const endDate = period.endOf("year").toISOString();
+
+      AND = [
+        ...AND,
+        { DataInicio_gte: startDate },
+        { DataInicio_lte: endDate },
+      ];
+    }
+  }
   return ctx.db.query.culturaDesenvolvidas(
     {
-      where: {
-        Agricultor: {
-          id: agricultorId,
-        },
-      },
-
+      where: { AND },
       orderBy: "DataInicio_ASC",
     },
     info
@@ -146,8 +183,19 @@ function vendaItems(_, args, ctx, info) {
     info
   );
 }
-function culturaEtapas(_, args, ctx, info) {
-  return ctx.db.query.culturaEtapas({ orderBy: "DescrEtapa_ASC" }, info);
+function culturaEtapas(_, { id }, ctx, info) {
+  console.log(id);
+  return ctx.db.query.culturaEtapas(
+    {
+      where: {
+        CulturaDesenvolvida: {
+          id: id,
+        },
+      },
+      orderBy: "DescrEtapa_ASC",
+    },
+    info
+  );
 }
 function usoInsumoReals(_, args, ctx, info) {
   return ctx.db.query.usoInsumoReals({ orderBy: "Data_ASC" }, info);

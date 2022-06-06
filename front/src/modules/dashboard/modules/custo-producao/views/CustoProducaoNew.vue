@@ -162,7 +162,7 @@
                       :error-messages="valueErrors"
                       :success="!$v.form.quantidade.$invalid"
                       v-model.trim="$v.form.quantidade.$model"
-                      label="Quantidade"
+                      label="Quantidade Estimada"
                       :value="form.quantidade"
                       prepend-inner-icon="mdi-numeric"
                     ></v-text-field>

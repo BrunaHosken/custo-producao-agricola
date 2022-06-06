@@ -1,0 +1,19 @@
+query culturaDesenvolvida($currentDate: String, $periodSelected: String) {
+  culturaDesenvolvidas(date: $currentDate, type: $periodSelected) {
+    id
+    AreaTerrenoHectares
+    DataInicio
+    DataColheita
+    QtdColhida
+    Unidade
+    Agricultor {
+      id
+      Nome
+    }
+    Cultura {
+      id
+      DescrCultura
+      QtdEstimadaPorHectare
+    }
+  }
+}

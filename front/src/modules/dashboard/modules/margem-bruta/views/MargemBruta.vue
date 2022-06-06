@@ -132,6 +132,9 @@ export default {
 
 <style lang="scss">
 .hover-card:hover {
-  background: #616161;
+  background: linear-gradient(rgba(85, 85, 85, 0.7), rgba(85, 85, 85, 0.7));
+}
+.hover-card {
+  filter: brightness(1.5);
 }
 </style>

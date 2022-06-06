@@ -1,0 +1,12 @@
+query CulturaEtapa($id: ID!) {
+  culturaEtapas(id: $id) {
+    id
+    DescrEtapa
+    NumEtapa
+    MesInicio
+    MesFim
+    CulturaDesenvolvida {
+      id
+    }
+  }
+}

@@ -110,7 +110,7 @@ type CulturaDesenvolvida {
   AreaTerrenoHectares: Float!
   DataInicio: DateTime!
   DataColheita: DateTime
-  QtdColhida: Float
+  QtdColhida: Float!
   Unidade: String!
   Agricultor: Agricultor
   Cultura: Cultura
@@ -157,7 +157,7 @@ input CulturaDesenvolvidaUpdateInput {
   AreaTerrenoHectares: Float
   DataInicio: DateTime
   DataColheita: DateTime
-  QtdColhida: Float
+  QtdColhida: Float!
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
   Cultura: CulturaUpdateOneInput
@@ -466,7 +466,7 @@ input CulturaDesenvolvidaUpdateDataInput {
   AreaTerrenoHectares: Float
   DataInicio: DateTime!
   DataColheita: DateTime
-  QtdColhida: Float
+  QtdColhida: Float!
   Unidade: String
   Agricultor: AgricultorUpdateOneRequiredInput
   Cultura: CulturaUpdateOneInput
@@ -475,7 +475,7 @@ input CulturaDesenvolvidaCreateInput {
   AreaTerrenoHectares: Float!
   DataInicio: DateTime!
   DataColheita: DateTime
-  QtdColhida: Float
+  QtdColhida: Float!
   Unidade: String!
   Agricultor: AgricultorCreateOneInput
   Cultura: CulturaCreateOneInput
@@ -571,7 +571,7 @@ type Mutation {
     AreaTerrenoHectares: Float!
     DataInicio: DateTime!
     DataColheita: DateTime
-    QtdColhida: Float
+    QtdColhida: Float!
     Unidade: String!
     CulturaId: ID!
   ): CulturaDesenvolvida!
@@ -660,10 +660,11 @@ type Query {
   culturas: [Cultura!]!
   vendas: [Venda!]!
   despesaRealizadas(date: String, type: String): [DespesaRealizada!]!
-  culturaDesenvolvidas: [CulturaDesenvolvida!]!
+  culturaDesenvolvidas(date: String, type: String): [CulturaDesenvolvida!]!
   insumoes: [Insumo!]!
   vendaItems: [VendaItem!]!
-  culturaEtapas: [CulturaEtapa!]!
+  # vendaItems(date: String, type: String): [VendaItem!]!
+  culturaEtapas(id: ID): [CulturaEtapa!]!
   usoInsumoReals: [UsoInsumoReal!]!
   usoInsumoPrevistoes: [UsoInsumoPrevisto!]!
   servicoPrestadoes: [ServicoPrestado!]!

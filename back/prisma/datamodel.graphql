@@ -33,7 +33,7 @@ type CulturaDesenvolvida {
   AreaTerrenoHectares: Float!
   DataInicio: DateTime!
   DataColheita: DateTime
-  QtdColhida: Float
+  QtdColhida: Float!
   Unidade: String!
   Agricultor: Agricultor
   Cultura: Cultura

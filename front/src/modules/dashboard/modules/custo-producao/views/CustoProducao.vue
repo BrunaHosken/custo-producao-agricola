@@ -6,6 +6,7 @@
         format="MM-YYYY"
         month="02"
         @period="period"
+        @date="date"
       />
     </v-flex>
     <v-flex xs12>
@@ -23,71 +24,53 @@
         </v-card-title>
 
         <v-container v-else fluid grid-list-md>
+          <v-card-title>
+            <v-icon size="50" color="warning" class="mr-2"
+              >mdi-alert-circle</v-icon
+            >
+            Clique em editar para adicionar as etapas da produção <br />
+          </v-card-title>
           <v-layout row wrap>
-            <v-flex v-for="card in cards" :key="card.index" pa-4>
+            <v-flex v-for="card in cards" :key="card.id" pa-4 xs6>
               <v-card elevation="24" outlined class="hover-card">
                 <v-card-title class="headline justify-center" ml-5>
-                  Cultura: {{ card.cultura }}
+                  Cultura: {{ card.Cultura.DescrCultura }}
                 </v-card-title>
                 <v-card-subtitle class="headline text-center">
-                  Terreno: {{ card.terreno }} hectares<v-spacer></v-spacer> Data
-                  de Início: {{ card.day }}<v-spacer></v-spacer> Data da
-                  Colheita: {{ card.colheita }}
-                </v-card-subtitle>
-                <hr />
-                <v-card-text class="text-center">
-                  <v-card-title>
-                    Etapas da Cultura
-                    <v-spacer></v-spacer>
-                    <v-text-field
-                      v-model="searchTable"
-                      append-icon="mdi-magnify"
-                      label="Pesquisar"
-                      hide-details
-                    ></v-text-field>
-                  </v-card-title>
+                  Terreno: {{ card.AreaTerrenoHectares }} hectares<v-spacer
+                  ></v-spacer
+                  ><span>
+                    Data de Início:
+                    {{ formatDateTable(card.DataInicio) }}
+                  </span>
+                  <v-spacer></v-spacer>
+                  <span v-if="card.DataColheita != null">
+                    Data da Colheita:
+                    {{ formatDateTable(card.DataInicio) }}
+                  </span>
 
-                  <v-data-table
-                    :headers="headers"
-                    :items="card.etapas"
-                    :search="searchTable"
-                    :items-per-page="5"
-                    class="elevation-1"
-                    multi-sort
-                  >
-                    <template v-slot:[`item.data`]="{ item }">
-                      {{ formatDateTable(item.data) }}
-                    </template>
-                    <template v-slot:[`item.quantidade`]="{ item }">
-                      {{ item.quantidade.toLocaleString() }}
-                    </template>
-                    <template v-slot:[`item.valor`]="{ item }">
-                      {{ formatCurrency(item.valor) }}
-                    </template>
-                    <template v-slot:[`item.total`]="{ item }">
-                      {{
-                        formatCurrency(totalEtapa(item.quantidade, item.valor))
-                      }}
-                    </template>
-                  </v-data-table>
-                </v-card-text>
-                <hr />
+                  <span v-else>
+                    Data da Colheita:
+                    {{ "Ainda não colhida" }}
+                  </span>
+                </v-card-subtitle>
+
                 <v-card-text class="text-center">
                   <h3>
                     Total cultura desenvolvida:
                     {{
-                      formatCurrency(totalCulturaDesenvolvida(card, card.index))
+                      formatCurrency(totalCulturaDesenvolvida(card, card.id))
                     }}
                   </h3>
 
                   <h3>
                     Quantidade estimada de produção:
-                    {{ card.quantidadeProduzida.toLocaleString() }}
-                    {{ card.unidade }}/hectare
+                    {{ card.QtdColhida.toLocaleString() }}
+                    {{ card.Unidade }}/hectare
                   </h3>
                   <h3>
                     Custo Unitário:
-                    {{ formatCurrency(custoUnitario(card, card.index)) }}
+                    {{ formatCurrency(custoUnitario(card, card.id)) }}
                   </h3>
                 </v-card-text>
                 <v-card-actions>
@@ -120,12 +103,12 @@
 </template>
 
 <script>
-// import moment from "moment";
 import CustoProducaoEdit from "./CustoProduçãoEdit.vue";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import Dialog from "./../../../components/Dialog.vue";
 import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
+import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service";
 export default {
   name: "CulturaDesenvolvida",
   mixins: [formatCurrentMixin],
@@ -136,97 +119,22 @@ export default {
   },
   data() {
     return {
-      periodoAtual: "Mensal",
-      searchTable: null,
-      headers: [
-        {
-          text: "Etapa",
-          align: "start",
-          value: "ordem",
-        },
-        {
-          text: "Data",
-          align: "start",
-          value: "data",
-        },
-        {
-          text: "Descrição",
-          align: "start",
-          value: "descricao",
-        },
-        {
-          text: "Insumos/Serviços",
-          align: "start",
-          value: "insumoServico",
-        },
-        {
-          text: "Quantidade",
-          align: "start",
-          value: "quantidade",
-        },
-        {
-          text: "Unidade",
-          align: "start",
-          value: "unidade",
-        },
-        {
-          text: "Custo Unitário",
-          align: "start",
-          value: "valor",
-        },
-        {
-          text: "Custo Total",
-          align: "start",
-          value: "total",
-        },
-      ],
+      periodoAtual: "",
+      currentDate: "",
+
       cards: [
         {
-          index: 0,
-          day: moment().format("YYYY-MM-DD"),
-          cultura: "Crisântemo",
-          terreno: 14,
-          colheita: "Ainda não colhido",
-          quantidadeProduzida: 14000,
-          unidade: "Maços",
-          etapas: [
-            {
-              index: 0,
-              ordem: 1,
-              data: moment().format("YYYY-MM-DD"),
-              descricao: "Semementes ou Mudas",
-              insumoServico: "Mudas enraizadas",
-              uso: "Real",
-              quantidade: 420,
-              unidade: "Milheiro",
-              valor: 35,
-              total: 0,
-            },
-            {
-              index: 1,
-              ordem: 1,
-              data: moment().format("YYYY-MM-DD"),
-              descricao: "Adubos e corretivos",
-              insumoServico: "Adubo foliar fosfatado",
-              uso: "Previsto",
-              quantidade: 8,
-              unidade: "Litros",
-              valor: 15,
-              total: 0,
-            },
-            {
-              index: 2,
-              ordem: 1,
-              data: moment().format("YYYY-MM-DD"),
-              descricao: "Defensivos",
-              insumoServico: "Fungicidas",
-              uso: "Real",
-              quantidade: 54,
-              unidade: "Quilograma/Litro",
-              valor: 40,
-              total: 0,
-            },
-          ],
+          AreaTerrenoHectares: 0,
+          Cultura: {
+            DescrCultura: "",
+            QtdEstimadaPorHectare: 0,
+            id: 0,
+          },
+          DataColheita: "",
+          DataInicio: "",
+          QtdColhida: 0,
+          Unidade: "",
+          id: 0,
         },
       ],
       message: "",
@@ -235,9 +143,19 @@ export default {
       editou: false,
     };
   },
+
   methods: {
+    async searchculturaDesenvolvida() {
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.cards = await culturaDesenvolvidaService.culturaDesenvolvida(
+        variables
+      );
+    },
     formatDateTable(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
     close(item) {
       this.editou = item;
@@ -263,7 +181,7 @@ export default {
     },
     custoUnitario(item, index) {
       let valorTotal =
-        this.totalCulturaDesenvolvida(item, index) / item.quantidadeProduzida;
+        this.totalCulturaDesenvolvida(item, index) / item.QtdColhida;
 
       return valorTotal;
     },
@@ -276,6 +194,10 @@ export default {
     },
     totalEtapa(quantidade, valor) {
       return quantidade * valor;
+    },
+    date(pValue) {
+      this.currentDate = pValue;
+      this.searchculturaDesenvolvida();
     },
     period(pValue) {
       this.periodoAtual = pValue;
@@ -301,8 +223,12 @@ export default {
 
 <style lang="scss">
 .hover-card:hover {
-  background: #616161;
+  background: linear-gradient(rgba(85, 85, 85, 0.7), rgba(85, 85, 85, 0.7));
 }
+.hover-card {
+  filter: brightness(1.5);
+}
+
 h3 {
   justify-content: center;
 }
