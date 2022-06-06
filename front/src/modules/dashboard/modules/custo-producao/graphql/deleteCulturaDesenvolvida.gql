@@ -1,0 +1,5 @@
+mutation DeleteCulturaDesenvolvida($id: ID) {
+  deleteCulturaDesenvolvida(where: { id: $id }) {
+    id
+  }
+}

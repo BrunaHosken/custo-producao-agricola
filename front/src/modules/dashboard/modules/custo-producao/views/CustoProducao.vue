@@ -99,6 +99,12 @@
       :showDialog="showDeleteDialog"
       @option="option"
     />
+    <SnackBar
+      :show="createSnackBar"
+      :mensagem="this.mensagem"
+      :color="color"
+      @show="showSnackBar"
+    />
   </v-layout>
 </template>
 
@@ -107,14 +113,17 @@ import CustoProducaoEdit from "./CustoProduçãoEdit.vue";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import Dialog from "./../../../components/Dialog.vue";
 import moment from "moment";
+import SnackBar from "./../../../components/SnackBar.vue";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service";
 export default {
   name: "CulturaDesenvolvida",
   mixins: [formatCurrentMixin],
+
   components: {
     ToolbarByMonth,
     Dialog,
+    SnackBar,
     CustoProducaoEdit,
   },
   data() {
@@ -141,10 +150,17 @@ export default {
       showDeleteDialog: false,
       culturaDesenvolvida: null,
       editou: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
+      selected: [],
     };
   },
 
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     async searchculturaDesenvolvida() {
       const variables = {
         periodSelected: this.periodoAtual,
@@ -164,17 +180,30 @@ export default {
       this.culturaDesenvolvida = item;
       this.editou = true;
     },
-    option(data) {
+    async option(data) {
       if (data === "sim") {
-        this.showDeleteDialog = false;
+        try {
+          await culturaDesenvolvidaService.DeleteCulturaDesenvolvida(
+            this.selected
+          );
+          this.mensagem = "Despesa deletada com sucesso!";
+          this.createSnackBar = true;
+          this.showDeleteDialog = false;
+        } catch (e) {
+          this.mensagem = e.message;
+          this.color = "red";
+          this.createSnackBar = true;
+        }
       } else {
         this.showDeleteDialog = false;
       }
     },
     excluir(item) {
-      this.message = `Deseja realmente excluir a cultura desenvolvida do ${item.cultura}?`;
+      console.log(item);
+      this.message = `Deseja realmente excluir a cultura desenvolvida do(a) ${item.Cultura.DescrCultura}?`;
       this.showDeleteDialog = true;
       this.culturaDesenvolvida = item;
+      this.selected = item;
     },
     novo() {
       this.$router.push("/dashboard/custo-producao/new");

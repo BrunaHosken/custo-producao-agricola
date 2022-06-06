@@ -2,6 +2,7 @@ import apollo from "../../../../../plugins/apollo";
 import culturaDesenvolvidaQuery from "./../graphql/CulturaDesenvolvida.gql";
 import culturaEtapaQuery from "./../graphql/CulturaEtapa.gql";
 import createCulturaDesenvolvida from "./../graphql/createCulturaDesenvolvida.gql";
+import deleteCulturaDesenvolvida from "./../graphql/deleteCulturaDesenvolvida.gql";
 
 const culturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -32,8 +33,17 @@ const CreateCulturaDesenvolvida = async (variables) => {
   return response.data.createCulturaDesenvolvida;
 };
 
+const DeleteCulturaDesenvolvida = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: deleteCulturaDesenvolvida,
+    variables,
+  });
+  return response.data.deleteCulturaDesenvolvida;
+};
+
 export default {
   culturaDesenvolvida,
   culturaEtapa,
   CreateCulturaDesenvolvida,
+  DeleteCulturaDesenvolvida,
 };
