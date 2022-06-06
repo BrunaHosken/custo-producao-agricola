@@ -1,6 +1,7 @@
 import apollo from "../../../../../plugins/apollo";
-import culturaDesenvolvidaQuery from "./../graphql/CulturaProduzida.gql";
+import culturaDesenvolvidaQuery from "./../graphql/CulturaDesenvolvida.gql";
 import culturaEtapaQuery from "./../graphql/CulturaEtapa.gql";
+import createCulturaDesenvolvida from "./../graphql/createCulturaDesenvolvida.gql";
 
 const culturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -19,7 +20,20 @@ const culturaEtapa = async (variables) => {
   return response.data.culturaEtapas;
 };
 
+const CreateCulturaDesenvolvida = async (variables) => {
+  variables.quantidade = parseFloat(variables.quantidade);
+  variables.terreno = parseFloat(variables.terreno);
+  variables.culturaDescricaoId = variables.culturaDescricao.id;
+
+  const response = await apollo.mutate({
+    mutation: createCulturaDesenvolvida,
+    variables,
+  });
+  return response.data.createCulturaDesenvolvida;
+};
+
 export default {
   culturaDesenvolvida,
   culturaEtapa,
+  CreateCulturaDesenvolvida,
 };

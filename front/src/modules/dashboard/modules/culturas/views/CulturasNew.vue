@@ -20,8 +20,8 @@
                   <v-col cols="12" md="6">
                     <v-text-field
                       :error-messages="descriptionErrors"
-                      :success="!$v.form.descricao.$invalid"
-                      v-model.trim="$v.form.descricao.$model"
+                      :success="!$v.form.name.$invalid"
+                      v-model.trim="$v.form.name.$model"
                       label="Descrição da Cultura"
                       prepend-inner-icon="mdi-book-variant"
                       required
@@ -111,7 +111,7 @@ export default {
       createWithError: false,
       unidades: ["Maço", "Dúzia"],
       form: {
-        descricao: "",
+        name: "",
         quantidade: 0,
         unidade: "Maço",
       },
@@ -122,7 +122,7 @@ export default {
   validations() {
     return {
       form: {
-        descricao: {
+        name: {
           required,
           minLength: minLength(2),
         },
@@ -139,7 +139,7 @@ export default {
     },
     descriptionErrors() {
       const errors = [];
-      const description = this.$v.form.descricao;
+      const description = this.$v.form.name;
       if (!description.$dirty) {
         return errors;
       }
@@ -182,7 +182,7 @@ export default {
     },
     clean() {
       this.form = {
-        descricao: "",
+        name: "",
         quantidade: 0,
         unidade: "Maço",
       };

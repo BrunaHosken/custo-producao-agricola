@@ -229,12 +229,18 @@ function createInsumo(_, args, ctx, info) {
 }
 function createCulturaDesenvolvida(_, args, ctx, info) {
   const dateInicio = moment(args.DataInicio);
-  const dateColheita = moment(args.DataColheita);
-  if (!dateInicio.isValid() || !dateColheita.isValid()) {
-    throw new Error("Data inválida!");
+
+  if (!dateInicio.isValid()) {
+    throw new Error("Data de início inválida!");
+  }
+  if (args.DataColheita != null) {
+    const dateColheita = moment(args.DataColheita);
+    if (!dateColheita.isValid()) {
+      throw new Error("Data de colheita inválida!");
+    }
   }
   const agricultorId = getAgricultorId(ctx);
-  console.log(agricultorId);
+
   return ctx.db.mutation.createCulturaDesenvolvida({
     data: {
       Cultura: {

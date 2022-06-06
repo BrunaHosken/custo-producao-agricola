@@ -46,7 +46,7 @@
                   <v-spacer></v-spacer>
                   <span v-if="card.DataColheita != null">
                     Data da Colheita:
-                    {{ formatDateTable(card.DataInicio) }}
+                    {{ formatDateTable(card.DataColheita) }}
                   </span>
 
                   <span v-else>

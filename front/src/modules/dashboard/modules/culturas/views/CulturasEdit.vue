@@ -24,7 +24,7 @@
                     :error-messages="descriptionErrors"
                     :success="!$v.form.name.$invalid"
                     v-model.trim="$v.form.name.$model"
-                    label="Descrição do Insumo"
+                    label="Descrição da Cultura"
                     prepend-inner-icon="mdi-book-variant"
                     required
                   ></v-text-field>
@@ -133,6 +133,9 @@ export default {
       },
     };
   },
+  created() {
+    this.form.unidade = this.unidades[0];
+  },
   watch: {
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
@@ -185,7 +188,9 @@ export default {
     },
     async salvar() {
       try {
-        await culturaService.UpdateCultura(this.form);
+        this.editou
+          ? await culturaService.UpdateCultura(this.form)
+          : await culturaService.CreateCultura(this.form);
         this.editouCultura = false;
         this.$emit("showDialogClose", this.editouCultura);
       } catch (e) {

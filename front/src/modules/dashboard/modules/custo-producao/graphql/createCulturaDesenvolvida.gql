@@ -1,0 +1,29 @@
+mutation createCulturaDesenvolvida(
+  $mesInicio: DateTime!
+  $mesFinal: DateTime
+  $culturaDescricaoId: ID!
+  $quantidade: Float!
+  $terreno: Float!
+  $unidade: String!
+) {
+  createCulturaDesenvolvida(
+    AreaTerrenoHectares: $terreno
+    DataInicio: $mesInicio
+    DataColheita: $mesFinal
+    QtdColhida: $quantidade
+    Unidade: $unidade
+    CulturaId: $culturaDescricaoId
+  ) {
+    id
+    AreaTerrenoHectares
+    DataInicio
+    DataColheita
+    QtdColhida
+    Unidade
+    Cultura {
+      id
+      DescrCultura
+      QtdEstimadaPorHectare
+    }
+  }
+}

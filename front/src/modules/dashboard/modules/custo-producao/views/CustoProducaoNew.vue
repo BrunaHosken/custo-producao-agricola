@@ -128,9 +128,12 @@
                       v-model="form.culturaDescricao"
                       :loading="loadingCultura"
                       :items="cultura"
+                      item-text="label"
+                      item-value="id"
                       :search-input.sync="searchCultura"
                       outlined
                       label="Cultura"
+                      return-object
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                     >
                       <v-list-item
@@ -163,19 +166,19 @@
                       :error-messages="valueErrors"
                       :success="!$v.form.quantidade.$invalid"
                       v-model.trim="$v.form.quantidade.$model"
-                      label="Quantidade Estimada"
+                      :label="label"
                       :value="form.quantidade"
+                      :disabled="!form.colheita"
                       prepend-inner-icon="mdi-numeric"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-select
+                    <v-text-field
                       v-model="form.unidade"
-                      :items="unidades"
                       label="Unidade da Cultura"
                       prepend-inner-icon="mdi-format-list-numbered"
-                      outlined
-                    ></v-select>
+                      disabled
+                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -214,6 +217,12 @@
           :showDialog="showClearDialog"
           @option="option"
         />
+        <SnackBar
+          :show="createSnackBar"
+          :mensagem="this.mensagem"
+          :color="color"
+          @show="showSnackBar"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -221,16 +230,20 @@
 
 <script>
 import moment from "moment";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import Dialog from "./../../../components/Dialog.vue";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
+import culturaService from "./../../culturas/services/cultura-service.js";
+import SnackBar from "./../../../components/SnackBar.vue";
+import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
 
 export default {
   name: "CustoProducaoNew",
   components: {
     Dialog,
     CulturasEdit,
+    SnackBar,
   },
   mixins: [formatCurrentMixin],
   data() {
@@ -238,13 +251,13 @@ export default {
       valid: false,
       itemsUso: ["Real", "Previsto"],
       searchTable: null,
-      cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
+      cultura: [],
       unidades: ["Maço", "Dúzia"],
       form: {
         colheita: true,
         mesInicio: moment().format("YYYY-MM-DD"),
         mesFinal: moment().add(1, "M").format("YYYY-MM-DD"),
-        culturaDescricao: "Crisântemo",
+        culturaDescricao: "",
         quantidade: 0,
         terreno: 0,
         unidade: "Dúzia",
@@ -261,16 +274,27 @@ export default {
       isPrevisto: false,
       searchCultura: null,
       loadingCultura: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
     };
   },
   validations() {
-    return {
+    const validators = {
       form: {
-        quantidade: {
+        terreno: {
           required,
           minValue: minValue(0.0000001),
         },
-        terreno: {
+      },
+    };
+    if (this.colheita) {
+      return validators.form;
+    }
+    return {
+      form: {
+        ...validators.form,
+        quantidade: {
           required,
           minValue: minValue(0.0000001),
         },
@@ -281,12 +305,42 @@ export default {
     "form.colheita"(pValue) {
       if (!pValue) {
         this.form.mesFinal = null;
+        this.form.quantidade =
+          this.form.culturaDescricao.quantidade * this.form.terreno;
+        this.$v.$reset();
       } else {
         this.form.mesFinal = moment().add(1, "M").format("YYYY-MM-DD");
+        this.form.quantidade = 0;
+      }
+    },
+    "form.terreno"(pValue) {
+      if (!this.form.colheita) {
+        this.form.quantidade = this.form.culturaDescricao.quantidade * pValue;
+      }
+    },
+    "form.culturaDescricao"(pValue) {
+      if (pValue && pValue !== null) {
+        this.form.unidade = pValue.unidade;
       }
     },
   },
+  async created() {
+    const data = await culturaService.cultura();
+    data.forEach((item) => {
+      this.cultura.push({
+        label: item.DescrCultura,
+        id: item.id,
+        quantidade: item.QtdEstimadaPorHectare,
+        unidade: item.Und,
+      });
+    });
+
+    this.form.culturaDescricao = this.cultura[0];
+  },
   computed: {
+    label() {
+      return this.form.colheita ? "Quantidade Colhida" : "Quantidade Estimada";
+    },
     initialDateErrors() {
       const errors = [];
 
@@ -329,6 +383,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     formatDateTable(value) {
       return moment(value).format("DD/MM/YYYY");
     },
@@ -367,16 +424,22 @@ export default {
         colheita: true,
         mesInicio: moment().format("YYYY-MM-DD"),
         mesFinal: moment().add(1, "M").format("YYYY-MM-DD"),
-        culturaDescricao: "Crisântemo",
         quantidade: 0,
         terreno: 0,
       };
+      this.form.culturaDescricao = this.cultura[0];
     },
-    save() {
-      // this.$v.$reset();
-      // this.clear();
-      console.log(this.form);
-      // this.$router.go(-1);
+    async save() {
+      try {
+        await culturaDesenvolvidaService.CreateCulturaDesenvolvida(this.form);
+        this.$router.go(-1);
+        this.createSnackBar = true;
+        this.mensagem = "Despesa criada com sucesso!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };

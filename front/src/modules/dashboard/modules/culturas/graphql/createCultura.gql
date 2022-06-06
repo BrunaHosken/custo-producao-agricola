@@ -1,10 +1,6 @@
-mutation CreateCultura(
-  $descricao: String!
-  $quantidade: Float!
-  $unidade: String!
-) {
+mutation CreateCultura($name: String!, $quantidade: Float!, $unidade: String!) {
   createCultura(
-    DescrCultura: $descricao
+    DescrCultura: $name
     QtdEstimadaPorHectare: $quantidade
     Und: $unidade
   ) {
