@@ -3,6 +3,10 @@ import culturaDesenvolvidaQuery from "./../graphql/CulturaDesenvolvida.gql";
 import culturaEtapaQuery from "./../graphql/CulturaEtapa.gql";
 import createCulturaDesenvolvida from "./../graphql/createCulturaDesenvolvida.gql";
 import deleteCulturaDesenvolvida from "./../graphql/deleteCulturaDesenvolvida.gql";
+import usoInsumoPrevistoQuery from "./../graphql/UsoInsumoPrevisto.gql";
+import usoInsumoRealQuery from "./../graphql/UsoInsumoReal.gql";
+import servicoPrevistoQuery from "./../graphql/ServicoPrestado.gql";
+import servicoPrestadoQuery from "./../graphql/ServicoPrevisto.gql.gql";
 
 const culturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -12,13 +16,41 @@ const culturaDesenvolvida = async (variables) => {
   return response.data.culturaDesenvolvidas;
 };
 const culturaEtapa = async (variables) => {
-  variables.id = variables[0].id;
-  variables.splice(variables[0].id);
   const response = await apollo.mutate({
     mutation: culturaEtapaQuery,
     variables,
   });
   return response.data.culturaEtapas;
+};
+const usoInsumoPrevisto = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: usoInsumoPrevistoQuery,
+    variables,
+  });
+  return response.data.usoInsumoPrevistoes;
+};
+const usoInsumoReal = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: usoInsumoRealQuery,
+    variables,
+  });
+  return response.data.usoInsumoReals;
+};
+const servicoPrevisto = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: servicoPrevistoQuery,
+    variables,
+  });
+
+  return response.data.servicoPrestadoes;
+};
+const servicoPrestado = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: servicoPrestadoQuery,
+    variables,
+  });
+
+  return response.data.servicoPrevistoes;
 };
 
 const CreateCulturaDesenvolvida = async (variables) => {
@@ -46,4 +78,8 @@ export default {
   culturaEtapa,
   CreateCulturaDesenvolvida,
   DeleteCulturaDesenvolvida,
+  servicoPrestado,
+  servicoPrevisto,
+  usoInsumoPrevisto,
+  usoInsumoReal,
 };

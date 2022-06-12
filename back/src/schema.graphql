@@ -665,8 +665,8 @@ type Query {
   vendaItems: [VendaItem!]!
   # vendaItems(date: String, type: String): [VendaItem!]!
   culturaEtapas(id: ID): [CulturaEtapa!]!
-  usoInsumoReals: [UsoInsumoReal!]!
-  usoInsumoPrevistoes: [UsoInsumoPrevisto!]!
-  servicoPrestadoes: [ServicoPrestado!]!
-  servicoPrevistoes: [ServicoPrevisto!]!
+  usoInsumoReals(id: ID): [UsoInsumoReal!]!
+  usoInsumoPrevistoes(id: ID): [UsoInsumoPrevisto!]!
+  servicoPrestadoes(id: ID): [ServicoPrestado!]!
+  servicoPrevistoes(id: ID): [ServicoPrevisto!]!
 }

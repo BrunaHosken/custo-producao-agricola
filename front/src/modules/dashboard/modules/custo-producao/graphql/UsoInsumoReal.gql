@@ -1,0 +1,24 @@
+query UsoInsumoReal($id: ID!) {
+  usoInsumoReals(id: $id) {
+    id
+    Qtd
+    Data
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+      PrecoUnit
+      Und
+      TipoInsumo {
+        id
+        NomeTipo
+      }
+      Agricultor {
+        Nome
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+query ServicoPrevisto($id: ID!) {
+  servicoPrevistoes(id: $id) {
+    id
+    DiasHomem
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Servico {
+      id
+      DescrServico
+      ValorDiaHomem
+    }
+  }
+}

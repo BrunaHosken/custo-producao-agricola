@@ -70,6 +70,7 @@
                   </h3>
                   <h3>
                     Custo Unitário:
+
                     {{ formatCurrency(custoUnitario(card, card.id)) }}
                   </h3>
                 </v-card-text>
@@ -144,6 +145,7 @@ export default {
           QtdColhida: 0,
           Unidade: "",
           id: 0,
+          etapas: [],
         },
       ],
       message: "",
@@ -166,9 +168,43 @@ export default {
         periodSelected: this.periodoAtual,
         currentDate: this.currentDate,
       };
+      const variablesEtapa = {
+        id: 0,
+      };
+      const variablesTipoEtapa = {
+        id: 0,
+      };
       this.cards = await culturaDesenvolvidaService.culturaDesenvolvida(
         variables
       );
+      for (var data in this.cards) {
+        variablesEtapa.id = this.cards[data].id;
+        this.cards[data].etapas = await culturaDesenvolvidaService.culturaEtapa(
+          variablesEtapa
+        );
+        if (this.cards[data].etapas.length > 0) {
+          for (var tipoEtapa in this.cards[data].etapas) {
+            variablesTipoEtapa.id = this.cards[data].etapas[tipoEtapa].id;
+
+            this.cards[data].etapas[tipoEtapa].insumoPrevisto =
+              await culturaDesenvolvidaService.usoInsumoPrevisto(
+                variablesTipoEtapa
+              );
+            this.cards[data].etapas[tipoEtapa].insumoReal =
+              await culturaDesenvolvidaService.usoInsumoReal(
+                variablesTipoEtapa
+              );
+            this.cards[data].etapas[tipoEtapa].servicoPrevisto =
+              await culturaDesenvolvidaService.servicoPrevisto(
+                variablesTipoEtapa
+              );
+            this.cards[data].etapas[tipoEtapa].servicoPrestado =
+              await culturaDesenvolvidaService.servicoPrestado(
+                variablesTipoEtapa
+              );
+          }
+        }
+      }
     },
     formatDateTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
@@ -177,6 +213,7 @@ export default {
       this.editou = item;
     },
     editar(item) {
+      console.log(item);
       this.culturaDesenvolvida = item;
       this.editou = true;
     },
@@ -211,7 +248,6 @@ export default {
     custoUnitario(item, index) {
       let valorTotal =
         this.totalCulturaDesenvolvida(item, index) / item.QtdColhida;
-
       return valorTotal;
     },
     totalCulturaDesenvolvida(item, index) {

@@ -184,7 +184,6 @@ function vendaItems(_, args, ctx, info) {
   );
 }
 function culturaEtapas(_, { id }, ctx, info) {
-  console.log(id);
   return ctx.db.query.culturaEtapas(
     {
       where: {
@@ -197,17 +196,57 @@ function culturaEtapas(_, { id }, ctx, info) {
     info
   );
 }
-function usoInsumoReals(_, args, ctx, info) {
-  return ctx.db.query.usoInsumoReals({ orderBy: "Data_ASC" }, info);
+function usoInsumoReals(_, { id }, ctx, info) {
+  return ctx.db.query.usoInsumoReals(
+    {
+      where: {
+        CulturaEtapa: {
+          id: id,
+        },
+      },
+      orderBy: "Data_ASC",
+    },
+    info
+  );
 }
-function usoInsumoPrevistoes(_, args, ctx, info) {
-  return ctx.db.query.usoInsumoPrevistoes({ orderBy: "Qtd_ASC" }, info);
+function usoInsumoPrevistoes(_, { id }, ctx, info) {
+  return ctx.db.query.usoInsumoPrevistoes(
+    {
+      where: {
+        CulturaEtapa: {
+          id: id,
+        },
+      },
+      orderBy: "Qtd_ASC",
+    },
+    info
+  );
 }
-function servicoPrestadoes(_, args, ctx, info) {
-  return ctx.db.query.servicoPrestadoes({ orderBy: "Data_ASC" }, info);
+function servicoPrestadoes(_, { id }, ctx, info) {
+  return ctx.db.query.servicoPrestadoes(
+    {
+      where: {
+        CulturaEtapa: {
+          id: id,
+        },
+      },
+      orderBy: "Data_ASC",
+    },
+    info
+  );
 }
-function servicoPrevistoes(_, args, ctx, info) {
-  return ctx.db.query.servicoPrevistoes({ orderBy: "DiasHomem_ASC" }, info);
+function servicoPrevistoes(_, { id }, ctx, info) {
+  return ctx.db.query.servicoPrevistoes(
+    {
+      where: {
+        CulturaEtapa: {
+          id: id,
+        },
+      },
+      orderBy: "DiasHomem_ASC",
+    },
+    info
+  );
 }
 module.exports = {
   agricultor,

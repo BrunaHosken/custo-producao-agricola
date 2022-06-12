@@ -1,0 +1,23 @@
+query UsoInsumoPrevisto($id: ID!) {
+  usoInsumoPrevistoes(id: $id) {
+    id
+    Qtd
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+      PrecoUnit
+      Und
+      TipoInsumo {
+        id
+        NomeTipo
+      }
+      Agricultor {
+        Nome
+      }
+    }
+  }
+}
