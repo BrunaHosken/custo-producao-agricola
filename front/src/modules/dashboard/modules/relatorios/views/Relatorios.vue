@@ -16,7 +16,13 @@
     </v-layout>
     <v-layout v-show="produtos.length > 0" row wrap>
       <v-flex xs12>
-        <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+        <ToolbarByMonth
+          class="mt-5 mb-3"
+          format="MM-YYYY"
+          month=""
+          @period="period"
+          @date="date"
+        />
       </v-flex>
       <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
         <v-card elevation="24" outlined>
@@ -95,18 +101,25 @@
 import Chart from "chart.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
+import despesasService from "./../../despesas/services/despesa-service";
+import { generateChartConfigs } from "./../../../../../utils";
 export default {
   name: "Relatorios",
   mixins: [formatCurrentMixin],
   components: { ToolbarByMonth },
   data: () => ({
+    chartFixesIncomes: undefined,
+    chartVariablesIncomes: undefined,
     charts: [
       { title: "Tipo de Consumo Fixo", refId: "chartFixesIncomes" },
       { title: "Tipo de Consumo Variável", refId: "chartVariablesIncomes" },
       { title: "Vendas por Cliente", refId: "chartClientsSales" },
       { title: "Lucro por Cultura", refId: "chartIncomesCultures" },
     ],
+    despesaChart: [],
     search: "",
+    periodoAtual: "",
+    currentDate: "",
     headers: [
       {
         text: "Produto",
@@ -153,12 +166,70 @@ export default {
   computed: {},
   mounted() {
     this.setChartsBar();
-    this.setChartsDoughnut();
-    this.setChartsDoughnut1();
     this.setChartsDoughnut2();
   },
   destroyed() {},
   methods: {
+    async searchDespesa() {
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.despesaChart = await despesasService.despesas(variables);
+    },
+    period(pValue) {
+      this.periodoAtual = pValue;
+    },
+    async date(pValue) {
+      this.currentDate = pValue;
+      await this.searchDespesa();
+      this.setCharts();
+    },
+
+    updateOrCreateChart(chartId, options) {
+      if (this[chartId]) {
+        this[chartId].data.datasets = options.data.datasets;
+        if (options.data.labels) {
+          this[chartId].data.labels = options.data.labels;
+        }
+        this[chartId].update();
+        return this[chartId];
+      }
+
+      const ref = Array.isArray(this.$refs[chartId])
+        ? this.$refs[chartId][0]
+        : this.$refs[chartId];
+
+      const ctx = ref.getContext("2d");
+      this[chartId] = new Chart(ctx, options);
+      return this[chartId];
+    },
+
+    setCharts() {
+      this.updateOrCreateChart(
+        "chartFixesIncomes",
+        generateChartConfigs({
+          type: "doughnut",
+          items: this.despesaChart.filter(
+            (d) => d.TipoDespesa.DescrTipoDespesa === "Fixo"
+          ),
+          keyToGroup: "DescrDetalhada",
+          keyOfValue: "Valor",
+        })
+      );
+      this.updateOrCreateChart(
+        "chartVariablesIncomes",
+        generateChartConfigs({
+          type: "doughnut",
+          items: this.despesaChart.filter(
+            (d) => d.TipoDespesa.DescrTipoDespesa === "Variável"
+          ),
+          keyToGroup: "DescrDetalhada",
+          keyOfValue: "Valor",
+        })
+      );
+    },
+
     calculaTotalLucro(data) {
       let lucros = 0;
       for (var prop in this.produtos) {
@@ -198,63 +269,6 @@ export default {
               data: [300000],
               label: "Copo de Leite",
               backgroundColor: [this.$vuetify.theme.themes.dark.accent],
-            },
-          ],
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        },
-      });
-    },
-    setChartsDoughnut() {
-      const ctx = this.$refs.chartVariablesIncomes[0].getContext("2d");
-      const myChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: [],
-          datasets: [
-            {
-              data: [],
-              backgroundColor: [],
-              hoverOffset: 4,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        },
-      });
-    },
-    setChartsDoughnut1() {
-      const ctx = this.$refs.chartFixesIncomes[0].getContext("2d");
-      const myChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["Mão de Obra", "Taxa e Impostos", "Manutenção Familiar"],
-          datasets: [
-            {
-              data: [1400, 400, 900],
-              backgroundColor: [
-                "rgb(255, 99, 132)",
-                "rgb(54, 162, 235)",
-                "rgb(255, 205, 86)",
-              ],
             },
           ],
         },

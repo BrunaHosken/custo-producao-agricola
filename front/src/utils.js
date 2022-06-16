@@ -123,7 +123,8 @@ const generateChartData = ({
               response[label] >= 0 ? response[label] : -response[label]
             ),
             backgroundColor: backgroundColors || generateColors(labels.length),
-            borderWidth: 0,
+            color: "#fff",
+            borderWidth: 2,
           },
         ],
         labels: items.length > 0 ? labels : [],
