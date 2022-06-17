@@ -4,7 +4,7 @@
       <ToolbarByMonth
         class="mt-5 mb-3"
         format="MM-YYYY"
-        month="02"
+        month=""
         @period="period"
         @date="date"
       />
@@ -70,7 +70,6 @@
                   </h3>
                   <h3>
                     Custo Unitário:
-
                     {{ formatCurrency(custoUnitario(card, card.id)) }}
                   </h3>
                 </v-card-text>
@@ -177,43 +176,43 @@ export default {
       this.cards = await culturaDesenvolvidaService.culturaDesenvolvida(
         variables
       );
-      for (var data in this.cards) {
-        variablesEtapa.id = this.cards[data].id;
-        this.cards[data].etapas = await culturaDesenvolvidaService.culturaEtapa(
+      this.cards.forEach(async (data) => {
+        variablesEtapa.id = data.id;
+        data.etapas = await culturaDesenvolvidaService.culturaEtapa(
           variablesEtapa
         );
-        if (this.cards[data].etapas.length > 0) {
-          for (var tipoEtapa in this.cards[data].etapas) {
-            variablesTipoEtapa.id = this.cards[data].etapas[tipoEtapa].id;
 
-            this.cards[data].etapas[tipoEtapa].insumoPrevisto =
+        if (data.etapas.length > 0) {
+          data.etapas.forEach(async (etapas) => {
+            variablesTipoEtapa.id = etapas.id;
+
+            etapas.insumoPrevisto =
               await culturaDesenvolvidaService.usoInsumoPrevisto(
                 variablesTipoEtapa
               );
-            this.cards[data].etapas[tipoEtapa].insumoReal =
-              await culturaDesenvolvidaService.usoInsumoReal(
-                variablesTipoEtapa
-              );
-            this.cards[data].etapas[tipoEtapa].servicoPrevisto =
+            etapas.insumoReal = await culturaDesenvolvidaService.usoInsumoReal(
+              variablesTipoEtapa
+            );
+            etapas.servicoPrevisto =
               await culturaDesenvolvidaService.servicoPrevisto(
                 variablesTipoEtapa
               );
-            this.cards[data].etapas[tipoEtapa].servicoPrestado =
+            etapas.servicoPrestado =
               await culturaDesenvolvidaService.servicoPrestado(
                 variablesTipoEtapa
               );
-          }
+          });
         }
-      }
+      });
     },
     formatDateTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
     close(item) {
       this.editou = item;
+      this.culturaDesenvolvida = null;
     },
     editar(item) {
-      console.log(item);
       this.culturaDesenvolvida = item;
       this.editou = true;
     },
@@ -236,7 +235,6 @@ export default {
       }
     },
     excluir(item) {
-      console.log(item);
       this.message = `Deseja realmente excluir a cultura desenvolvida do(a) ${item.Cultura.DescrCultura}?`;
       this.showDeleteDialog = true;
       this.culturaDesenvolvida = item;
@@ -246,41 +244,26 @@ export default {
       this.$router.push("/dashboard/custo-producao/new");
     },
     custoUnitario(item, index) {
+      //this.cards.forEach((data) => {});
       let valorTotal =
         this.totalCulturaDesenvolvida(item, index) / item.QtdColhida;
       return valorTotal;
     },
     totalCulturaDesenvolvida(item, index) {
       let valorTotal = 0;
-      for (var prop in item.etapas) {
-        valorTotal += item.etapas[prop].valor * item.etapas[prop].quantidade;
-      }
+      // console.log(item.etapas);
+      // for (var prop in item.etapas) {
+      //   valorTotal += item.etapas[prop].valor * item.etapas[prop].quantidade;
+      // }
       return valorTotal;
     },
-    totalEtapa(quantidade, valor) {
-      return quantidade * valor;
-    },
+
     date(pValue) {
       this.currentDate = pValue;
       this.searchculturaDesenvolvida();
     },
     period(pValue) {
       this.periodoAtual = pValue;
-    },
-    receitaBruta(card, index) {
-      return this.cards[index].vendido * this.cards[index].valorVenda;
-    },
-    custoProducao(card, index) {
-      return this.cards[index].vendido * this.cards[index].custo;
-    },
-    margemBrutaSemanal(card, index) {
-      return this.receitaBruta(card, index) - this.custoProducao(card, index);
-    },
-    margemBrutaMensal(card, index) {
-      return this.margemBrutaSemanal(card, index) * 4;
-    },
-    margemBrutaAnual(card, index) {
-      return this.margemBrutaMensal(card, index) * 12;
     },
   },
 };

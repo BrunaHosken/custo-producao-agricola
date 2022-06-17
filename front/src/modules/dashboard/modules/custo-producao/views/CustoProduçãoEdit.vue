@@ -121,14 +121,17 @@
               </v-row>
 
               <v-row class="mt-4">
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="6                                    ">
                   <v-autocomplete
                     v-model="form.culturaDescricao"
                     :loading="loadingCultura"
                     :items="cultura"
+                    item-text="label"
+                    item-value="id"
                     :search-input.sync="searchCultura"
                     outlined
                     label="Cultura"
+                    return-object
                     prepend-inner-icon="mdi-format-list-bulleted-type"
                   >
                     <v-list-item
@@ -145,7 +148,7 @@
                   </v-autocomplete>
                 </v-col>
 
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="6">
                   <v-text-field
                     :error-messages="terrenoErrors"
                     :success="!$v.form.terreno.$invalid"
@@ -155,16 +158,26 @@
                     prepend-inner-icon="mdi-numeric"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" md="4">
+              </v-row>
+              <v-row class="mt-4">
+                <v-col cols="12" md="6">
                   <v-text-field
                     :error-messages="valueErrors"
                     :success="!$v.form.quantidade.$invalid"
                     v-model.trim="$v.form.quantidade.$model"
-                    label="Quantidade"
+                    :label="labelQuantidade"
                     :value="form.quantidade"
                     prepend-inner-icon="mdi-numeric"
                   ></v-text-field
                 ></v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.unidade"
+                    label="Unidade da Cultura"
+                    prepend-inner-icon="mdi-format-list-numbered"
+                    disabled
+                  ></v-text-field>
+                </v-col>
               </v-row>
 
               <hr />
@@ -475,9 +488,9 @@
                   {{ item.ordem }}º
                 </template>
 
-                <template v-slot:[`item.quantidade`]="{ item }">
+                <!-- <template v-slot:[`item.quantidade`]="{ item }">
                   {{ item.quantidade.toLocaleString() }}
-                </template>
+                </template> -->
                 <template v-slot:[`item.valor`]="{ item }">
                   {{ formatCurrency(item.valor) }}
                 </template>
@@ -529,7 +542,7 @@
 import moment from "moment";
 import { required, minLength, minValue } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
-
+import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
 import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
@@ -599,8 +612,7 @@ export default {
           value: "total",
         },
       ],
-      cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
-      unidades: ["Maço", "Dúzia"],
+      cultura: [],
       etapas: [
         "Adubo foliar fosfatado",
         "Espalhante adesivo",
@@ -610,12 +622,13 @@ export default {
         "Mudas enraizadas",
       ],
       form: {
-        colheita: true,
         mesInicio: moment().format("YYYY-MM-DD"),
         mesFinal: moment().add(1, "M").format("YYYY-MM-DD"),
-        culturaDescricao: "Crisântemo",
+        colheita: false,
+        culturaDescricao: "",
         quantidade: 0,
         terreno: 0,
+        unidade: "Dúzia",
         etapas: [],
       },
       showDialogProduto: false,
@@ -668,36 +681,52 @@ export default {
     };
   },
   validations() {
-    return {
-      formEtapa: {
-        descricao: {
-          required,
-          minLength: minLength(2),
-        },
-        quantidade: {
-          required,
-          minValue: minValue(0.0000001),
-        },
-        ordem: {
-          required,
-          minValue: minValue(0.0000001),
-        },
-      },
+    // formEtapa: {
+    //   descricao: {
+    //     required,
+    //     minLength: minLength(2),
+    //   },
+    //   quantidade: {
+    //     required,
+    //     minValue: minValue(0.0000001),
+    //   },
+    //   ordem: {
+    //     required,
+    //     minValue: minValue(0.0000001),
+    //   },
+    // },
+    const validators = {
       form: {
-        descricao: {
-          required,
-          minLength: minLength(2),
-        },
-        quantidade: {
-          required,
-          minValue: minValue(0.0000001),
-        },
         terreno: {
           required,
           minValue: minValue(0.0000001),
         },
       },
     };
+    if (this.colheita) {
+      return validators.form;
+    }
+    return {
+      form: {
+        ...validators.form,
+        quantidade: {
+          required,
+          minValue: minValue(0.0000001),
+        },
+      },
+    };
+  },
+  async created() {
+    const data = await culturaService.cultura();
+    data.forEach((item) => {
+      this.cultura.push({
+        label: item.DescrCultura,
+        id: item.id,
+        quantidade: item.QtdEstimadaPorHectare,
+        unidade: item.Und,
+      });
+    });
+    this.form.culturaDescricao = this.cultura[0];
   },
   watch: {
     showDialog(pValue) {
@@ -705,8 +734,32 @@ export default {
         this.preencheForm();
       }
     },
+    "form.colheita"(pValue) {
+      if (!pValue && pValue !== undefined) {
+        this.form.mesFinal = null;
+        this.form.quantidade =
+          this.form.culturaDescricao.QtdEstimadaPorHectare * this.form.terreno;
+        this.$v.$reset();
+      } else {
+        this.form.mesFinal = moment(this.form.mesInicio)
+          .add(1, "M")
+          .format("YYYY-MM-DD");
+
+        this.form.quantidade = 0;
+      }
+    },
+    "form.terreno"(pValue) {
+      if (!this.form.colheita) {
+        this.form.quantidade = this.form.culturaDescricao.quantidade * pValue;
+      }
+    },
+    "form.culturaDescricao"(pValue) {
+      if (pValue && pValue !== null) {
+        this.form.unidade = pValue.Und;
+      }
+    },
     formEditou(pValue) {
-      if (pValue) {
+      if (pValue && pValue !== null) {
         this.preencheForm();
       }
     },
@@ -730,6 +783,9 @@ export default {
     formattedDatePrevista() {
       return moment(this.formEtapa.datePrevista).format("DD/MM/YYYY");
     },
+    labelQuantidade() {
+      return this.form.colheita ? "Quantidade Colhida" : "Quantidade Estimada";
+    },
     label() {
       return this.isServico ? "Dias/Homem" : "Quantidade";
     },
@@ -745,39 +801,39 @@ export default {
     formattedDateFinalEtapa() {
       return moment(this.formEtapa.mesFinal).format("MM/YYYY");
     },
-    ordemErrors() {
-      const errors = [];
-      const value = this.$v.formEtapa.ordem;
-      if (!value.$dirty) {
-        return errors;
-      }
-      !value.required && errors.push("Valor  é obrigatório!");
-      !value.minValue && errors.push(`Insira um valor acima de 0`);
-      return errors;
-    },
-    descriptionEtapaErrors() {
-      const errors = [];
-      const description = this.$v.formEtapa.descricao;
-      if (!description.$dirty) {
-        return errors;
-      }
-      !description.required && errors.push("Descrição é obrigatória!");
-      !description.minLength &&
-        errors.push(
-          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-        );
-      return errors;
-    },
-    valueEtapaErrors() {
-      const errors = [];
-      const value = this.$v.formEtapa.quantidade;
-      if (!value.$dirty) {
-        return errors;
-      }
-      !value.required && errors.push("Valor  é obrigatório!");
-      !value.minValue && errors.push(`Insira um valor acima de 0`);
-      return errors;
-    },
+    // ordemErrors() {
+    //   const errors = [];
+    //   const value = this.$v.formEtapa.ordem;
+    //   if (!value.$dirty) {
+    //     return errors;
+    //   }
+    //   !value.required && errors.push("Valor  é obrigatório!");
+    //   !value.minValue && errors.push(`Insira um valor acima de 0`);
+    //   return errors;
+    // },
+    // descriptionEtapaErrors() {
+    //   const errors = [];
+    //   const description = this.$v.formEtapa.descricao;
+    //   if (!description.$dirty) {
+    //     return errors;
+    //   }
+    //   !description.required && errors.push("Descrição é obrigatória!");
+    //   !description.minLength &&
+    //     errors.push(
+    //       `Insira pelo menos ${description.$params.minLength.min} caracteres!`
+    //     );
+    //   return errors;
+    // },
+    // valueEtapaErrors() {
+    //   const errors = [];
+    //   const value = this.$v.formEtapa.quantidade;
+    //   if (!value.$dirty) {
+    //     return errors;
+    //   }
+    //   !value.required && errors.push("Valor  é obrigatório!");
+    //   !value.minValue && errors.push(`Insira um valor acima de 0`);
+    //   return errors;
+    // },
     terrenoErrors() {
       const errors = [];
       const value = this.$v.form.terreno;
@@ -786,19 +842,6 @@ export default {
       }
       !value.required && errors.push("Valor  é obrigatório!");
       !value.minValue && errors.push(`Insira um valor acima de 0`);
-      return errors;
-    },
-    descriptionErrors() {
-      const errors = [];
-      const description = this.$v.form.descricao;
-      if (!description.$dirty) {
-        return errors;
-      }
-      !description.required && errors.push("Descrição é obrigatória!");
-      !description.minLength &&
-        errors.push(
-          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-        );
       return errors;
     },
     valueErrors() {
@@ -838,18 +881,28 @@ export default {
     },
     preencheForm() {
       this.form = {
-        colheita: false,
-        mesInicio: this.formEditou.day,
-
-        culturaDescricao: this.formEditou.cultura,
-        terreno: this.formEditou.terreno,
-        quantidade: this.formEditou.quantidadeProduzida,
-        etapas: this.formEditou.etapas,
+        mesInicio: moment(this.formEditou.DataInicio.substr(0, 10)).format(
+          "YYYY-MM-DD"
+        ),
+        unidade: this.formEditou.Cultura.Und,
+        terreno: this.formEditou.AreaTerrenoHectares,
+        quantidade: this.formEditou.QtdColhida,
+        culturaDescricao: this.formEditou.Cultura,
+        colheita: this.formEditou.DataColheita !== null ? true : false,
+        //etapas: this.formEditou.etapas,
       };
-
-      this.dateDialogValueInitial = this.formEditou.day;
-
-      // this.dateDialogValueFinal = pValue.mesFinal;
+      if (this.formEditou.DataColheita !== null) {
+        this.form.mesFinal = moment(
+          this.formEditou.DataColheita.substr(0, 10)
+        ).format("YYYY-MM-DD");
+        this.dateDialogValueFinal = this.form.mesInicio;
+        this.dateDialogValueFinal = moment(
+          this.formEditou.DataColheita.substr(0, 10)
+        ).format("YYYY-MM-DD");
+      }
+      this.dateDialogValueInitial = moment(
+        this.formEditou.DataInicio.substr(0, 10)
+      ).format("YYYY-MM-DD");
     },
     cancelar() {
       this.editouCustoProducao = false;
@@ -924,16 +977,14 @@ export default {
     },
     clean() {
       this.form = {
+        colheita: false,
         mesInicio: moment().format("YYYY-MM-DD"),
-        mesFinal: moment().format("YYYY-MM-DD"),
-
-        descricao: "",
-        tipoEtapa: "Insumo",
-        tipoUso: "Real",
+        mesFinal: moment().add(1, "M").format("YYYY-MM-DD"),
+        culturaDescricao: "",
         quantidade: 0,
-        servico: "Preparo do Solo",
-        insumo: "Mudas",
-        ordem: 0,
+        terreno: 0,
+        unidade: "Dúzia",
+        etapas: [],
       };
     },
     save() {

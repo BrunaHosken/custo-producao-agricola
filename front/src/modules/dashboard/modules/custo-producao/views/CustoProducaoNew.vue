@@ -252,7 +252,6 @@ export default {
       itemsUso: ["Real", "Previsto"],
       searchTable: null,
       cultura: [],
-      unidades: ["Maço", "Dúzia"],
       form: {
         colheita: true,
         mesInicio: moment().format("YYYY-MM-DD"),
