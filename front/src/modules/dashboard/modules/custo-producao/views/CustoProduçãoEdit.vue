@@ -6,7 +6,7 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title class="text-h5 mb-1">
-                Cadastrar Cultura Desenvolvida
+                Editar Cultura Desenvolvida
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -534,24 +534,34 @@
         :editou="false"
         @showDialogClose="close"
       />
+      <SnackBar
+        :show="createSnackBar"
+        :mensagem="this.mensagem"
+        :color="color"
+        @show="showSnackBar"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import moment from "moment";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
 import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
+import SnackBar from "./../../../components/SnackBar.vue";
+import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
+
 export default {
   name: "CustoProducaoEdit",
   components: {
     CulturasEdit,
     InsumosEdit,
     ServicoEdit,
+    SnackBar,
   },
   props: {
     showDialog: {
@@ -629,6 +639,7 @@ export default {
         quantidade: 0,
         terreno: 0,
         unidade: "Dúzia",
+        id: 0,
         etapas: [],
       },
       showDialogProduto: false,
@@ -678,6 +689,9 @@ export default {
       editouEtapaCultura: false,
       selected: [],
       editouCustoProducao: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
     };
   },
   validations() {
@@ -722,8 +736,8 @@ export default {
       this.cultura.push({
         label: item.DescrCultura,
         id: item.id,
-        quantidade: item.QtdEstimadaPorHectare,
-        unidade: item.Und,
+        QtdEstimadaPorHectare: item.QtdEstimadaPorHectare,
+        Und: item.Und,
       });
     });
     this.form.culturaDescricao = this.cultura[0];
@@ -739,6 +753,8 @@ export default {
         this.form.mesFinal = null;
         this.form.quantidade =
           this.form.culturaDescricao.QtdEstimadaPorHectare * this.form.terreno;
+        console.log(this.form.culturaDescricao.QtdEstimadaPorHectare);
+        console.log(this.form.terreno);
         this.$v.$reset();
       } else {
         this.form.mesFinal = moment(this.form.mesInicio)
@@ -750,10 +766,12 @@ export default {
     },
     "form.terreno"(pValue) {
       if (!this.form.colheita) {
-        this.form.quantidade = this.form.culturaDescricao.quantidade * pValue;
+        this.form.quantidade =
+          this.form.culturaDescricao.QtdEstimadaPorHectare * pValue;
       }
     },
     "form.culturaDescricao"(pValue) {
+      console.log(pValue);
       if (pValue && pValue !== null) {
         this.form.unidade = pValue.Und;
       }
@@ -856,6 +874,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     novoServico() {
       this.showDialogServico = true;
     },
@@ -884,6 +905,7 @@ export default {
         mesInicio: moment(this.formEditou.DataInicio.substr(0, 10)).format(
           "YYYY-MM-DD"
         ),
+        id: this.formEditou.id,
         unidade: this.formEditou.Cultura.Und,
         terreno: this.formEditou.AreaTerrenoHectares,
         quantidade: this.formEditou.QtdColhida,
@@ -909,11 +931,20 @@ export default {
       this.$emit("showDialogClose", this.editouCustoProducao);
       this.clean();
     },
-    salvar() {
-      this.editouCustoProducao = false;
-
-      this.$emit("showDialogClose", this.editouCustoProducao);
-      this.clean();
+    async save() {
+      try {
+        console.log(this.form);
+        await culturaDesenvolvidaService.UpdateCulturaDesenvolvida(this.form);
+        this.createSnackBar = true;
+        this.mensagem = "Custo de Produção editado com sucesso!";
+        this.editouCustoProducao = false;
+        this.$emit("showDialogClose", this.editouCustoProducao);
+        this.clean();
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
     calculaTotal(valor, quantidade) {
       return valor * quantidade;
@@ -955,9 +986,7 @@ export default {
       this.showDateDialogFinal = false;
       this.dateDialogValueFinal = this.form.mesFinal;
     },
-    cancel() {
-      this.$router.go(-1);
-    },
+
     cleanEtapa() {
       this.formEtapa = {
         mesInicio: new Date().toISOString().substr(0, 7),
@@ -986,11 +1015,6 @@ export default {
         unidade: "Dúzia",
         etapas: [],
       };
-    },
-    save() {
-      // this.$v.$reset();
-      // this.clear();
-      this.$router.go(-1);
     },
   },
 };

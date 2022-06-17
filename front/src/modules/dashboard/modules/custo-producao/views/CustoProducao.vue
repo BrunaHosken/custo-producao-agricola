@@ -37,7 +37,7 @@
                   Cultura: {{ card.Cultura.DescrCultura }}
                 </v-card-title>
                 <v-card-subtitle class="headline text-center">
-                  Terreno: {{ card.AreaTerrenoHectares }} hectares<v-spacer
+                  Terreno: {{ card.AreaTerrenoHectares }} hectare(s)<v-spacer
                   ></v-spacer
                   ><span>
                     Data de Início:

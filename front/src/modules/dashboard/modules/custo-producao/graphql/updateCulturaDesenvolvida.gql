@@ -1,0 +1,33 @@
+mutation UpdateCulturaDesenvolvida(
+  $mesInicio: DateTime!
+  $mesFinal: DateTime
+  $culturaDescricaoId: ID!
+  $quantidade: Float!
+  $terreno: Float!
+  $unidade: String!
+  $id: ID!
+) {
+  updateCulturaDesenvolvida(
+    where: { id: $id }
+    data: {
+      AreaTerrenoHectares: $terreno
+      DataInicio: $mesInicio
+      DataColheita: $mesFinal
+      QtdColhida: $quantidade
+      Unidade: $unidade
+      Cultura: { connect: { id: $culturaDescricaoId } }
+    }
+  ) {
+    id
+    AreaTerrenoHectares
+    DataInicio
+    DataColheita
+    QtdColhida
+    Unidade
+    Cultura {
+      id
+      DescrCultura
+      QtdEstimadaPorHectare
+    }
+  }
+}

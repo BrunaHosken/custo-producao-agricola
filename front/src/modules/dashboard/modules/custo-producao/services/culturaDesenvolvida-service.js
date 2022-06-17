@@ -7,6 +7,7 @@ import usoInsumoPrevistoQuery from "./../graphql/UsoInsumoPrevisto.gql";
 import usoInsumoRealQuery from "./../graphql/UsoInsumoReal.gql";
 import servicoPrevistoQuery from "./../graphql/ServicoPrestado.gql";
 import servicoPrestadoQuery from "./../graphql/ServicoPrevisto.gql.gql";
+import updateCulturaDesenvolvida from "./../graphql/updateCulturaDesenvolvida.gql";
 
 const culturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -64,6 +65,18 @@ const CreateCulturaDesenvolvida = async (variables) => {
   });
   return response.data.createCulturaDesenvolvida;
 };
+const UpdateCulturaDesenvolvida = async (variables) => {
+  variables.quantidade = parseFloat(variables.quantidade);
+  variables.terreno = parseFloat(variables.terreno);
+  variables.culturaDescricaoId = variables.culturaDescricao.id;
+  console.log(variables);
+
+  const response = await apollo.mutate({
+    mutation: updateCulturaDesenvolvida,
+    variables,
+  });
+  return response.data.updateCulturaDesenvolvida;
+};
 
 const DeleteCulturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -82,4 +95,5 @@ export default {
   servicoPrevisto,
   usoInsumoPrevisto,
   usoInsumoReal,
+  UpdateCulturaDesenvolvida,
 };
