@@ -58,9 +58,8 @@
                 <v-card-text class="text-center">
                   <h3>
                     Total cultura desenvolvida:
-                    {{
-                      formatCurrency(totalCulturaDesenvolvida(card, card.id))
-                    }}
+                    {{ totalCulturaDesenvolvida }}
+                    {{ formatCurrency(card.totalCulturaDesenvolvida || 0) }}
                   </h3>
 
                   <h3>
@@ -70,7 +69,7 @@
                   </h3>
                   <h3>
                     Custo Unitário:
-                    {{ formatCurrency(custoUnitario(card, card.id)) }}
+                    {{ formatCurrency(card.custoUnitario || 0) }}
                   </h3>
                 </v-card-text>
                 <v-card-actions>
@@ -185,22 +184,41 @@ export default {
         if (data.etapas.length > 0) {
           data.etapas.forEach(async (etapas) => {
             variablesTipoEtapa.id = etapas.id;
+            let total = 0;
+            let custoProducao = 0;
 
             etapas.insumoPrevisto =
               await culturaDesenvolvidaService.usoInsumoPrevisto(
                 variablesTipoEtapa
               );
+            etapas.insumoPrevisto.forEach((response) => {
+              total += response.Qtd * response.Insumo.PrecoUnit;
+            });
             etapas.insumoReal = await culturaDesenvolvidaService.usoInsumoReal(
               variablesTipoEtapa
             );
+            etapas.insumoReal.forEach((response) => {
+              total += response.Qtd * response.Insumo.PrecoUnit;
+            });
             etapas.servicoPrevisto =
               await culturaDesenvolvidaService.servicoPrevisto(
                 variablesTipoEtapa
               );
+            etapas.servicoPrevisto.forEach((response) => {
+              total += response.DiasHomem * response.Servico.ValorDiaHomem;
+            });
             etapas.servicoPrestado =
               await culturaDesenvolvidaService.servicoPrestado(
                 variablesTipoEtapa
               );
+            etapas.servicoPrestado.forEach((response) => {
+              total += response.DiasHomem * response.Servico.ValorDiaHomem;
+            });
+            etapas.custoTotal = total;
+            custoProducao = total / data.QtdColhida;
+            data.totalCulturaDesenvolvida = total;
+            data.custoUnitario = custoProducao;
+            console.log(data);
           });
         }
       });
@@ -242,20 +260,6 @@ export default {
     },
     novo() {
       this.$router.push("/dashboard/custo-producao/new");
-    },
-    custoUnitario(item, index) {
-      //this.cards.forEach((data) => {});
-      let valorTotal =
-        this.totalCulturaDesenvolvida(item, index) / item.QtdColhida;
-      return valorTotal;
-    },
-    totalCulturaDesenvolvida(item, index) {
-      let valorTotal = 0;
-      // console.log(item.etapas);
-      // for (var prop in item.etapas) {
-      //   valorTotal += item.etapas[prop].valor * item.etapas[prop].quantidade;
-      // }
-      return valorTotal;
     },
 
     date(pValue) {

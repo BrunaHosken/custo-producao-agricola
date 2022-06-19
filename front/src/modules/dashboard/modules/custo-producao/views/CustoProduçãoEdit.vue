@@ -15,83 +15,25 @@
         <v-card-text>
           <v-form v-model="valid">
             <v-container>
-              <v-row class="mt-0">
-                <v-col cols="12" md="4">
-                  <v-dialog
-                    ref="dateDialogInitial"
-                    :return-value.sync="form.mesInicio"
-                    v-model="showDateDialogInitial"
-                    persistent
-                    width="290px"
-                    fullwidth
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-text-field
-                        name="dateInitial"
-                        label="Data Início"
-                        prepend-inner-icon="mdi-calendar"
-                        type="text"
-                        readonly
-                        :value="formattedDateInitial"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-
-                    <v-date-picker
-                      locale="pt-br"
-                      scrollable
-                      color="primary"
-                      v-model="dateDialogValueInitial"
-                    >
-                      <v-spacer></v-spacer>
-                      <v-btn text @click="cancelDateDialogInitial">
-                        Cancelar
-                      </v-btn>
-                      <v-btn
-                        text
-                        @click="
-                          $refs.dateDialogInitial.save(dateDialogValueInitial)
-                        "
-                      >
-                        Ok
-                      </v-btn>
-                    </v-date-picker>
-                  </v-dialog>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-row class="mt-0 text-center">
-                    <v-subheader class="mt-2"
-                      >A cultura já foi colhida?</v-subheader
-                    >
-                    <v-checkbox
-                      v-model="form.colheita"
-                      hide-details
-                    ></v-checkbox>
-                    <v-text-field
-                      v-if="!form.colheita"
-                      value="Ainda não colhido"
-                      label="Data Colheita"
-                      disabled
-                      prepend-inner-icon="mdi-calendar"
-                    ></v-text-field>
+              <div v-if="!adicionarNovaEtapa">
+                <v-row class="mt-0">
+                  <v-col cols="12" md="4">
                     <v-dialog
-                      v-if="form.colheita"
-                      ref="dateDialogFinal"
-                      :return-value.sync="form.mesFinal"
-                      v-model="showDateDialogFinal"
+                      ref="dateDialogInitial"
+                      :return-value.sync="form.mesInicio"
+                      v-model="showDateDialogInitial"
                       persistent
                       width="290px"
                       fullwidth
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          name="dateFinal"
-                          label="Data Colheita"
+                          name="dateInitial"
+                          label="Data Início"
                           prepend-inner-icon="mdi-calendar"
                           type="text"
                           readonly
-                          :value="formattedDateFinal"
+                          :value="formattedDateInitial"
                           v-on="on"
                         ></v-text-field>
                       </template>
@@ -100,99 +42,327 @@
                         locale="pt-br"
                         scrollable
                         color="primary"
-                        v-model="dateDialogValueFinal"
+                        v-model="dateDialogValueInitial"
                       >
                         <v-spacer></v-spacer>
-                        <v-btn text @click="cancelDateDialogFinal">
+                        <v-btn text @click="cancelDateDialogInitial">
                           Cancelar
                         </v-btn>
                         <v-btn
                           text
                           @click="
-                            $refs.dateDialogFinal.save(dateDialogValueFinal)
+                            $refs.dateDialogInitial.save(dateDialogValueInitial)
                           "
                         >
                           Ok
                         </v-btn>
                       </v-date-picker>
                     </v-dialog>
-                  </v-row>
-                </v-col>
-              </v-row>
+                  </v-col>
 
-              <v-row class="mt-4">
-                <v-col cols="12" md="6                                    ">
-                  <v-autocomplete
-                    v-model="form.culturaDescricao"
-                    :loading="loadingCultura"
-                    :items="cultura"
-                    item-text="label"
-                    item-value="id"
-                    :search-input.sync="searchCultura"
-                    outlined
-                    label="Cultura"
-                    return-object
-                    prepend-inner-icon="mdi-format-list-bulleted-type"
-                  >
-                    <v-list-item
-                      slot="prepend-item"
-                      ripple
-                      @click="novaCultura"
+                  <v-col cols="12" md="6">
+                    <v-row class="mt-0 text-center">
+                      <v-subheader class="mt-2"
+                        >A cultura já foi colhida?</v-subheader
+                      >
+                      <v-checkbox
+                        v-model="form.colheita"
+                        hide-details
+                      ></v-checkbox>
+                      <v-text-field
+                        v-if="!form.colheita"
+                        value="Ainda não colhido"
+                        label="Data Colheita"
+                        disabled
+                        prepend-inner-icon="mdi-calendar"
+                      ></v-text-field>
+                      <v-dialog
+                        v-if="form.colheita"
+                        ref="dateDialogFinal"
+                        :return-value.sync="form.mesFinal"
+                        v-model="showDateDialogFinal"
+                        persistent
+                        width="290px"
+                        fullwidth
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            name="dateFinal"
+                            label="Data Colheita"
+                            prepend-inner-icon="mdi-calendar"
+                            type="text"
+                            readonly
+                            :value="formattedDateFinal"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+
+                        <v-date-picker
+                          locale="pt-br"
+                          scrollable
+                          color="primary"
+                          v-model="dateDialogValueFinal"
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn text @click="cancelDateDialogFinal">
+                            Cancelar
+                          </v-btn>
+                          <v-btn
+                            text
+                            @click="
+                              $refs.dateDialogFinal.save(dateDialogValueFinal)
+                            "
+                          >
+                            Ok
+                          </v-btn>
+                        </v-date-picker>
+                      </v-dialog>
+                    </v-row>
+                  </v-col>
+                </v-row>
+
+                <v-row class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-autocomplete
+                      v-model="form.culturaDescricao"
+                      :loading="loadingCultura"
+                      :items="cultura"
+                      item-text="label"
+                      item-value="id"
+                      :search-input.sync="searchCultura"
+                      outlined
+                      label="Cultura"
+                      return-object
+                      prepend-inner-icon="mdi-format-list-bulleted-type"
                     >
-                      <v-list-item-action>
-                        <v-icon>mdi-plus</v-icon>
-                      </v-list-item-action>
-                      <v-list-item-title>Nova Cultura</v-list-item-title>
-                    </v-list-item>
-                    <v-divider slot="prepend-item" class="mt-2"></v-divider>
-                  </v-autocomplete>
-                </v-col>
+                      <v-list-item
+                        slot="prepend-item"
+                        ripple
+                        @click="novaCultura"
+                      >
+                        <v-list-item-action>
+                          <v-icon>mdi-plus</v-icon>
+                        </v-list-item-action>
+                        <v-list-item-title>Nova Cultura</v-list-item-title>
+                      </v-list-item>
+                      <v-divider slot="prepend-item" class="mt-2"></v-divider>
+                    </v-autocomplete>
+                  </v-col>
 
-                <v-col cols="12" md="6">
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      :error-messages="terrenoErrors"
+                      :success="!$v.form.terreno.$invalid"
+                      v-model.trim="$v.form.terreno.$model"
+                      label="Total de Hectares"
+                      :value="form.quantidade"
+                      prepend-inner-icon="mdi-numeric"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      :error-messages="valueErrors"
+                      :success="!$v.form.quantidade.$invalid"
+                      v-model.trim="$v.form.quantidade.$model"
+                      :label="labelQuantidade"
+                      :value="form.quantidade"
+                      prepend-inner-icon="mdi-numeric"
+                    ></v-text-field
+                  ></v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="form.unidade"
+                      label="Unidade da Cultura"
+                      prepend-inner-icon="mdi-format-list-numbered"
+                      disabled
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <hr />
+                <v-card-title>
+                  Etapas da Cultura
+                  <v-spacer></v-spacer>
                   <v-text-field
-                    :error-messages="terrenoErrors"
-                    :success="!$v.form.terreno.$invalid"
-                    v-model.trim="$v.form.terreno.$model"
-                    label="Total de Hectares"
-                    :value="form.quantidade"
-                    prepend-inner-icon="mdi-numeric"
+                    v-model="searchTable"
+                    append-icon="mdi-magnify"
+                    label="Pesquisar"
+                    hide-details
                   ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row class="mt-4">
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :error-messages="valueErrors"
-                    :success="!$v.form.quantidade.$invalid"
-                    v-model.trim="$v.form.quantidade.$model"
-                    :label="labelQuantidade"
-                    :value="form.quantidade"
-                    prepend-inner-icon="mdi-numeric"
-                  ></v-text-field
-                ></v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.unidade"
-                    label="Unidade da Cultura"
-                    prepend-inner-icon="mdi-format-list-numbered"
-                    disabled
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <hr />
-              <v-card-title>
-                Etapas da Cultura
-                <v-spacer></v-spacer>
-                <v-text-field
-                  v-model="searchTable"
-                  append-icon="mdi-magnify"
-                  label="Pesquisar"
-                  hide-details
-                ></v-text-field>
-              </v-card-title>
+                </v-card-title>
+              </div>
               <div v-if="adicionarNovaEtapa">
-                <v-row class="mt-2">
+                <v-card-title>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="secundary"
+                    class="mr-4 ma-2"
+                    @click="cancelEtapa"
+                  >
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="success"
+                    class="mr-4 ma-2"
+                    @click="editarEtapaCadastrada(selected)"
+                  >
+                    Editar Etapa
+                  </v-btn>
+                </v-card-title>
+
+                <v-layout v-if="!cadastrarEditarEtapa" row wrap>
+                  <v-flex v-for="card in selected" pa-4 xs6 :key="card.id">
+                    <v-card-title
+                      v-if="card.insumoPrevisto.length > 0"
+                      class="headline justify-center"
+                      ml-5
+                    >
+                      Insumos Previstos Cadastrados
+                    </v-card-title>
+                    <v-card
+                      v-for="insumo in card.insumoPrevisto"
+                      :key="insumo.id"
+                      elevation="24"
+                      outlined
+                      class="hover-card"
+                    >
+                      <v-card-title class="headline justify-center" ml-5>
+                        Insumo: {{ insumo.Insumo.DescrInsumo }}
+                      </v-card-title>
+                      <v-card-subtitle class="headline text-center">
+                        <span>
+                          Tipo do Insumo:
+                          {{ insumo.Insumo.TipoInsumo.NomeTipo }}</span
+                        ><br />
+                        <span>
+                          Preço do Insumo:
+                          {{ formatCurrency(insumo.Insumo.PrecoUnit) }}</span
+                        ><br />
+                        <span>
+                          Unidade do Insumo:
+                          {{ insumo.Insumo.Und }} </span
+                        ><br />
+                        <span>
+                          Quantidade Prevista:
+                          {{ insumo.Qtd }}
+                        </span>
+                      </v-card-subtitle>
+                    </v-card>
+                    <v-card-title
+                      v-if="card.insumoReal.length > 0"
+                      class="headline justify-center"
+                      ml-5
+                    >
+                      Insumos Prestados Cadastrados
+                    </v-card-title>
+                    <v-card
+                      v-for="insumo in card.insumoReal"
+                      :key="insumo.id"
+                      elevation="24"
+                      outlined
+                      class="hover-card"
+                    >
+                      <v-card-title class="headline justify-center" ml-5>
+                        Insumo: {{ insumo.Insumo.DescrInsumo }}
+                      </v-card-title>
+                      <v-card-subtitle class="headline text-center">
+                        <span>
+                          Tipo do Insumo:
+                          {{ insumo.Insumo.TipoInsumo.NomeTipo }}</span
+                        ><br />
+                        <span>
+                          Preço do Insumo:
+                          {{ formatCurrency(insumo.Insumo.PrecoUnit) }}</span
+                        ><br />
+                        <span>
+                          Unidade do Insumo:
+                          {{ insumo.Insumo.Und }} </span
+                        ><br />
+                        <span>
+                          Quantidade Utilizada:
+                          {{ insumo.Qtd }}
+                        </span>
+                        <br />
+                        <span>
+                          Data Prestada:
+                          {{ formatTable(insumo.Data) }}
+                        </span>
+                      </v-card-subtitle>
+                    </v-card>
+                    <v-card-title
+                      v-if="card.servicoPrestado.length > 0"
+                      class="headline justify-center"
+                      ml-5
+                    >
+                      Serviços Previstos Cadastrados
+                    </v-card-title>
+                    <v-card
+                      v-for="servico in card.servicoPrestado"
+                      :key="servico.id"
+                      elevation="24"
+                      outlined
+                      class="hover-card"
+                    >
+                      <v-card-title class="headline justify-center" ml-5>
+                        Serviço: {{ servico.Servico.DescrServico }}
+                      </v-card-title>
+                      <v-card-subtitle class="headline text-center">
+                        <span>
+                          Preço do Serviço:
+                          {{ formatCurrency(servico.Servico.ValorDiaHomem) }}
+                          Homem/Dia</span
+                        ><br />
+
+                        <span>
+                          Dias Previstos:
+                          {{ servico.DiasHomem }} Homem/Dia
+                        </span>
+                        <br />
+                      </v-card-subtitle>
+                    </v-card>
+                    <v-card-title
+                      v-if="card.servicoPrevisto.length > 0"
+                      class="headline justify-center"
+                      ml-5
+                    >
+                      Serviços Prestados Cadastrados
+                    </v-card-title>
+                    <v-card
+                      v-for="servico in card.servicoPrevisto"
+                      :key="servico.id"
+                      elevation="24"
+                      outlined
+                      class="hover-card"
+                    >
+                      <v-card-title class="headline justify-center" ml-5>
+                        Serviço: {{ servico.Servico.DescrServico }}
+                      </v-card-title>
+                      <v-card-subtitle class="headline text-center">
+                        <span>
+                          Preço do Serviço:
+                          {{ formatCurrency(servico.Servico.ValorDiaHomem) }}
+                          Homem/Dia</span
+                        ><br />
+
+                        <span>
+                          Dias Previstos:
+                          {{ servico.DiasHomem }} Homem/Dia
+                        </span>
+                        <br />
+                        <span>
+                          Data Prestada:
+                          {{ formatTable(servico.Data) }}
+                        </span>
+                      </v-card-subtitle>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+
+                <v-layout v-if="cadastrarEditarEtapa" row wrap>
+                  {{ selected }}
+                </v-layout>
+                <!-- <v-row class="mt-2">
                   <v-col cols="12" md="4">
                     <v-text-field
                       :error-messages="descriptionEtapaErrors"
@@ -214,8 +384,8 @@
                       suffix="º"
                     ></v-text-field>
                   </v-col>
-                </v-row>
-                <v-row class="mt-0">
+                </v-row> -->
+                <!-- <v-row class="mt-0">
                   <v-col cols="12" md="4">
                     <v-dialog
                       ref="dateDialogInitialEtapa"
@@ -307,9 +477,9 @@
                       </v-date-picker>
                     </v-dialog>
                   </v-col>
-                </v-row>
+                </v-row> -->
 
-                <v-row class="mt-4">
+                <!-- <v-row class="mt-4">
                   <v-col cols="12" md="4">
                     <v-select
                       v-model="formEtapa.tipoEtapa"
@@ -428,22 +598,17 @@
                       <v-divider slot="prepend-item" class="mt-2"></v-divider
                     ></v-select>
                   </v-col>
-                </v-row>
+                </v-row> -->
               </div>
               <v-row v-if="adicionarNovaEtapa" class="mt-0 mb-3">
-                <v-spacer></v-spacer>
-                <v-btn color="secundary" class="mr-4 ma-2" @click="cancelEtapa">
-                  Cancelar
-                </v-btn>
-
-                <v-btn
+                <!-- <v-btn
                   color="success"
                   class="ma-2"
                   title="Adicionar"
                   :disabled="$v.$invalid"
                   @click="salvarEtapa"
                   >Salvar</v-btn
-                >
+                > -->
               </v-row>
               <v-row v-if="!adicionarNovaEtapa" class="mt-0 mb-3">
                 <v-spacer></v-spacer>
@@ -484,13 +649,12 @@
                 show-select
                 item-key="index"
               >
-                <template v-slot:[`item.ordem`]="{ item }">
-                  {{ item.ordem }}º
+                <template v-slot:[`item.NumEtapa`]="{ item }">
+                  {{ item.NumEtapa }}º
                 </template>
-
-                <!-- <template v-slot:[`item.quantidade`]="{ item }">
-                  {{ item.quantidade.toLocaleString() }}
-                </template> -->
+                <template v-slot:[`item.MesInicio`]="{ item }">
+                  {{ formatTable(item.MesInicio) }}
+                </template>
                 <template v-slot:[`item.valor`]="{ item }">
                   {{ formatCurrency(item.valor) }}
                 </template>
@@ -546,7 +710,7 @@
 
 <script>
 import moment from "moment";
-import { required, minValue } from "vuelidate/lib/validators";
+import { required, minValue, minLength } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
@@ -584,42 +748,22 @@ export default {
         {
           text: "Etapa",
           align: "start",
-          value: "ordem",
+          value: "NumEtapa",
         },
         {
           text: "Data",
           align: "start",
-          value: "data",
+          value: "MesInicio",
         },
         {
           text: "Descrição",
           align: "start",
-          value: "descricao",
-        },
-        {
-          text: "Insumos/Serviços",
-          align: "start",
-          value: "insumoServico",
-        },
-        {
-          text: "Quantidade",
-          align: "start",
-          value: "quantidade",
-        },
-        {
-          text: "Unidade",
-          align: "start",
-          value: "unidade",
-        },
-        {
-          text: "Custo Unitário",
-          align: "start",
-          value: "valor",
+          value: "DescrEtapa",
         },
         {
           text: "Custo Total",
           align: "start",
-          value: "total",
+          value: "custoTotal",
         },
       ],
       cultura: [],
@@ -672,7 +816,7 @@ export default {
           .toISOString()
           .substr(0, 7),
         datePrevista: moment().format("YYYY-MM-DD"),
-        descricao: "",
+        descricao: "Oi",
         tipoEtapa: "Insumo",
         tipoUso: "Real",
         quantidade: 0,
@@ -692,23 +836,26 @@ export default {
       createSnackBar: false,
       mensagem: "",
       color: "success",
+      cadastrarEditarEtapa: false,
     };
   },
   validations() {
-    // formEtapa: {
-    //   descricao: {
-    //     required,
-    //     minLength: minLength(2),
-    //   },
-    //   quantidade: {
-    //     required,
-    //     minValue: minValue(0.0000001),
-    //   },
-    //   ordem: {
-    //     required,
-    //     minValue: minValue(0.0000001),
-    //   },
-    // },
+    const validatorsEtapa = {
+      formEtapa: {
+        descricao: {
+          required,
+          minLength: minLength(2),
+        },
+        quantidade: {
+          required,
+          minValue: minValue(0.0000001),
+        },
+        ordem: {
+          required,
+          minValue: minValue(0.0000001),
+        },
+      },
+    };
     const validators = {
       form: {
         terreno: {
@@ -719,6 +866,9 @@ export default {
     };
     if (this.colheita) {
       return validators.form;
+    }
+    if (this.adicionarNovaEtapa) {
+      return validatorsEtapa.formEtapa;
     }
     return {
       form: {
@@ -753,8 +903,7 @@ export default {
         this.form.mesFinal = null;
         this.form.quantidade =
           this.form.culturaDescricao.QtdEstimadaPorHectare * this.form.terreno;
-        console.log(this.form.culturaDescricao.QtdEstimadaPorHectare);
-        console.log(this.form.terreno);
+
         this.$v.$reset();
       } else {
         this.form.mesFinal = moment(this.form.mesInicio)
@@ -771,13 +920,13 @@ export default {
       }
     },
     "form.culturaDescricao"(pValue) {
-      console.log(pValue);
       if (pValue && pValue !== null) {
         this.form.unidade = pValue.Und;
       }
     },
     formEditou(pValue) {
       if (pValue && pValue !== null) {
+        console.log(pValue.etapas);
         this.preencheForm();
       }
     },
@@ -819,39 +968,44 @@ export default {
     formattedDateFinalEtapa() {
       return moment(this.formEtapa.mesFinal).format("MM/YYYY");
     },
-    // ordemErrors() {
-    //   const errors = [];
-    //   const value = this.$v.formEtapa.ordem;
-    //   if (!value.$dirty) {
-    //     return errors;
-    //   }
-    //   !value.required && errors.push("Valor  é obrigatório!");
-    //   !value.minValue && errors.push(`Insira um valor acima de 0`);
-    //   return errors;
-    // },
-    // descriptionEtapaErrors() {
-    //   const errors = [];
-    //   const description = this.$v.formEtapa.descricao;
-    //   if (!description.$dirty) {
-    //     return errors;
-    //   }
-    //   !description.required && errors.push("Descrição é obrigatória!");
-    //   !description.minLength &&
-    //     errors.push(
-    //       `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-    //     );
-    //   return errors;
-    // },
-    // valueEtapaErrors() {
-    //   const errors = [];
-    //   const value = this.$v.formEtapa.quantidade;
-    //   if (!value.$dirty) {
-    //     return errors;
-    //   }
-    //   !value.required && errors.push("Valor  é obrigatório!");
-    //   !value.minValue && errors.push(`Insira um valor acima de 0`);
-    //   return errors;
-    // },
+    ordemErrors() {
+      const errors = [];
+      console.log(this.$v.formEtapa.ordem);
+      const value = this.$v.formEtapa.ordem;
+      if (!value.$dirty) {
+        return errors;
+      }
+      !value.required && errors.push("Valor  é obrigatório!");
+      !value.minValue && errors.push(`Insira um valor acima de 0`);
+      return errors;
+    },
+    descriptionEtapaErrors() {
+      const errors = [];
+      console.log("OI");
+      console.log(this.formEtapa.descricao);
+      console.log(this.$v.formEtapa.descricao);
+      const description = this.$v.formEtapa.descricao;
+      if (!description.$dirty) {
+        return errors;
+      }
+      !description.required && errors.push("Descrição é obrigatória!");
+      !description.minLength &&
+        errors.push(
+          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
+        );
+      return errors;
+    },
+    valueEtapaErrors() {
+      const errors = [];
+      console.log(this.$v.formEtapa.quantidade);
+      const value = this.$v.formEtapa.quantidade;
+      if (!value.$dirty) {
+        return errors;
+      }
+      !value.required && errors.push("Valor  é obrigatório!");
+      !value.minValue && errors.push(`Insira um valor acima de 0`);
+      return errors;
+    },
     terrenoErrors() {
       const errors = [];
       const value = this.$v.form.terreno;
@@ -874,6 +1028,13 @@ export default {
     },
   },
   methods: {
+    editarEtapaCadastrada(pValue) {
+      console.log(pValue);
+      this.cadastrarEditarEtapa = true;
+    },
+    formatTable(value) {
+      return moment(value.substr(0, 10)).format("DD/MM/YYYY");
+    },
     showSnackBar(data) {
       this.createSnackBar = data;
     },
@@ -895,7 +1056,8 @@ export default {
       this.adicionarNovaEtapa = true;
     },
     editarEtapa() {
-      console.log(this.formEtapa);
+      console.log(this.selected);
+      this.adicionarNovaEtapa = true;
     },
     excluirEtapa() {
       console.log(this.formEtapa);
@@ -911,7 +1073,7 @@ export default {
         quantidade: this.formEditou.QtdColhida,
         culturaDescricao: this.formEditou.Cultura,
         colheita: this.formEditou.DataColheita !== null ? true : false,
-        //etapas: this.formEditou.etapas,
+        etapas: this.formEditou.etapas,
       };
       if (this.formEditou.DataColheita !== null) {
         this.form.mesFinal = moment(
@@ -933,7 +1095,6 @@ export default {
     },
     async save() {
       try {
-        console.log(this.form);
         await culturaDesenvolvidaService.UpdateCulturaDesenvolvida(this.form);
         this.createSnackBar = true;
         this.mensagem = "Custo de Produção editado com sucesso!";
