@@ -8,6 +8,10 @@ import usoInsumoRealQuery from "./../graphql/UsoInsumoReal.gql";
 import servicoPrevistoQuery from "./../graphql/ServicoPrestado.gql";
 import servicoPrestadoQuery from "./../graphql/ServicoPrevisto.gql.gql";
 import updateCulturaDesenvolvida from "./../graphql/updateCulturaDesenvolvida.gql";
+import updateCulturaEtapa from "./../graphql/updateCulturaEtapa.gql";
+import createCulturaEtapa from "./../graphql/createCulturaEtapa.gql";
+import deleteCulturaEtapa from "./../graphql/deleteCulturaEtapa.gql";
+import moment from "moment";
 
 const culturaDesenvolvida = async (variables) => {
   const response = await apollo.mutate({
@@ -69,7 +73,6 @@ const UpdateCulturaDesenvolvida = async (variables) => {
   variables.quantidade = parseFloat(variables.quantidade);
   variables.terreno = parseFloat(variables.terreno);
   variables.culturaDescricaoId = variables.culturaDescricao.id;
-  console.log(variables);
 
   const response = await apollo.mutate({
     mutation: updateCulturaDesenvolvida,
@@ -86,6 +89,36 @@ const DeleteCulturaDesenvolvida = async (variables) => {
   return response.data.deleteCulturaDesenvolvida;
 };
 
+const CreateCulturaEtapa = async (variables) => {
+  variables.mesFinal = moment(variables.mesFinal).format("YYYY-MM-DD");
+  variables.mesInicio = moment(variables.mesInicio).format("YYYY-MM-DD");
+  variables.ordem = Number(variables.ordem);
+  const response = await apollo.mutate({
+    mutation: createCulturaEtapa,
+    variables,
+  });
+  return response.data.createCulturaEtapa;
+};
+
+const UpdateCulturaEtapa = async (variables) => {
+  variables.mesFinal = moment(variables.mesFinal).format("YYYY-MM-DD");
+  variables.mesInicio = moment(variables.mesInicio).format("YYYY-MM-DD");
+  variables.ordem = Number(variables.ordem);
+  const response = await apollo.mutate({
+    mutation: updateCulturaEtapa,
+    variables,
+  });
+  return response.data.updateCulturaEtapa;
+};
+
+const DeleteCulturaEtapa = async (variables) => {
+  const response = await apollo.mutate({
+    mutation: deleteCulturaEtapa,
+    variables,
+  });
+  return response.data.deleteCulturaEtapa;
+};
+
 export default {
   culturaDesenvolvida,
   culturaEtapa,
@@ -96,4 +129,7 @@ export default {
   usoInsumoPrevisto,
   usoInsumoReal,
   UpdateCulturaDesenvolvida,
+  UpdateCulturaEtapa,
+  CreateCulturaEtapa,
+  DeleteCulturaEtapa,
 };

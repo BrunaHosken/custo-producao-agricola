@@ -1,0 +1,30 @@
+mutation updateCulturaEtapa(
+  $mesInicio: DateTime!
+  $mesFinal: DateTime!
+  $ordem: Float!
+  $descricao: String!
+  $id: ID!
+) {
+  updateCulturaEtapa(
+    where: { id: $id }
+    data: {
+      DescrEtapa: $descricao
+      NumEtapa: $ordem
+      MesInicio: $mesInicio
+      MesFim: $mesFinal
+    }
+  ) {
+    id
+    DescrEtapa
+    NumEtapa
+    MesInicio
+    MesFim
+    CulturaDesenvolvida {
+      id
+      Cultura {
+        id
+        DescrCultura
+      }
+    }
+  }
+}

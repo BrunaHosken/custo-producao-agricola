@@ -218,7 +218,6 @@ export default {
             custoProducao = total / data.QtdColhida;
             data.totalCulturaDesenvolvida = total;
             data.custoUnitario = custoProducao;
-            console.log(data);
           });
         }
       });

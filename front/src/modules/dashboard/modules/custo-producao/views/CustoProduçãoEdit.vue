@@ -34,6 +34,7 @@
                           type="text"
                           readonly
                           :value="formattedDateInitial"
+                          :error-messages="initialDateErrors"
                           v-on="on"
                         ></v-text-field>
                       </template>
@@ -203,15 +204,22 @@
                     Cancelar
                   </v-btn>
                   <v-btn
-                    color="success"
+                    color="warning"
                     class="mr-4 ma-2"
                     @click="editarEtapaCadastrada(selected)"
                   >
                     Editar Etapa
                   </v-btn>
+                  <v-btn
+                    color="success"
+                    class="mr-4 ma-2"
+                    @click="criarInsumoServico(selected)"
+                  >
+                    Criar Insumo/Serviço
+                  </v-btn>
                 </v-card-title>
 
-                <v-layout v-if="!cadastrarEditarEtapa" row wrap>
+                <v-layout row wrap>
                   <v-flex v-for="card in selected" pa-4 xs6 :key="card.id">
                     <v-card-title
                       v-if="card.insumoPrevisto.length > 0"
@@ -248,6 +256,25 @@
                           {{ insumo.Qtd }}
                         </span>
                       </v-card-subtitle>
+                      <v-card-actions class="mb-4">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="warning"
+                          text
+                          class="mr-4 ma-2"
+                          @click="editarInsumoServico(insumo, true, true)"
+                        >
+                          Editar Insumo
+                        </v-btn>
+                        <v-btn
+                          color="red"
+                          text
+                          class="mr-4 ma-2"
+                          @click="excluirInsumoServico(insumo, true, true)"
+                        >
+                          Excluir Insumo
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                     <v-card-title
                       v-if="card.insumoReal.length > 0"
@@ -289,6 +316,25 @@
                           {{ formatTable(insumo.Data) }}
                         </span>
                       </v-card-subtitle>
+                      <v-card-actions class="mb-4">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="warning"
+                          text
+                          class="mr-4 ma-2"
+                          @click="editarInsumoServico(insumo, true, false)"
+                        >
+                          Editar Insumo
+                        </v-btn>
+                        <v-btn
+                          color="red"
+                          text
+                          class="mr-4 ma-2"
+                          @click="excluirInsumoServico(insumo, true, false)"
+                        >
+                          Excluir Insumo
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                     <v-card-title
                       v-if="card.servicoPrestado.length > 0"
@@ -320,6 +366,25 @@
                         </span>
                         <br />
                       </v-card-subtitle>
+                      <v-card-actions class="mb-4">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="warning"
+                          text
+                          class="mr-4 ma-2"
+                          @click="editarInsumoServico(servico, false, true)"
+                        >
+                          Editar Serviço
+                        </v-btn>
+                        <v-btn
+                          color="red"
+                          text
+                          class="mr-4 ma-2"
+                          @click="excluirInsumoServico(servico, false, true)"
+                        >
+                          Excluir Serviço
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                     <v-card-title
                       v-if="card.servicoPrevisto.length > 0"
@@ -355,268 +420,37 @@
                           {{ formatTable(servico.Data) }}
                         </span>
                       </v-card-subtitle>
+                      <v-card-actions class="mb-4">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="warning"
+                          text
+                          class="mr-4 ma-2"
+                          @click="editarInsumoServico(servico, false, false)"
+                        >
+                          Editar Serviço
+                        </v-btn>
+                        <v-btn
+                          color="red"
+                          text
+                          class="mr-4 ma-2"
+                          @click="excluirInsumoServico(servico, false, false)"
+                        >
+                          Excluir Serviço
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                   </v-flex>
                 </v-layout>
-
-                <v-layout v-if="cadastrarEditarEtapa" row wrap>
-                  {{ selected }}
-                </v-layout>
-                <!-- <v-row class="mt-2">
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      :error-messages="descriptionEtapaErrors"
-                      :success="!$v.formEtapa.descricao.$invalid"
-                      v-model.trim="$v.formEtapa.descricao.$model"
-                      label="Descrição da Etapa"
-                      prepend-inner-icon="mdi-book-variant"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      :error-messages="ordemErrors"
-                      :success="!$v.formEtapa.ordem.$invalid"
-                      v-model.trim="$v.formEtapa.ordem.$model"
-                      label="Ordem da Etapa"
-                      prepend-inner-icon="mdi-order-numeric-ascending"
-                      required
-                      suffix="º"
-                    ></v-text-field>
-                  </v-col>
-                </v-row> -->
-                <!-- <v-row class="mt-0">
-                  <v-col cols="12" md="4">
-                    <v-dialog
-                      ref="dateDialogInitialEtapa"
-                      :return-value.sync="formEtapa.mesInicio"
-                      v-model="showDateDialogInitialEtapa"
-                      persistent
-                      width="290px"
-                      fullwidth
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          name="dateInitial"
-                          label="Mês Inicial"
-                          prepend-inner-icon="mdi-calendar"
-                          type="text"
-                          readonly
-                          :value="formattedDateInitialEtapa"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-
-                      <v-date-picker
-                        locale="pt-br"
-                        scrollable
-                        color="primary"
-                        v-model="dateDialogValueInitialEtapa"
-                        type="month"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text @click="cancelDateDialogInitialEtapa">
-                          Cancelar
-                        </v-btn>
-                        <v-btn
-                          text
-                          @click="
-                            $refs.dateDialogInitialEtapa.save(
-                              dateDialogValueInitialEtapa
-                            )
-                          "
-                        >
-                          Ok
-                        </v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </v-col>
-
-                  <v-col cols="12" md="4">
-                    <v-dialog
-                      ref="dateDialogFinalEtapa"
-                      :return-value.sync="formEtapa.mesFinal"
-                      v-model="showDateDialogFinalEtapa"
-                      persistent
-                      width="290px"
-                      fullwidth
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          name="dateFinal"
-                          label="Mês Final"
-                          prepend-inner-icon="mdi-calendar"
-                          type="text"
-                          readonly
-                          :value="formattedDateFinalEtapa"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-
-                      <v-date-picker
-                        locale="pt-br"
-                        scrollable
-                        color="primary"
-                        v-model="dateDialogValueFinalEtapa"
-                        type="month"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text @click="cancelDateDialogFinalEtapa">
-                          Cancelar
-                        </v-btn>
-                        <v-btn
-                          text
-                          @click="
-                            $refs.dateDialogFinalEtapa.save(
-                              dateDialogValueFinalEtapa
-                            )
-                          "
-                        >
-                          Ok
-                        </v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </v-col>
-                </v-row> -->
-
-                <!-- <v-row class="mt-4">
-                  <v-col cols="12" md="4">
-                    <v-select
-                      v-model="formEtapa.tipoEtapa"
-                      :items="itemsEtapa"
-                      label="Tipo da Etapa"
-                      prepend-inner-icon="mdi-format-list-bulleted-type"
-                      outlined
-                    >
-                    </v-select>
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-select
-                      v-model="formEtapa.tipoUso"
-                      :items="itemsUso"
-                      label="Tipo de Uso"
-                      prepend-inner-icon="mdi-format-list-bulleted-type"
-                      outlined
-                    ></v-select>
-                  </v-col>
-                </v-row>
-                <v-row class="mt-0">
-                  <v-col cols="12" md="4" v-show="!isPrevisto">
-                    <v-dialog
-                      ref="dateDialogPrevista"
-                      :return-value.sync="formEtapa.datePrevista"
-                      v-model="showDateDialogPrevista"
-                      persistent
-                      width="290px"
-                      fullwidth
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          name="datePrevista"
-                          label="Data da Etapa"
-                          prepend-inner-icon="mdi-calendar"
-                          type="text"
-                          readonly
-                          :value="formattedDatePrevista"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-
-                      <v-date-picker
-                        locale="pt-br"
-                        scrollable
-                        color="primary"
-                        v-model="dateDialogValuePrevista"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text @click="cancelDateDialogPrevista">
-                          Cancelar
-                        </v-btn>
-                        <v-btn
-                          text
-                          @click="
-                            $refs.dateDialogPrevista.save(
-                              dateDialogValuePrevista
-                            )
-                          "
-                        >
-                          Ok
-                        </v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      :error-messages="valueEtapaErrors"
-                      :success="!$v.formEtapa.quantidade.$invalid"
-                      v-model.trim="$v.formEtapa.quantidade.$model"
-                      :label="label"
-                      :value="formEtapa.quantidade"
-                      prepend-inner-icon="mdi-numeric"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" md="4" v-show="isServico">
-                    <v-select
-                      v-model="formEtapa.servico"
-                      :items="itemsServico"
-                      label="Serviço"
-                      prepend-inner-icon="mdi-format-list-bulleted-type"
-                      outlined
-                    >
-                      <v-list-item
-                        slot="prepend-item"
-                        ripple
-                        @click="novoServico"
-                      >
-                        <v-list-item-action>
-                          <v-icon>mdi-plus</v-icon>
-                        </v-list-item-action>
-                        <v-list-item-title>Novo Serviço</v-list-item-title>
-                      </v-list-item>
-                      <v-divider slot="prepend-item" class="mt-2"></v-divider
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" md="4" v-show="!isServico">
-                    <v-select
-                      v-model="formEtapa.insumo"
-                      :items="itemsInsumo"
-                      label="Insumo"
-                      prepend-inner-icon="mdi-format-list-bulleted-type"
-                      outlined
-                    >
-                      <v-list-item
-                        slot="prepend-item"
-                        ripple
-                        @click="novoInsumo"
-                      >
-                        <v-list-item-action>
-                          <v-icon>mdi-plus</v-icon>
-                        </v-list-item-action>
-                        <v-list-item-title>Novo Insumo</v-list-item-title>
-                      </v-list-item>
-                      <v-divider slot="prepend-item" class="mt-2"></v-divider
-                    ></v-select>
-                  </v-col>
-                </v-row> -->
               </div>
-              <v-row v-if="adicionarNovaEtapa" class="mt-0 mb-3">
-                <!-- <v-btn
-                  color="success"
-                  class="ma-2"
-                  title="Adicionar"
-                  :disabled="$v.$invalid"
-                  @click="salvarEtapa"
-                  >Salvar</v-btn
-                > -->
-              </v-row>
+
               <v-row v-if="!adicionarNovaEtapa" class="mt-0 mb-3">
                 <v-spacer></v-spacer>
                 <v-btn
                   color="success"
                   class="ma-2"
                   title="Adicionar"
-                  @click="adicionarEtapa"
+                  @click="adicionarNovaEtapaCultura"
                   ><v-icon>mdi-plus</v-icon></v-btn
                 >
                 <v-btn
@@ -647,7 +481,7 @@
                 multi-sort
                 multi-select
                 show-select
-                item-key="index"
+                item-key="id"
               >
                 <template v-slot:[`item.NumEtapa`]="{ item }">
                   {{ item.NumEtapa }}º
@@ -655,13 +489,8 @@
                 <template v-slot:[`item.MesInicio`]="{ item }">
                   {{ formatTable(item.MesInicio) }}
                 </template>
-                <template v-slot:[`item.valor`]="{ item }">
-                  {{ formatCurrency(item.valor) }}
-                </template>
-                <template v-slot:[`item.total`]="{ item }">
-                  {{
-                    formatCurrency(calculaTotal(item.valor, item.quantidade))
-                  }}
+                <template v-slot:[`item.custoTotal`]="{ item }">
+                  {{ formatCurrency(item.custoTotal) }}
                 </template>
               </v-data-table>
             </v-container>
@@ -704,13 +533,27 @@
         :color="color"
         @show="showSnackBar"
       />
+      <Dialog
+        :message="message"
+        :showDialog="showDeleteDialog"
+        @option="option"
+      />
+      <Etapas
+        :showDialog="cadastrarEditarEtapa"
+        :etapa="formEtapa"
+        :editou="editou"
+        :culturaDesenvolvidaId="culturaDesenvolvidaId"
+        :etapasLength="etapasLength"
+        @showDialogClose="closeEtapaCadastrada"
+      />
+      <InsumoServico :showDialog="false" />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import moment from "moment";
-import { required, minValue, minLength } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
@@ -718,6 +561,9 @@ import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
 import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
 import SnackBar from "./../../../components/SnackBar.vue";
 import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
+import Etapas from "./Etapas.vue";
+import InsumoServico from "./InsumoServico.vue";
+import Dialog from "./../../../components/Dialog.vue";
 
 export default {
   name: "CustoProducaoEdit",
@@ -726,6 +572,9 @@ export default {
     InsumosEdit,
     ServicoEdit,
     SnackBar,
+    Etapas,
+    InsumoServico,
+    Dialog,
   },
   props: {
     showDialog: {
@@ -741,6 +590,8 @@ export default {
   data() {
     return {
       valid: false,
+      message: "",
+      showDeleteDialog: false,
       itemsEtapa: ["Insumo", "Serviço"],
       itemsUso: ["Real", "Previsto"],
       searchTable: null,
@@ -789,18 +640,10 @@ export default {
       showDialogProduto: false,
       showDateDialogInitial: false,
       dateDialogValueInitial: moment().format("YYYY-MM-DD"),
-      showDateDialogInitialEtapa: false,
-      dateDialogValueInitialEtapa: new Date().toISOString().substr(0, 7),
       showDateDialogPrevista: false,
       dateDialogValuePrevista: moment().add(1, "M").format("YYYY-MM-DD"),
       showDateDialogFinal: false,
       dateDialogValueFinal: moment().add(1, "M").format("YYYY-MM-DD"),
-      showDateDialogFinalEtapa: false,
-      dateDialogValueFinalEtapa: new Date(
-        new Date().setMonth(new Date().getMonth() + 1)
-      )
-        .toISOString()
-        .substr(0, 7),
       showClearDialog: false,
       isServico: false,
       isPrevisto: false,
@@ -816,7 +659,7 @@ export default {
           .toISOString()
           .substr(0, 7),
         datePrevista: moment().format("YYYY-MM-DD"),
-        descricao: "Oi",
+        descricao: "",
         tipoEtapa: "Insumo",
         tipoUso: "Real",
         quantidade: 0,
@@ -824,7 +667,7 @@ export default {
         insumo: "Mudas",
         ordem: 0,
       },
-
+      culturaDesenvolvidaId: null,
       itemsServico: ["Preparo do Solo", "Calagem", "Adubação", "Plantio"],
       itemsInsumo: ["Mudas", "Calcário", "Fungicidas", "Frete", "Fitilho"],
       clearEtapa: false,
@@ -837,25 +680,11 @@ export default {
       mensagem: "",
       color: "success",
       cadastrarEditarEtapa: false,
+      editou: false,
+      etapasLength: 0,
     };
   },
   validations() {
-    const validatorsEtapa = {
-      formEtapa: {
-        descricao: {
-          required,
-          minLength: minLength(2),
-        },
-        quantidade: {
-          required,
-          minValue: minValue(0.0000001),
-        },
-        ordem: {
-          required,
-          minValue: minValue(0.0000001),
-        },
-      },
-    };
     const validators = {
       form: {
         terreno: {
@@ -866,9 +695,6 @@ export default {
     };
     if (this.colheita) {
       return validators.form;
-    }
-    if (this.adicionarNovaEtapa) {
-      return validatorsEtapa.formEtapa;
     }
     return {
       form: {
@@ -926,7 +752,6 @@ export default {
     },
     formEditou(pValue) {
       if (pValue && pValue !== null) {
-        console.log(pValue.etapas);
         this.preencheForm();
       }
     },
@@ -956,54 +781,22 @@ export default {
     label() {
       return this.isServico ? "Dias/Homem" : "Quantidade";
     },
-    formattedDateInitialEtapa() {
-      return moment(this.formEtapa.mesInicio).format("MM/YYYY");
-    },
+
     formattedDateInitial() {
       return moment(this.form.mesInicio).format("DD/MM/YYYY");
     },
     formattedDateFinal() {
       return moment(this.form.mesFinal).format("DD/MM/YYYY");
     },
-    formattedDateFinalEtapa() {
-      return moment(this.formEtapa.mesFinal).format("MM/YYYY");
-    },
-    ordemErrors() {
+    initialDateErrors() {
       const errors = [];
-      console.log(this.$v.formEtapa.ordem);
-      const value = this.$v.formEtapa.ordem;
-      if (!value.$dirty) {
-        return errors;
+
+      if (
+        this.form.mesInicio > this.form.mesFinal &&
+        this.form.mesFinal !== null
+      ) {
+        errors.push("Data inicial é maior do que a final");
       }
-      !value.required && errors.push("Valor  é obrigatório!");
-      !value.minValue && errors.push(`Insira um valor acima de 0`);
-      return errors;
-    },
-    descriptionEtapaErrors() {
-      const errors = [];
-      console.log("OI");
-      console.log(this.formEtapa.descricao);
-      console.log(this.$v.formEtapa.descricao);
-      const description = this.$v.formEtapa.descricao;
-      if (!description.$dirty) {
-        return errors;
-      }
-      !description.required && errors.push("Descrição é obrigatória!");
-      !description.minLength &&
-        errors.push(
-          `Insira pelo menos ${description.$params.minLength.min} caracteres!`
-        );
-      return errors;
-    },
-    valueEtapaErrors() {
-      const errors = [];
-      console.log(this.$v.formEtapa.quantidade);
-      const value = this.$v.formEtapa.quantidade;
-      if (!value.$dirty) {
-        return errors;
-      }
-      !value.required && errors.push("Valor  é obrigatório!");
-      !value.minValue && errors.push(`Insira um valor acima de 0`);
       return errors;
     },
     terrenoErrors() {
@@ -1028,9 +821,55 @@ export default {
     },
   },
   methods: {
+    async option(data) {
+      if (data === "sim") {
+        this.selected.forEach((selected) => {
+          this.formEditou.etapas.forEach((data) => {
+            if (data.NumEtapa > selected.NumEtapa) {
+              data.NumEtapa--;
+            }
+          });
+        });
+        try {
+          this.formEditou.etapas.forEach(async (data) => {
+            const variables = {};
+            variables.descricao = data.DescrEtapa;
+            variables.mesFinal = data.MesFim;
+            variables.mesInicio = data.MesInicio;
+            variables.ordem = data.NumEtapa;
+            variables.id = data.id;
+            await culturaDesenvolvidaService.UpdateCulturaEtapa(variables);
+          });
+          this.selected.forEach(async (selected) => {
+            const variables = {};
+            variables.id = selected.id;
+            await culturaDesenvolvidaService.DeleteCulturaEtapa(variables);
+          });
+          this.showDeleteDialog = false;
+          this.mensagem = "Etapas deletadas com sucesso!";
+          this.createSnackBar = true;
+        } catch (e) {
+          this.mensagem = e.message;
+          this.color = "red";
+          this.createSnackBar = true;
+        }
+      } else {
+        this.showDeleteDialog = false;
+      }
+    },
     editarEtapaCadastrada(pValue) {
-      console.log(pValue);
+      this.formEtapa = {
+        mesInicio: moment(pValue[0].MesInicio.substr(0, 7)).format("YYYY-MM"),
+        mesFinal: moment(pValue[0].MesFim.substr(0, 7)).format("YYYY-MM"),
+        descricao: pValue[0].DescrEtapa,
+        ordem: pValue[0].NumEtapa,
+        id: pValue[0].id,
+      };
+      this.editou = true;
       this.cadastrarEditarEtapa = true;
+    },
+    closeEtapaCadastrada() {
+      this.cadastrarEditarEtapa = false;
     },
     formatTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
@@ -1044,23 +883,23 @@ export default {
     novoInsumo() {
       this.showDialogInsumo = true;
     },
-    cancelDateDialogInitialEtapa() {
-      this.showDateDialogInitialEtapa = false;
-      this.dateDialogValueInitialEtapa = this.formEtapa.mesInicio;
-    },
+
     salvarEtapa() {
       this.adicionarNovaEtapa = false;
       this.$v.$reset();
     },
-    adicionarEtapa() {
-      this.adicionarNovaEtapa = true;
+    adicionarNovaEtapaCultura() {
+      this.editou = false;
+      this.cadastrarEditarEtapa = true;
+      this.culturaDesenvolvidaId = this.form.id;
+      this.etapasLength = this.form.etapas.length;
     },
     editarEtapa() {
-      console.log(this.selected);
       this.adicionarNovaEtapa = true;
     },
     excluirEtapa() {
-      console.log(this.formEtapa);
+      this.message = `Deseja realmente excluir as etapas?`;
+      this.showDeleteDialog = true;
     },
     preencheForm() {
       this.form = {
@@ -1092,6 +931,15 @@ export default {
       this.editouCustoProducao = false;
       this.$emit("showDialogClose", this.editouCustoProducao);
       this.clean();
+    },
+    editarInsumoServico(pValue, isInsumo, isPrevisto) {
+      console.log(pValue, isInsumo, isPrevisto);
+    },
+    excluirInsumoServico(pValue, isInsumo, isPrevisto) {
+      console.log(pValue, isInsumo, isPrevisto);
+    },
+    criarInsumoServico(pValue) {
+      console.log(pValue);
     },
     async save() {
       try {
@@ -1130,10 +978,7 @@ export default {
       this.showDateDialogPrevista = false;
       this.dateDialogValuePrevista = this.formEtapa.datePrevista;
     },
-    cancelDateDialogFinalEtapa() {
-      this.showDateDialogFinalEtapa = false;
-      this.dateDialogValueFinalEtapa = this.formEtapa.mesFinal;
-    },
+
     cancelEtapa() {
       this.cleanEtapa();
       this.adicionarNovaEtapa = false;

@@ -1,0 +1,28 @@
+mutation createCulturaEtapa(
+  $mesInicio: DateTime!
+  $mesFinal: DateTime!
+  $ordem: Float!
+  $descricao: String!
+  $culturaDesenvolvidaId: ID!
+) {
+  createCulturaEtapa(
+    DescrEtapa: $descricao
+    NumEtapa: $ordem
+    MesInicio: $mesInicio
+    MesFim: $mesFinal
+    CulturaDesenvolvidaId: $culturaDesenvolvidaId
+  ) {
+    id
+    DescrEtapa
+    NumEtapa
+    MesInicio
+    MesFim
+    CulturaDesenvolvida {
+      id
+      Cultura {
+        id
+        DescrCultura
+      }
+    }
+  }
+}

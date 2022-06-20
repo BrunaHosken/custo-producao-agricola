@@ -1,0 +1,5 @@
+mutation DeleteCulturaEtapa($id: ID) {
+  deleteCulturaEtapa(where: { id: $id }) {
+    id
+  }
+}
