@@ -141,7 +141,12 @@
           <v-btn color="secundary" class="mr-4 ma-2" @click="cancelar">
             Cancelar
           </v-btn>
-          <v-btn color="success" class="mr-4 ma-2" @click="salvar">
+          <v-btn
+            color="success"
+            class="mr-4 ma-2"
+            :disabled="$v.$invalid"
+            @click="salvar"
+          >
             Salvar Etapa
           </v-btn>
         </v-card-actions>
@@ -162,7 +167,7 @@ import SnackBar from "./../../../components/SnackBar.vue";
 import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
 import moment from "moment";
 export default {
-  name: "ClientesEditNew",
+  name: "Etapas",
   components: {
     SnackBar,
   },

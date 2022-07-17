@@ -1,0 +1,26 @@
+mutation UpdateUsoInsumoPrevisto(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $insumoId: ID!
+  $id: ID!
+) {
+  updateUsoInsumoPrevisto(
+    where: { id: $id }
+    data: {
+      Qtd: $quantidade
+      CulturaEtapaId: $culturaEtapaId
+      Insumo: { connect: { id: $insumoId } }
+    }
+  ) {
+    id
+    Qtd
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+    }
+  }
+}

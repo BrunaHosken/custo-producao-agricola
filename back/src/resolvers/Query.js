@@ -197,6 +197,7 @@ function culturaEtapas(_, { id }, ctx, info) {
   );
 }
 function usoInsumoReals(_, { id }, ctx, info) {
+  console.log(id);
   return ctx.db.query.usoInsumoReals(
     {
       where: {
@@ -210,6 +211,7 @@ function usoInsumoReals(_, { id }, ctx, info) {
   );
 }
 function usoInsumoPrevistoes(_, { id }, ctx, info) {
+  console.log(id);
   return ctx.db.query.usoInsumoPrevistoes(
     {
       where: {
@@ -223,6 +225,7 @@ function usoInsumoPrevistoes(_, { id }, ctx, info) {
   );
 }
 function servicoPrestadoes(_, { id }, ctx, info) {
+  console.log("id prestado:", id);
   return ctx.db.query.servicoPrestadoes(
     {
       where: {
@@ -236,6 +239,8 @@ function servicoPrestadoes(_, { id }, ctx, info) {
   );
 }
 function servicoPrevistoes(_, { id }, ctx, info) {
+  console.log("id previsto:", id);
+  console.log("-------------------------------------");
   return ctx.db.query.servicoPrevistoes(
     {
       where: {

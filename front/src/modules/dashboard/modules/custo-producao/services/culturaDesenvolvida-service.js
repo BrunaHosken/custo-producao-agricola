@@ -5,8 +5,8 @@ import createCulturaDesenvolvida from "./../graphql/createCulturaDesenvolvida.gq
 import deleteCulturaDesenvolvida from "./../graphql/deleteCulturaDesenvolvida.gql";
 import usoInsumoPrevistoQuery from "./../graphql/UsoInsumoPrevisto.gql";
 import usoInsumoRealQuery from "./../graphql/UsoInsumoReal.gql";
-import servicoPrevistoQuery from "./../graphql/ServicoPrestado.gql";
-import servicoPrestadoQuery from "./../graphql/ServicoPrevisto.gql.gql";
+import servicoPrevistoQuery from "./../graphql/ServicoPrevisto.gql";
+import servicoPrestadoQuery from "./../graphql/ServicoPrestado.gql";
 import updateCulturaDesenvolvida from "./../graphql/updateCulturaDesenvolvida.gql";
 import updateCulturaEtapa from "./../graphql/updateCulturaEtapa.gql";
 import createCulturaEtapa from "./../graphql/createCulturaEtapa.gql";
@@ -46,16 +46,14 @@ const servicoPrevisto = async (variables) => {
     mutation: servicoPrevistoQuery,
     variables,
   });
-
-  return response.data.servicoPrestadoes;
+  return response.data.servicoPrevistoes;
 };
 const servicoPrestado = async (variables) => {
   const response = await apollo.mutate({
     mutation: servicoPrestadoQuery,
     variables,
   });
-
-  return response.data.servicoPrevistoes;
+  return response.data.servicoPrestadoes;
 };
 
 const CreateCulturaDesenvolvida = async (variables) => {

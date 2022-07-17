@@ -1,0 +1,22 @@
+mutation CreateUsoInsumoPrevisto(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $insumoId: ID!
+) {
+  createUsoInsumoPrevisto(
+    Qtd: $quantidade
+    CulturaEtapaId: $culturaEtapaId
+    InsumoId: $insumoId
+  ) {
+    id
+    Qtd
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+    }
+  }
+}

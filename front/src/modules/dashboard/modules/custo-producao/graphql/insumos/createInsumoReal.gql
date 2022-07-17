@@ -1,0 +1,25 @@
+mutation CreateUsoInsumoReal(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $insumoId: ID!
+  $datePrevista: DateTime!
+) {
+  createUsoInsumoReal(
+    Data: $datePrevista
+    Qtd: $quantidade
+    CulturaEtapaId: $culturaEtapaId
+    InsumoId: $insumoId
+  ) {
+    id
+    Data
+    Qtd
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+    }
+  }
+}

@@ -1,0 +1,29 @@
+mutation UpdateUsoInsumoReal(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $datePrevista: DateTime!
+  $insumoId: ID!
+  $id: ID!
+) {
+  updateUsoInsumoReal(
+    where: { id: $id }
+    data: {
+      Qtd: $quantidade
+      Data: $datePrevista
+      CulturaEtapaId: $culturaEtapaId
+      Insumo: { connect: { id: $insumoId } }
+    }
+  ) {
+    id
+    Data
+    Qtd
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Insumo {
+      id
+      DescrInsumo
+    }
+  }
+}

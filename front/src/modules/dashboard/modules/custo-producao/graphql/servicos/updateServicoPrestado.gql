@@ -1,0 +1,29 @@
+mutation UpdateServicoPrestado(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $servicoId: ID!
+  $datePrevista: DateTime!
+  $id: ID!
+) {
+  updateServicoPrestado(
+    where: { id: $id }
+    data: {
+      Qtd: $quantidade
+      Data: $datePrevista
+      CulturaEtapaId: $culturaEtapaId
+      Servico: { connect: { id: $servicoId } }
+    }
+  ) {
+    id
+    Data
+    DiasHomem
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Servico {
+      id
+      DescrServico
+    }
+  }
+}

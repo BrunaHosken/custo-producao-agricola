@@ -1,0 +1,5 @@
+mutation DeleteUsoInsumoReal($id: ID!) {
+  deleteUsoInsumoReal(where: { id: $id }) {
+    id
+  }
+}

@@ -1,0 +1,25 @@
+mutation CreateServicoPrestado(
+  $quantidade: Float!
+  $servicoId: ID!
+  $culturaEtapaId: ID!
+  $datePrevista: DateTime!
+) {
+  createServicoPrestado(
+    DiasHomem: $quantidade
+    CulturaEtapaId: $culturaEtapaId
+    ServicoId: $servicoId
+    Data: $datePrevista
+  ) {
+    id
+    Data
+    DiasHomem
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Servico {
+      id
+      DescrServico
+    }
+  }
+}

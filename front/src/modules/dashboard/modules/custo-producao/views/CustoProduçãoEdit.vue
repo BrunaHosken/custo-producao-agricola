@@ -262,7 +262,7 @@
                           color="warning"
                           text
                           class="mr-4 ma-2"
-                          @click="editarInsumoServico(insumo, true, true)"
+                          @click="editarInsumoServico(insumo, false, true)"
                         >
                           Editar Insumo
                         </v-btn>
@@ -270,7 +270,7 @@
                           color="red"
                           text
                           class="mr-4 ma-2"
-                          @click="excluirInsumoServico(insumo, true, true)"
+                          @click="excluirInsumoServico(insumo, false, true)"
                         >
                           Excluir Insumo
                         </v-btn>
@@ -322,7 +322,7 @@
                           color="warning"
                           text
                           class="mr-4 ma-2"
-                          @click="editarInsumoServico(insumo, true, false)"
+                          @click="editarInsumoServico(insumo, false, false)"
                         >
                           Editar Insumo
                         </v-btn>
@@ -330,7 +330,7 @@
                           color="red"
                           text
                           class="mr-4 ma-2"
-                          @click="excluirInsumoServico(insumo, true, false)"
+                          @click="excluirInsumoServico(insumo, false, false)"
                         >
                           Excluir Insumo
                         </v-btn>
@@ -372,7 +372,7 @@
                           color="warning"
                           text
                           class="mr-4 ma-2"
-                          @click="editarInsumoServico(servico, false, true)"
+                          @click="editarInsumoServico(servico, true, true)"
                         >
                           Editar Serviço
                         </v-btn>
@@ -380,7 +380,7 @@
                           color="red"
                           text
                           class="mr-4 ma-2"
-                          @click="excluirInsumoServico(servico, false, true)"
+                          @click="excluirInsumoServico(servico, true, true)"
                         >
                           Excluir Serviço
                         </v-btn>
@@ -426,7 +426,7 @@
                           color="warning"
                           text
                           class="mr-4 ma-2"
-                          @click="editarInsumoServico(servico, false, false)"
+                          @click="editarInsumoServico(servico, true, false)"
                         >
                           Editar Serviço
                         </v-btn>
@@ -434,7 +434,7 @@
                           color="red"
                           text
                           class="mr-4 ma-2"
-                          @click="excluirInsumoServico(servico, false, false)"
+                          @click="excluirInsumoServico(servico, true, false)"
                         >
                           Excluir Serviço
                         </v-btn>
@@ -517,16 +517,7 @@
         :editou="false"
         @showDialogClose="close"
       />
-      <ServicoEdit
-        :showDialog="showDialogServico"
-        :editou="false"
-        @showDialogClose="close"
-      />
-      <InsumosEdit
-        :showDialog="showDialogInsumo"
-        :editou="false"
-        @showDialogClose="close"
-      />
+
       <SnackBar
         :show="createSnackBar"
         :mensagem="this.mensagem"
@@ -546,7 +537,15 @@
         :etapasLength="etapasLength"
         @showDialogClose="closeEtapaCadastrada"
       />
-      <InsumoServico :showDialog="false" />
+      <InsumoServico
+        :showDialog="cadastrarEditarInsumoServico"
+        :servicoInsumo="formServicoInsumo"
+        :servico="isServico"
+        :previsto="isPrevisto"
+        :editou="editouServicoInsumo"
+        :culturaEtapaId="culturaEtapaId"
+        @showDialogClose="closeServicoInsumo"
+      />
     </v-flex>
   </v-dialog>
 </template>
@@ -557,10 +556,9 @@ import { required, minValue } from "vuelidate/lib/validators";
 import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
-import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
-import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
 import SnackBar from "./../../../components/SnackBar.vue";
 import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
+import insumoServicoService from "./../services/insumoServico-service";
 import Etapas from "./Etapas.vue";
 import InsumoServico from "./InsumoServico.vue";
 import Dialog from "./../../../components/Dialog.vue";
@@ -569,8 +567,6 @@ export default {
   name: "CustoProducaoEdit",
   components: {
     CulturasEdit,
-    InsumosEdit,
-    ServicoEdit,
     SnackBar,
     Etapas,
     InsumoServico,
@@ -592,8 +588,7 @@ export default {
       valid: false,
       message: "",
       showDeleteDialog: false,
-      itemsEtapa: ["Insumo", "Serviço"],
-      itemsUso: ["Real", "Previsto"],
+
       searchTable: null,
       headers: [
         {
@@ -637,16 +632,14 @@ export default {
         id: 0,
         etapas: [],
       },
+      isServico: false,
+      isPrevisto: false,
       showDialogProduto: false,
       showDateDialogInitial: false,
       dateDialogValueInitial: moment().format("YYYY-MM-DD"),
-      showDateDialogPrevista: false,
-      dateDialogValuePrevista: moment().add(1, "M").format("YYYY-MM-DD"),
       showDateDialogFinal: false,
       dateDialogValueFinal: moment().add(1, "M").format("YYYY-MM-DD"),
       showClearDialog: false,
-      isServico: false,
-      isPrevisto: false,
       searchCultura: null,
       searchEtapa: null,
       loadingCultura: false,
@@ -660,19 +653,20 @@ export default {
           .substr(0, 7),
         datePrevista: moment().format("YYYY-MM-DD"),
         descricao: "",
+        ordem: 0,
+      },
+      formServicoInsumo: {
+        datePrevista: moment().format("YYYY-MM-DD"),
         tipoEtapa: "Insumo",
         tipoUso: "Real",
         quantidade: 0,
-        servico: "Preparo do Solo",
-        insumo: "Mudas",
-        ordem: 0,
+        servico: "",
+        insumo: "",
       },
+      editouServicoInsumo: false,
       culturaDesenvolvidaId: null,
-      itemsServico: ["Preparo do Solo", "Calagem", "Adubação", "Plantio"],
-      itemsInsumo: ["Mudas", "Calcário", "Fungicidas", "Frete", "Fitilho"],
+      culturaEtapaId: null,
       clearEtapa: false,
-      showDialogServico: false,
-      showDialogInsumo: false,
       editouEtapaCultura: false,
       selected: [],
       editouCustoProducao: false,
@@ -682,6 +676,7 @@ export default {
       cadastrarEditarEtapa: false,
       editou: false,
       etapasLength: 0,
+      cadastrarEditarInsumoServico: false,
     };
   },
   validations() {
@@ -719,6 +714,9 @@ export default {
     this.form.culturaDescricao = this.cultura[0];
   },
   watch: {
+    selected(pValue) {
+      console.log(pValue.id);
+    },
     showDialog(pValue) {
       if (pValue !== false) {
         this.preencheForm();
@@ -752,34 +750,14 @@ export default {
     },
     formEditou(pValue) {
       if (pValue && pValue !== null) {
+        console.log(pValue);
         this.preencheForm();
-      }
-    },
-
-    "form.tipoEtapa"(pValue) {
-      if (pValue === "Serviço") {
-        this.isServico = true;
-      } else {
-        this.isServico = false;
-      }
-    },
-    "form.tipoUso"(pValue) {
-      if (pValue === "Previsto") {
-        this.isPrevisto = true;
-      } else {
-        this.isPrevisto = false;
       }
     },
   },
   computed: {
-    formattedDatePrevista() {
-      return moment(this.formEtapa.datePrevista).format("DD/MM/YYYY");
-    },
     labelQuantidade() {
       return this.form.colheita ? "Quantidade Colhida" : "Quantidade Estimada";
-    },
-    label() {
-      return this.isServico ? "Dias/Homem" : "Quantidade";
     },
 
     formattedDateInitial() {
@@ -871,17 +849,16 @@ export default {
     closeEtapaCadastrada() {
       this.cadastrarEditarEtapa = false;
     },
+    closeServicoInsumo() {
+      this.cadastrarEditarInsumoServico = false;
+      this.isServico = false;
+      this.isPrevisto = false;
+    },
     formatTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
     showSnackBar(data) {
       this.createSnackBar = data;
-    },
-    novoServico() {
-      this.showDialogServico = true;
-    },
-    novoInsumo() {
-      this.showDialogInsumo = true;
     },
 
     salvarEtapa() {
@@ -932,14 +909,40 @@ export default {
       this.$emit("showDialogClose", this.editouCustoProducao);
       this.clean();
     },
-    editarInsumoServico(pValue, isInsumo, isPrevisto) {
-      console.log(pValue, isInsumo, isPrevisto);
+    editarInsumoServico(pValue, isServico, isPrevisto) {
+      this.culturaEtapaId = this.selected[0].id;
+      console.log(this.culturaEtapaId);
+      this.formServicoInsumo = {
+        datePrevista: pValue.Data,
+        quantidade: pValue.Qtd,
+        servico: pValue.Servico?.id,
+        insumo: pValue.Insumo?.id,
+      };
+      this.isServico = isServico;
+      this.isPrevisto = isPrevisto;
+
+      this.editouServicoInsumo = true;
+      this.cadastrarEditarInsumoServico = true;
     },
-    excluirInsumoServico(pValue, isInsumo, isPrevisto) {
-      console.log(pValue, isInsumo, isPrevisto);
+    async excluirInsumoServico(pValue, isServico, isPrevisto) {
+      if (isServico) {
+        if (isPrevisto) {
+          await insumoServicoService.DeleteServicoPrevisto(pValue);
+        }
+        await insumoServicoService.DeleteServicoPrestado(pValue);
+      } else {
+        if (isPrevisto) {
+          await insumoServicoService.DeleteInsumoPrevisto(pValue);
+        }
+        await insumoServicoService.DeleteInsumoReal(pValue);
+      }
     },
     criarInsumoServico(pValue) {
-      console.log(pValue);
+      console.log(this.form);
+
+      this.culturaEtapaId = this.selected[0].id;
+      console.log(this.culturaEtapaId);
+      this.cadastrarEditarInsumoServico = true;
     },
     async save() {
       try {
@@ -965,18 +968,12 @@ export default {
     close() {
       this.showDialogProduto = false;
       this.showDialogEtapas = false;
-      this.showDialogInsumo = false;
     },
     novaCultura() {
       this.showDialogProduto = true;
     },
     novaEtapa() {
       this.showDialogEtapas = true;
-    },
-
-    cancelDateDialogPrevista() {
-      this.showDateDialogPrevista = false;
-      this.dateDialogValuePrevista = this.formEtapa.datePrevista;
     },
 
     cancelEtapa() {
@@ -1001,11 +998,6 @@ export default {
           .substr(0, 7),
         datePrevista: moment().format("YYYY-MM-DD"),
         descricao: "",
-        tipoEtapa: "Insumo",
-        tipoUso: "Real",
-        quantidade: 0,
-        servico: "Preparo do Solo",
-        insumo: "Mudas",
         ordem: 0,
       };
       this.clearEtapa = false;

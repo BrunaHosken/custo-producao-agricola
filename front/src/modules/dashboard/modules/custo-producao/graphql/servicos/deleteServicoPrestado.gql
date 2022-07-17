@@ -1,0 +1,5 @@
+mutation DeleteServicoPrestado($id: ID!) {
+  deleteServicoPrestado(where: { id: $id }) {
+    id
+  }
+}

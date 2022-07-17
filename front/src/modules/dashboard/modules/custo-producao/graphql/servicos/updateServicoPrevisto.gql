@@ -1,0 +1,26 @@
+mutation UpdateServicoPrevisto(
+  $quantidade: Float!
+  $culturaEtapaId: ID!
+  $servicoId: ID!
+  $id: ID!
+) {
+  updateServicoPrevisto(
+    where: { id: $id }
+    data: {
+      Qtd: $quantidade
+      CulturaEtapaId: $culturaEtapaId
+      Servico: { connect: { id: $servicoId } }
+    }
+  ) {
+    id
+    DiasHomem
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Servico {
+      id
+      DescrServico
+    }
+  }
+}

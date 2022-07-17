@@ -1,0 +1,5 @@
+mutation DeleteUsoInsumoPrevisto($id: ID!) {
+  deleteUsoInsumoPrevisto(where: { id: $id }) {
+    id
+  }
+}

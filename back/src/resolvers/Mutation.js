@@ -326,6 +326,7 @@ function createUsoInsumoReal(_, args, ctx, info) {
   });
 }
 function createUsoInsumoPrevisto(_, args, ctx, info) {
+  console.log(args);
   return ctx.db.mutation.createUsoInsumoPrevisto({
     data: {
       Qtd: args.Qtd,

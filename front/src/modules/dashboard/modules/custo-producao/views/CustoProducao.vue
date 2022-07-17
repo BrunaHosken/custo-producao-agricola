@@ -182,24 +182,30 @@ export default {
         );
 
         if (data.etapas.length > 0) {
+          console.log(data.etapas);
           data.etapas.forEach(async (etapas) => {
+            console.log(etapas.id);
             variablesTipoEtapa.id = etapas.id;
+            console.log(variablesTipoEtapa);
             let total = 0;
             let custoProducao = 0;
-
+            console.log(variablesTipoEtapa);
             etapas.insumoPrevisto =
               await culturaDesenvolvidaService.usoInsumoPrevisto(
                 variablesTipoEtapa
               );
+            console.log("OI");
             etapas.insumoPrevisto.forEach((response) => {
               total += response.Qtd * response.Insumo.PrecoUnit;
             });
+            console.log(variablesTipoEtapa);
             etapas.insumoReal = await culturaDesenvolvidaService.usoInsumoReal(
               variablesTipoEtapa
             );
             etapas.insumoReal.forEach((response) => {
               total += response.Qtd * response.Insumo.PrecoUnit;
             });
+            console.log(variablesTipoEtapa);
             etapas.servicoPrevisto =
               await culturaDesenvolvidaService.servicoPrevisto(
                 variablesTipoEtapa
@@ -207,6 +213,7 @@ export default {
             etapas.servicoPrevisto.forEach((response) => {
               total += response.DiasHomem * response.Servico.ValorDiaHomem;
             });
+            console.log(variablesTipoEtapa);
             etapas.servicoPrestado =
               await culturaDesenvolvidaService.servicoPrestado(
                 variablesTipoEtapa
@@ -218,6 +225,7 @@ export default {
             custoProducao = total / data.QtdColhida;
             data.totalCulturaDesenvolvida = total;
             data.custoUnitario = custoProducao;
+            console.log("fim");
           });
         }
       });

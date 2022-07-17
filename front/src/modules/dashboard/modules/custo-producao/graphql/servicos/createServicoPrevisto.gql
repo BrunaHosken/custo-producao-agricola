@@ -1,0 +1,22 @@
+mutation CreateServicoPrevisto(
+  $quantidade: Float!
+  $servicoId: ID!
+  $culturaEtapaId: ID!
+) {
+  createServicoPrevisto(
+    DiasHomem: $quantidade
+    CulturaEtapaId: $culturaEtapaId
+    ServicoId: $servicoId
+  ) {
+    id
+    DiasHomem
+    CulturaEtapa {
+      id
+      DescrEtapa
+    }
+    Servico {
+      id
+      DescrServico
+    }
+  }
+}
