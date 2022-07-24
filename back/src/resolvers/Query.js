@@ -170,19 +170,79 @@ function insumoes(_, args, ctx, info) {
     info
   );
 }
-function vendaItems(_, args, ctx, info) {
+
+function vendaItems(_, { date, type }, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
+  let AND = [
+    {
+      Agricultor: {
+        id: agricultorId,
+      },
+    },
+  ];
+  if (date) {
+    if (type === "Semanal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("week").toISOString();
+      const endDate = period.endOf("week").toISOString();
+
+      AND = [
+        {
+          where: {
+            Venda: {
+              Data_gte: startDate,
+              Data_lte: endDate,
+            },
+          },
+          Agricultor: {
+            id: agricultorId,
+          },
+        },
+      ];
+    }
+    if (type === "Mensal") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("month").toISOString();
+      const endDate = period.endOf("month").toISOString();
+
+      AND = [
+        ...AND,
+        {
+          Venda: {
+            Data_gte: startDate,
+            Data_lte: endDate,
+          },
+        },
+      ];
+    }
+    if (type === "Anual") {
+      const period = moment(date, "DD-MM-YYYY");
+      const startDate = period.startOf("year").toISOString();
+      const endDate = period.endOf("year").toISOString();
+
+      AND = [
+        {
+          Venda: {
+            Data_gte: startDate,
+            Data_lte: endDate,
+          },
+          Agricultor: {
+            id: agricultorId,
+          },
+        },
+      ];
+    }
+    console.log(AND);
+  }
   return ctx.db.query.vendaItems(
     {
-      where: {
-        Agricultor: {
-          id: agricultorId,
-        },
-      },
+      where: { AND },
       orderBy: "Qtd_ASC",
     },
     info
   );
 }
+
 function culturaEtapas(_, { id }, ctx, info) {
   return ctx.db.query.culturaEtapas(
     {

@@ -262,6 +262,7 @@ function createCulturaDesenvolvida(_, args, ctx, info) {
   });
 }
 function createVendaItem(_, args, ctx, info) {
+  const agricultorId = getAgricultorId(ctx);
   return ctx.db.mutation.createVendaItem(
     {
       data: {
@@ -276,6 +277,11 @@ function createVendaItem(_, args, ctx, info) {
         CulturaDesenvolvida: {
           connect: {
             id: args.CulturaDesenvolvidaId,
+          },
+        },
+        Agricultor: {
+          connect: {
+            id: agricultorId,
           },
         },
       },
