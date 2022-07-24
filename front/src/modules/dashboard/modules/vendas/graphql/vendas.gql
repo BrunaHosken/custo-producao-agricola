@@ -1,0 +1,34 @@
+query vendaItems($currentDate: String, $periodSelected: String) {
+  vendaItems(date: $currentDate, type: $periodSelected) {
+    id
+    Qtd
+    Und
+    PrecoUnit
+    CulturaDesenvolvida {
+      id
+      AreaTerrenoHectares
+      DataInicio
+      DataColheita
+      QtdColhida
+      Unidade
+      Cultura {
+        id
+        DescrCultura
+        QtdEstimadaPorHectare
+        Und
+      }
+    }
+    Venda {
+      id
+      Data
+      Cliente {
+        id
+        NomeCliente
+      }
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

@@ -1,7 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+      <ToolbarByMonth
+        class="mt-5 mb-3"
+        format="MM-YYYY"
+        month="02"
+        @period="period"
+        @date="date"
+      />
       <TotalBalance class="mt-5 mb-3" :value="value" />
       <v-card v-if="produtos.length === 0">
         <v-card-title>
@@ -34,17 +40,17 @@
           loading-text="Loading... Please wait"
           multi-sort
         >
-          <template v-slot:[`item.data`]="{ item }">
-            {{ formatDateTable(item.data) }}
+          <template v-slot:[`item.Venda.Data`]="{ item }">
+            {{ formatDateTable(item.Venda.Data) }}
           </template>
-          <template v-slot:[`item.vendida`]="{ item }">
-            {{ item.vendida.toLocaleString() }}
+          <template v-slot:[`item.Qtd`]="{ item }">
+            {{ formatCurrency(item.Qtd) }}
           </template>
-          <template v-slot:[`item.preco`]="{ item }">
-            {{ formatCurrency(item.preco) }}
+          <template v-slot:[`item.PrecoUnit`]="{ item }">
+            {{ formatCurrency(item.PrecoUnit) }}
           </template>
           <template v-slot:[`item.total`]="{ item }">
-            {{ formatCurrency(calculaTotal(item.preco, item.vendida)) }}
+            {{ formatCurrency(item.total) }}
           </template>
         </v-data-table>
       </v-card>
@@ -70,6 +76,7 @@ import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import AppFloatingButton from "./../../components/AppFloatingButton.vue";
 import VendasEdit from "./VendasEdit.vue";
+import vendasService from "./../services/vendasService";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import TotalBalance from "./../../components/TotalBalance.vue";
 
@@ -90,79 +97,53 @@ export default {
         {
           text: "Produto",
           align: "start",
-
-          value: "produto",
+          value: "CulturaDesenvolvida.Cultura.DescrCultura",
         },
-        { text: "Data da Venda", value: "data" },
-        { text: "Cliente", value: "cliente" },
+        { text: "Data da Venda", value: "Venda.Data" },
+        { text: "Cliente", value: "Venda.Cliente.NomeCliente" },
 
-        { text: "Quantidade Vendida", value: "vendida" },
-        { text: "Preço Unitário", value: "preco" },
-        { text: "Unidade", value: "unidade" },
+        { text: "Quantidade Vendida", value: "Qtd" },
+        { text: "Preço Unitário", value: "PrecoUnit" },
+        { text: "Unidade", value: "Und" },
         { text: "Total", value: "total" },
       ],
-      produtos: [
-        {
-          index: 1,
-          produto: "Crisântemo",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Feira",
-          vendida: 14000,
-          preco: 20,
-          unidade: "Maço",
-          total: 0,
-        },
-        {
-          index: 2,
-          produto: "Gérbera",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Feira",
-          vendida: 9000,
-          preco: 10,
-          unidade: "Maço",
-          total: 0,
-        },
-        {
-          index: 3,
-          produto: "Limonium",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Floricultura do Seu João",
-          vendida: 14500,
-          preco: 20,
-          unidade: "Maço",
-          total: 0,
-        },
-        {
-          index: 4,
-          produto: "Rosa",
-          data: moment().format("YYYY-MM-DD"),
-          cliente: "Floricultura do Seu João",
-          vendida: 12250,
-          preco: 30,
-          unidade: "Maço",
-          total: 0,
-        },
-      ],
+      produtos: [],
       total: 0,
       totalAnual: 0,
       produtosEdicao: [],
       editou: false,
       deletou: false,
+      periodoAtual: "",
+      currentDate: "",
     };
   },
   computed: {
     value() {
       return this.produtos.reduce((a, b) => {
-        return a + b.preco * b.vendida;
+        return a + b.total;
       }, 0);
     },
   },
   methods: {
+    async searchSales() {
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.produtos = await vendasService.vendas(variables);
+    },
+    period(pValue) {
+      this.periodoAtual = pValue;
+    },
+    async date(pValue) {
+      this.currentDate = pValue;
+      this.searchSales();
+    },
     close(item) {
       this.editou = item;
     },
     formatDateTable(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
 
     edicaoItens(item) {
@@ -183,15 +164,3 @@ export default {
   },
 };
 </script>
-
-<style>
-h3 {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: 0.0125em;
-  line-height: 2rem;
-}
-</style>

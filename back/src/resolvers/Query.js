@@ -187,15 +187,11 @@ function vendaItems(_, { date, type }, ctx, info) {
       const endDate = period.endOf("week").toISOString();
 
       AND = [
+        ...AND,
         {
-          where: {
-            Venda: {
-              Data_gte: startDate,
-              Data_lte: endDate,
-            },
-          },
-          Agricultor: {
-            id: agricultorId,
+          Venda: {
+            Data_gte: startDate,
+            Data_lte: endDate,
           },
         },
       ];
@@ -221,18 +217,15 @@ function vendaItems(_, { date, type }, ctx, info) {
       const endDate = period.endOf("year").toISOString();
 
       AND = [
+        ...AND,
         {
           Venda: {
             Data_gte: startDate,
             Data_lte: endDate,
           },
-          Agricultor: {
-            id: agricultorId,
-          },
         },
       ];
     }
-    console.log(AND);
   }
   return ctx.db.query.vendaItems(
     {
@@ -257,7 +250,6 @@ function culturaEtapas(_, { id }, ctx, info) {
   );
 }
 function usoInsumoReals(_, { id }, ctx, info) {
-  console.log(id);
   return ctx.db.query.usoInsumoReals(
     {
       where: {
@@ -271,7 +263,6 @@ function usoInsumoReals(_, { id }, ctx, info) {
   );
 }
 function usoInsumoPrevistoes(_, { id }, ctx, info) {
-  console.log(id);
   return ctx.db.query.usoInsumoPrevistoes(
     {
       where: {
@@ -285,7 +276,6 @@ function usoInsumoPrevistoes(_, { id }, ctx, info) {
   );
 }
 function servicoPrestadoes(_, { id }, ctx, info) {
-  console.log("id prestado:", id);
   return ctx.db.query.servicoPrestadoes(
     {
       where: {
@@ -299,8 +289,6 @@ function servicoPrestadoes(_, { id }, ctx, info) {
   );
 }
 function servicoPrevistoes(_, { id }, ctx, info) {
-  console.log("id previsto:", id);
-  console.log("-------------------------------------");
   return ctx.db.query.servicoPrevistoes(
     {
       where: {
