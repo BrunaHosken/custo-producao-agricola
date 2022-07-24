@@ -81,15 +81,6 @@
                 </td>
               </tr>
             </template>
-            <!-- <template v-slot:[`item.despesas`]="{ item }">
-              {{ formatCurrency(item.despesas) }}
-            </template>
-
-            <template v-slot:[`item.total`]="{ item }">
-              <v-chip :color="getColor(item)" dark>
-                {{ formatCurrency(produtos.total) }}
-              </v-chip>
-            </template> -->
           </v-data-table>
         </v-card>
       </v-flex>
@@ -102,6 +93,7 @@ import Chart from "chart.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import despesasService from "./../../despesas/services/despesa-service";
+import vendasService from "./../../vendas/services/vendasService";
 import { generateChartConfigs } from "./../../../../../utils";
 export default {
   name: "Relatorios",
@@ -110,6 +102,7 @@ export default {
   data: () => ({
     chartFixesIncomes: undefined,
     chartVariablesIncomes: undefined,
+    chartClientsSales: undefined,
     charts: [
       { title: "Tipo de Consumo Fixo", refId: "chartFixesIncomes" },
       { title: "Tipo de Consumo Variável", refId: "chartVariablesIncomes" },
@@ -117,6 +110,7 @@ export default {
       { title: "Lucro por Cultura", refId: "chartIncomesCultures" },
     ],
     despesaChart: [],
+    salesChart: [],
     search: "",
     periodoAtual: "",
     currentDate: "",
@@ -166,7 +160,6 @@ export default {
   computed: {},
   mounted() {
     this.setChartsBar();
-    this.setChartsDoughnut2();
   },
   destroyed() {},
   methods: {
@@ -177,12 +170,20 @@ export default {
       };
       this.despesaChart = await despesasService.despesas(variables);
     },
+    async searchSales() {
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.salesChart = await vendasService.vendas(variables);
+    },
     period(pValue) {
       this.periodoAtual = pValue;
     },
     async date(pValue) {
       this.currentDate = pValue;
       await this.searchDespesa();
+      await this.searchSales();
       this.setCharts();
     },
 
@@ -228,6 +229,15 @@ export default {
           keyOfValue: "Valor",
         })
       );
+      this.updateOrCreateChart(
+        "chartClientsSales",
+        generateChartConfigs({
+          type: "doughnut",
+          items: this.salesChart,
+          keyToGroup: "CulturaDesenvolvida.Cultura.DescrCultura",
+          keyOfValue: "total",
+        })
+      );
     },
 
     calculaTotalLucro(data) {
@@ -269,32 +279,6 @@ export default {
               data: [300000],
               label: "Copo de Leite",
               backgroundColor: [this.$vuetify.theme.themes.dark.accent],
-            },
-          ],
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        },
-      });
-    },
-    setChartsDoughnut2() {
-      const ctx = this.$refs.chartClientsSales[0].getContext("2d");
-      const myChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["Feira", "Floricultura do Seu João"],
-          datasets: [
-            {
-              data: [23000, 26750],
-              backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)"],
             },
           ],
         },
