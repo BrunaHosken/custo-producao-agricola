@@ -1,0 +1,38 @@
+mutation CreateVendaItem(
+  $quantidade: Float!
+  $unidade: String!
+  $valor: Float!
+  $culturaId: ID!
+  $vendaId: ID!
+) {
+  createVendaItem(
+    Qtd: $quantidade
+    Und: $unidade
+    PrecoUnit: $valor
+    VendaId: $vendaId
+    CulturaDesenvolvidaId: $culturaId
+  ) {
+    id
+    Qtd
+    Und
+    PrecoUnit
+    CulturaDesenvolvida {
+      id
+      Cultura {
+        id
+      }
+    }
+    Venda {
+      id
+      Data
+      Cliente {
+        id
+        NomeCliente
+      }
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

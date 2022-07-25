@@ -1,0 +1,5 @@
+mutation DeleteVendaItem($id: ID) {
+  deleteVendaItem(where: { id: $id }) {
+    id
+  }
+}

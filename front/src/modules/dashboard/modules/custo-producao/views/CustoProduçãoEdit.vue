@@ -714,9 +714,6 @@ export default {
     this.form.culturaDescricao = this.cultura[0];
   },
   watch: {
-    selected(pValue) {
-      console.log(pValue.id);
-    },
     showDialog(pValue) {
       if (pValue !== false) {
         this.preencheForm();

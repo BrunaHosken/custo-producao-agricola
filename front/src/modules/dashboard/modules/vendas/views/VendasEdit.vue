@@ -17,7 +17,7 @@
 
         <v-card-text>
           <v-form>
-            <v-container>
+            <v-container fill-height>
               <v-row class="mt-2">
                 <v-col cols="12" md="6">
                   <v-dialog
@@ -60,14 +60,19 @@
 
                 <v-col cols="12" md="6">
                   <v-autocomplete
-                    v-model="form.descricao"
-                    :loading="loadingCultura"
+                    v-model="form.culturaDescricao"
+                    hint="As culturas que irão aparecer são aquelas que já foram colhidas"
+                    persistent-hint
                     :items="cultura"
+                    :loading="loadingCultura"
+                    item-text="label"
+                    item-value="id"
                     :search-input.sync="searchCultura"
                     outlined
-                    label="Produto"
+                    label="Cultura"
+                    return-object
                     prepend-inner-icon="mdi-format-list-bulleted-type"
-                  ></v-autocomplete>
+                  />
                 </v-col>
               </v-row>
 
@@ -79,6 +84,9 @@
                     :items="clientes"
                     :search-input.sync="searchCliente"
                     outlined
+                    item-text="label"
+                    item-value="id"
+                    return-object
                     prepend-inner-icon="mdi-account"
                     label="Cliente"
                   >
@@ -153,20 +161,36 @@
         :showDialog="showDialogCliente"
         @showDialogClose="close"
       />
+      <Dialog
+        message="Deseja realmente limpar os dados?"
+        :showDialog="showClearDialog"
+        @option="option"
+      />
+      <SnackBar
+        :show="createSnackBar"
+        :mensagem="this.mensagem"
+        :color="color"
+        @show="showSnackBar"
+      />
     </v-flex>
   </v-dialog>
 </template>
 
 <script>
 import moment from "moment";
+import { required, minValue, maxValue } from "vuelidate/lib/validators";
 import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
-
-import { required, minValue } from "vuelidate/lib/validators";
+import Dialog from "./../../../components/Dialog.vue";
 import clienteService from "./../../clientes/services/cliente-service";
+import culturaDesenvolvidaService from "./../../custo-producao/services/culturaDesenvolvida-service";
+import vendasService from "./../services/vendasService";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
-  name: "VendasEdit",
+  name: "VendasNew",
   components: {
+    Dialog,
     ClientesEditNew,
+    SnackBar,
   },
   props: {
     showDialog: {
@@ -178,30 +202,38 @@ export default {
       default: () => {},
     },
   },
-
   data() {
     return {
-      form: {
-        date: moment().format("YYYY-MM-DD"),
-        descricao: "Crisântemo",
-        valor: 0,
-        cliente: "",
-        unidade: "Maço",
-        quantidade: 0,
-        index: 0,
-      },
+      valid: false,
       items: ["Fixo", "Variavel"],
-      cultura: ["Crisântemo", "Gérbera", "Limonium", "Rosa"],
+      cultura: [],
       clientes: [],
       loadingCultura: false,
       loadingCliente: false,
       searchCultura: null,
       searchCliente: null,
       unidades: ["Maço", "Dúzia"],
+      form: {
+        date: moment().format("YYYY-MM-DD"),
+        culturaDescricao: "",
+        valor: 0,
+        cliente: "",
+        unidade: "Maço",
+        quantidade: 0,
+        vendaId: "",
+        vendaItemId: "",
+      },
+      vendasQuery: [],
+      totalVendas: 0,
       showDateDialog: false,
       dateDialogValue: moment().format("YYYY-MM-DD"),
-      editouCultura: false,
+      showClearDialog: false,
       showDialogCliente: false,
+      showDialogProduto: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
+      editouCultura: false,
     };
   },
   validations() {
@@ -209,6 +241,7 @@ export default {
       form: {
         quantidade: {
           required,
+          maxValue: maxValue(this.totalVendas),
           minValue: minValue(0.0000001),
         },
         valor: {
@@ -219,26 +252,41 @@ export default {
     };
   },
   watch: {
+    "form.culturaDescricao"(pValue) {
+      const vendas = this.vendasQuery.filter(
+        (v) => v.CulturaDesenvolvida.Cultura.id === pValue.culturaId
+      );
+      const totalVendas = vendas.reduce((a, b) => {
+        return a + b.Qtd;
+      }, 0);
+      this.totalVendas = pValue.quantidade - totalVendas;
+    },
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
+        console.log(pValue);
         this.form = {
-          date: pValue[0].data,
-          descricao: pValue[0].produto,
-          valor: pValue[0].preco,
-          cliente: pValue[0].cliente,
-          unidade: pValue[0].unidade,
-          quantidade: pValue[0].vendida,
-          index: pValue[0].index,
+          date: moment(pValue[0].Venda.Data.substr(0, 10)).format("YYYY-MM-DD"),
+          valor: pValue[0].PrecoUnit,
+          unidade: pValue[0].Und,
+          quantidade: pValue[0].Qtd,
+          vendaId: pValue[0].Venda.id,
+          vendaItemId: pValue[0].id,
         };
+        this.form.culturaDescricao = {
+          label: pValue[0].CulturaDesenvolvida.Cultura.DescrCultura,
+          culturaId: pValue[0].CulturaDesenvolvida.Cultura.id,
+          quantidade: pValue[0].CulturaDesenvolvida.QtdColhida,
+          id: pValue[0].CulturaDesenvolvida.id,
+        };
+        this.form.cliente = {
+          label: pValue[0].Venda.Cliente.NomeCliente,
+          id: pValue[0].Venda.Cliente.id,
+        };
+        this.dateDialogValue = moment(
+          pValue[0].Venda.Data.substr(0, 10)
+        ).format("YYYY-MM-DD");
       }
     },
-  },
-  async created() {
-    const response = await clienteService.cliente();
-    response.forEach((item) => {
-      this.clientes.push(item.NomeCliente);
-    });
-    this.form.cliente = this.clientes[0];
   },
   computed: {
     formattedDate() {
@@ -250,8 +298,12 @@ export default {
       if (!quantity.$dirty) {
         return errors;
       }
-      !quantity.required && errors.push("Descrição é obrigatória!");
-      !quantity.minValue && errors.push(`Insira um valor acima de 0`);
+      !quantity.required && errors.push("Valor é obrigatório!");
+      if (!quantity.minValue || !quantity.maxValue) {
+        errors.push(
+          `Insira um valor acima de 0 e abaixo de ${this.totalVendas}`
+        );
+      }
       return errors;
     },
     valueErrors() {
@@ -265,26 +317,84 @@ export default {
       return errors;
     },
   },
+  async created() {
+    const response = await clienteService.cliente();
+    response.forEach((item) => {
+      this.clientes.push({
+        label: item.NomeCliente,
+        id: item.id,
+      });
+    });
+    this.form.cliente = this.clientes[0];
+    const data = await culturaDesenvolvidaService.culturaDesenvolvida();
+    const culturaDesenvolvida = data.filter((c) => c.DataColheita !== null);
+
+    culturaDesenvolvida.forEach((item) => {
+      this.cultura.push({
+        label: item.Cultura.DescrCultura,
+        culturaId: item.Cultura.id,
+        quantidade: item.QtdColhida,
+        id: item.id,
+      });
+    });
+    this.vendasQuery = await vendasService.vendas();
+    this.form.culturaDescricao = this.cultura[0];
+  },
   methods: {
-    novoCliente() {
-      this.showDialogCliente = true;
+    showSnackBar(data) {
+      this.createSnackBar = data;
     },
     close() {
       this.showDialogCliente = false;
-      // this.showDialogProduto = false;
+      this.showDialogProduto = false;
+    },
+    novoProduto() {
+      this.showDialogProduto = true;
+    },
+    novoCliente() {
+      this.showDialogCliente = true;
+    },
+    option(data) {
+      if (data == "nao") {
+        this.showClearDialog = false;
+      } else {
+        this.clean();
+        this.showClearDialog = false;
+      }
     },
     cancelDateDialog() {
       this.showDateDialog = false;
       this.dateDialogValue = this.form.date;
     },
+    cancel() {
+      this.$router.go(-1);
+    },
+    clean() {
+      this.form = {
+        date: moment().format("YYYY-MM-DD"),
+        culturaDescricao: "Crisântemo",
+        valor: 0,
+        cliente: this.clientes[0],
+        unidade: "Maço",
+        quantidade: 0,
+      };
+    },
     cancelar() {
       this.editouCultura = false;
       this.$emit("showDialogClose", this.editouCultura);
     },
-    salvar() {
-      this.editouCultura = false;
-
-      this.$emit("showDialogClose", this.editouCultura);
+    async salvar() {
+      try {
+        await vendasService.updateVendaItem(this.form);
+        this.createSnackBar = true;
+        this.mensagem = "Venda criada com sucesso!";
+        this.editouCultura = false;
+        //  this.$emit("showDialogClose", this.editouCultura);
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };

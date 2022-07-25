@@ -1,0 +1,42 @@
+mutation updateVendaItem(
+  $quantidade: Float!
+  $unidade: String!
+  $valor: Float!
+  $culturaId: ID!
+  $vendaItemId: ID!
+  $vendaId: ID!
+) {
+  updateVendaItem(
+    where: { id: $vendaItemId }
+    data: {
+      Qtd: $quantidade
+      Und: $unidade
+      PrecoUnit: $valor
+      Venda: { connect: { id: $vendaId } }
+      CulturaDesenvolvida: { connect: { id: $culturaId } }
+    }
+  ) {
+    id
+    Qtd
+    Und
+    PrecoUnit
+    CulturaDesenvolvida {
+      id
+      Cultura {
+        id
+      }
+    }
+    Venda {
+      id
+      Data
+      Cliente {
+        id
+        NomeCliente
+      }
+    }
+    Agricultor {
+      id
+      Nome
+    }
+  }
+}

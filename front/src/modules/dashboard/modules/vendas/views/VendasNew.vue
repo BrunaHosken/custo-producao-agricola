@@ -58,26 +58,19 @@
 
                   <v-col cols="12" md="6">
                     <v-autocomplete
-                      v-model="form.descricao"
-                      :loading="loadingCultura"
+                      v-model="form.culturaDescricao"
+                      hint="As culturas que irão aparecer são aquelas que já foram colhidas"
+                      persistent-hint
                       :items="cultura"
+                      :loading="loadingCultura"
+                      item-text="label"
+                      item-value="id"
                       :search-input.sync="searchCultura"
                       outlined
-                      label="Produto"
+                      label="Cultura"
+                      return-object
                       prepend-inner-icon="mdi-format-list-bulleted-type"
-                    >
-                      <v-list-item
-                        slot="prepend-item"
-                        ripple
-                        @click="novoProduto"
-                      >
-                        <v-list-item-action>
-                          <v-icon>mdi-plus</v-icon>
-                        </v-list-item-action>
-                        <v-list-item-title>Novo Produto</v-list-item-title>
-                      </v-list-item>
-                      <v-divider slot="prepend-item" class="mt-2"></v-divider>
-                    </v-autocomplete>
+                    />
                   </v-col>
                 </v-row>
 
@@ -89,6 +82,9 @@
                       :items="clientes"
                       :search-input.sync="searchCliente"
                       outlined
+                      item-text="label"
+                      item-value="id"
+                      return-object
                       prepend-inner-icon="mdi-account"
                       label="Cliente"
                     >
@@ -166,11 +162,7 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-        <CulturasEdit
-          :showDialog="showDialogProduto"
-          :editou="false"
-          @showDialogClose="close"
-        />
+
         <ClientesEditNew
           :showDialog="showDialogCliente"
           @showDialogClose="close"
@@ -180,6 +172,12 @@
           :showDialog="showClearDialog"
           @option="option"
         />
+        <SnackBar
+          :show="createSnackBar"
+          :mensagem="this.mensagem"
+          :color="color"
+          @show="showSnackBar"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -187,23 +185,25 @@
 
 <script>
 import moment from "moment";
-import { required, minLength, minValue } from "vuelidate/lib/validators";
+import { required, minValue, maxValue } from "vuelidate/lib/validators";
 import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
-import CulturasEdit from "./../../culturas/views/CulturasEdit.vue";
 import Dialog from "./../../../components/Dialog.vue";
 import clienteService from "./../../clientes/services/cliente-service";
+import culturaDesenvolvidaService from "./../../custo-producao/services/culturaDesenvolvida-service";
+import vendasService from "./../services/vendasService";
+import SnackBar from "./../../../components/SnackBar.vue";
 export default {
   name: "VendasNew",
   components: {
     Dialog,
     ClientesEditNew,
-    CulturasEdit,
+    SnackBar,
   },
   data() {
     return {
       valid: false,
       items: ["Fixo", "Variavel"],
-      cultura: ["Crisântemo"],
+      cultura: [],
       clientes: [],
       loadingCultura: false,
       loadingCliente: false,
@@ -212,18 +212,22 @@ export default {
       unidades: ["Maço", "Dúzia"],
       form: {
         date: moment().format("YYYY-MM-DD"),
-        descricao: "Crisântemo",
+        culturaDescricao: "",
         valor: 0,
         cliente: "",
         unidade: "Maço",
         quantidade: 0,
       },
-
+      vendasQuery: [],
+      totalVendas: 0,
       showDateDialog: false,
       dateDialogValue: moment().format("YYYY-MM-DD"),
       showClearDialog: false,
       showDialogCliente: false,
       showDialogProduto: false,
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
     };
   },
   validations() {
@@ -231,6 +235,7 @@ export default {
       form: {
         quantidade: {
           required,
+          maxValue: maxValue(this.totalVendas),
           minValue: minValue(0.0000001),
         },
         valor: {
@@ -239,6 +244,17 @@ export default {
         },
       },
     };
+  },
+  watch: {
+    "form.culturaDescricao"(pValue) {
+      const vendas = this.vendasQuery.filter(
+        (v) => v.CulturaDesenvolvida.Cultura.id === pValue.culturaId
+      );
+      const totalVendas = vendas.reduce((a, b) => {
+        return a + b.Qtd;
+      }, 0);
+      this.totalVendas = pValue.quantidade - totalVendas;
+    },
   },
   computed: {
     formattedDate() {
@@ -250,8 +266,12 @@ export default {
       if (!quantity.$dirty) {
         return errors;
       }
-      !quantity.required && errors.push("Descrição é obrigatória!");
-      !quantity.minValue && errors.push(`Insira um valor acima de 0`);
+      !quantity.required && errors.push("Valor é obrigatório!");
+      if (!quantity.minValue || !quantity.maxValue) {
+        errors.push(
+          `Insira um valor acima de 0 e abaixo de ${this.totalVendas}`
+        );
+      }
       return errors;
     },
     valueErrors() {
@@ -268,11 +288,30 @@ export default {
   async created() {
     const response = await clienteService.cliente();
     response.forEach((item) => {
-      this.clientes.push(item.NomeCliente);
+      this.clientes.push({
+        label: item.NomeCliente,
+        id: item.id,
+      });
     });
     this.form.cliente = this.clientes[0];
+    const data = await culturaDesenvolvidaService.culturaDesenvolvida();
+    const culturaDesenvolvida = data.filter((c) => c.DataColheita !== null);
+
+    culturaDesenvolvida.forEach((item) => {
+      this.cultura.push({
+        label: item.Cultura.DescrCultura,
+        culturaId: item.Cultura.id,
+        quantidade: item.QtdColhida,
+        id: item.id,
+      });
+    });
+    this.vendasQuery = await vendasService.vendas();
+    this.form.culturaDescricao = this.cultura[0];
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     close() {
       this.showDialogCliente = false;
       this.showDialogProduto = false;
@@ -301,17 +340,23 @@ export default {
     clean() {
       this.form = {
         date: moment().format("YYYY-MM-DD"),
-        descricao: "Crisântemo",
+        culturaDescricao: "Crisântemo",
         valor: 0,
         cliente: this.clientes[0],
         unidade: "Maço",
         quantidade: 0,
       };
     },
-    save() {
-      // this.$v.$reset();
-      // this.clear();
-      this.$router.go(-1);
+    async save() {
+      try {
+        await vendasService.createVendas(this.form);
+        this.createSnackBar = true;
+        this.mensagem = "Despesa criada com sucesso!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      }
     },
   },
 };

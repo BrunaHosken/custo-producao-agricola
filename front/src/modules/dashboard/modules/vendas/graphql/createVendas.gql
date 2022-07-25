@@ -1,0 +1,14 @@
+mutation CreateVenda($date: DateTime!, $clienteId: ID!) {
+  createVenda(Data: $date, ClienteId: $clienteId) {
+    id
+    Data
+    Cliente {
+      id
+      NomeCliente
+      Agricultor {
+        id
+        Nome
+      }
+    }
+  }
+}

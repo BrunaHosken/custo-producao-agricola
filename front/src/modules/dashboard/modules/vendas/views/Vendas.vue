@@ -33,7 +33,7 @@
           :headers="headers"
           :items="produtos"
           show-select
-          item-key="produto"
+          item-key="id"
           :search="searchTable"
           multi-select
           loading="false"
@@ -42,9 +42,6 @@
         >
           <template v-slot:[`item.Venda.Data`]="{ item }">
             {{ formatDateTable(item.Venda.Data) }}
-          </template>
-          <template v-slot:[`item.Qtd`]="{ item }">
-            {{ formatCurrency(item.Qtd) }}
           </template>
           <template v-slot:[`item.PrecoUnit`]="{ item }">
             {{ formatCurrency(item.PrecoUnit) }}
@@ -61,7 +58,12 @@
       :formEditou="selected"
       @showDialogClose="close"
     />
-
+    <SnackBar
+      :show="createSnackBar"
+      :mensagem="this.mensagem"
+      :color="color"
+      @show="showSnackBar"
+    />
     <AppFloatingButton
       v-show="true"
       :itensLength="selected.length"
@@ -79,6 +81,7 @@ import VendasEdit from "./VendasEdit.vue";
 import vendasService from "./../services/vendasService";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import TotalBalance from "./../../components/TotalBalance.vue";
+import SnackBar from "./../../../components/SnackBar.vue";
 
 export default {
   name: "Vendas",
@@ -87,6 +90,7 @@ export default {
     VendasEdit,
     ToolbarByMonth,
     TotalBalance,
+    SnackBar,
   },
   mixins: [formatCurrentMixin],
   data() {
@@ -102,7 +106,7 @@ export default {
         { text: "Data da Venda", value: "Venda.Data" },
         { text: "Cliente", value: "Venda.Cliente.NomeCliente" },
 
-        { text: "Quantidade Vendida", value: "Qtd" },
+        { text: "Quantidade Vendida", align: "center", value: "Qtd" },
         { text: "Preço Unitário", value: "PrecoUnit" },
         { text: "Unidade", value: "Und" },
         { text: "Total", value: "total" },
@@ -115,6 +119,9 @@ export default {
       deletou: false,
       periodoAtual: "",
       currentDate: "",
+      createSnackBar: false,
+      mensagem: "",
+      color: "success",
     };
   },
   computed: {
@@ -125,6 +132,9 @@ export default {
     },
   },
   methods: {
+    showSnackBar(data) {
+      this.createSnackBar = data;
+    },
     async searchSales() {
       const variables = {
         periodSelected: this.periodoAtual,
@@ -149,8 +159,20 @@ export default {
     edicaoItens(item) {
       this.editou = item;
     },
-    deletouItens(item) {
-      this.deletou = item;
+
+    async deletouItens(item) {
+      try {
+        await vendasService.deleteVendaItem(this.selected);
+        this.$router.go(-1);
+        this.createSnackBar = true;
+        this.mensagem = "Despesa criada com sucesso!";
+      } catch (e) {
+        this.mensagem = e.message;
+        this.createSnackBar = true;
+        this.color = "red";
+      } finally {
+        this.deletou = item;
+      }
     },
     calculaTotal(vendida, total) {
       return vendida * total;

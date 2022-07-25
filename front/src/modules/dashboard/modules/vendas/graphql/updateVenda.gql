@@ -1,0 +1,13 @@
+mutation updateVenda($vendaId: ID!, $date: DateTime!, $clienteId: ID!) {
+  updateVenda(
+    where: { id: $vendaId }
+    data: { Data: $date, Cliente: { connect: { id: $clienteId } } }
+  ) {
+    id
+    Data
+    Cliente {
+      id
+      NomeCliente
+    }
+  }
+}
