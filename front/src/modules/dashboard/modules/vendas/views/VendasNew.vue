@@ -267,6 +267,9 @@ export default {
         return errors;
       }
       !quantity.required && errors.push("Valor é obrigatório!");
+      if (this.totalVendas === 0) {
+        errors.push("Não existem mais produtos no estoque!");
+      }
       if (!quantity.minValue || !quantity.maxValue) {
         errors.push(
           `Insira um valor acima de 0 e abaixo de ${this.totalVendas}`

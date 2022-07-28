@@ -178,7 +178,7 @@
 
 <script>
 import moment from "moment";
-import { required, minValue, maxValue } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import ClientesEditNew from "./../../clientes/views/ClientesEditNew.vue";
 import Dialog from "./../../../components/Dialog.vue";
 import clienteService from "./../../clientes/services/cliente-service";
@@ -234,6 +234,8 @@ export default {
       mensagem: "",
       color: "success",
       editouCultura: false,
+      totalColhida: 0,
+      initialVenda: 0,
     };
   },
   validations() {
@@ -241,7 +243,6 @@ export default {
       form: {
         quantidade: {
           required,
-          maxValue: maxValue(this.totalVendas),
           minValue: minValue(0.0000001),
         },
         valor: {
@@ -257,13 +258,14 @@ export default {
         (v) => v.CulturaDesenvolvida.Cultura.id === pValue.culturaId
       );
       const totalVendas = vendas.reduce((a, b) => {
+        this.totalColhida = vendas[0].CulturaDesenvolvida.QtdColhida;
         return a + b.Qtd;
       }, 0);
       this.totalVendas = pValue.quantidade - totalVendas;
     },
+
     formEditou(pValue) {
       if (pValue && pValue.length > 0) {
-        console.log(pValue);
         this.form = {
           date: moment(pValue[0].Venda.Data.substr(0, 10)).format("YYYY-MM-DD"),
           valor: pValue[0].PrecoUnit,
@@ -272,6 +274,7 @@ export default {
           vendaId: pValue[0].Venda.id,
           vendaItemId: pValue[0].id,
         };
+        this.initialVenda = pValue[0].Qtd;
         this.form.culturaDescricao = {
           label: pValue[0].CulturaDesenvolvida.Cultura.DescrCultura,
           culturaId: pValue[0].CulturaDesenvolvida.Cultura.id,
@@ -299,10 +302,13 @@ export default {
         return errors;
       }
       !quantity.required && errors.push("Valor é obrigatório!");
-      if (!quantity.minValue || !quantity.maxValue) {
+      if (this.form.quantidade - this.initialVenda - this.totalVendas > 0) {
         errors.push(
-          `Insira um valor acima de 0 e abaixo de ${this.totalVendas}`
+          `A quantidade vendida está ultrapassando o valor limite de ${this.totalColhida}`
         );
+      }
+      if (!quantity.minValue) {
+        errors.push(`Insira um valor acima de 0`);
       }
       return errors;
     },
@@ -389,7 +395,7 @@ export default {
         this.createSnackBar = true;
         this.mensagem = "Venda criada com sucesso!";
         this.editouCultura = false;
-        //  this.$emit("showDialogClose", this.editouCultura);
+        this.$emit("showDialogClose", this.editouCultura);
       } catch (e) {
         this.mensagem = e.message;
         this.createSnackBar = true;
