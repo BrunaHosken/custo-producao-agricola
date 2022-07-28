@@ -69,7 +69,6 @@ export default {
 
   created() {
     this.period();
-    this.emitPeriod();
   },
   methods: {
     period() {
