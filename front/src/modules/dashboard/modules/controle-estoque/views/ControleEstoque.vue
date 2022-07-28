@@ -1,7 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth class="mt-5 mb-3" format="MM-YYYY" month="02" />
+      <ToolbarByMonth
+        class="mt-5 mb-3"
+        format="MM-YYYY"
+        month="02"
+        @period="period"
+        @date="date"
+      />
     </v-flex>
     <v-flex xs12>
       <v-card v-if="produtos.length === 0">
@@ -53,10 +59,10 @@
 </template>
 
 <script>
-// import moment from "moment";
-
+import "core-js/actual/array/group-by-to-map";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
+import vendasService from "./../../vendas/services/vendasService";
 export default {
   name: "ControleEstoque",
   mixins: [formatCurrentMixin],
@@ -66,6 +72,8 @@ export default {
   data() {
     return {
       search: "",
+      periodoAtual: "",
+      currentDate: "",
       headers: [
         {
           text: "Produto",
@@ -91,36 +99,60 @@ export default {
           value: "estoque",
         },
       ],
-      produtos: [
-        {
-          name: "Crisântemo",
-          colhida: 14000,
-          vendida: 14000,
-          estoque: 0,
-        },
-        {
-          name: "Gérbera",
-          colhida: 10000,
-          vendida: 9000,
-          estoque: 0,
-        },
-        {
-          name: "Limonium",
-          colhida: 15000,
-          vendida: 14500,
-          estoque: 0,
-        },
-        {
-          name: "Rosa",
-          colhida: 13000,
-          vendida: 12250,
-          estoque: 0,
-        },
-      ],
+      produtos: [],
     };
   },
   computed: {},
   methods: {
+    groupBy(item) {
+      const produtos = [];
+      item.forEach((p) => {
+        produtos.push({
+          name: p.CulturaDesenvolvida.Cultura.DescrCultura,
+          colhida: p.CulturaDesenvolvida.QtdColhida,
+          vendida: p.Qtd,
+        });
+      });
+
+      const groupByCategory = produtos.groupByToMap((product) => {
+        return product.name;
+      });
+      const array = [];
+      groupByCategory.forEach((product) => {
+        if (product.length > 1) {
+          const colhida = (array.colhida = product.reduce((a, b) => {
+            return a + b.colhida;
+          }, 0));
+          const vendida = product.reduce((a, b) => {
+            return a + b.vendida;
+          }, 0);
+          this.produtos.push({ name: product[0].name, colhida, vendida });
+        } else {
+          this.produtos.push({
+            name: product[0].name,
+            colhida: product[0].colhida,
+            vendida: product[0].vendida,
+          });
+        }
+      });
+    },
+    async searchSales() {
+      this.produtos = [];
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      const response = await vendasService.vendas(variables);
+      this.groupBy(response);
+    },
+    period(pValue) {
+      this.periodoAtual = pValue;
+    },
+
+    async date(pValue) {
+      this.currentDate = pValue;
+      this.searchSales();
+    },
     qtdEstoque(data) {
       const estoque = data.colhida - data.vendida;
       this.produtos.estoque = estoque;
