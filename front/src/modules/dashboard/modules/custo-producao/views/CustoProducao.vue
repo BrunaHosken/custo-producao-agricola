@@ -181,7 +181,6 @@ export default {
       if (data === "sim") {
         try {
           this.selected.etapas.forEach(async (item) => {
-            console.log(item);
             if (item.servicoPrestado.length > 0)
               item.servicoPrestado.forEach(async (item) => {
                 await culturaDesenvolvidaService.DeleteServicoPrestado(item);

@@ -774,9 +774,6 @@ export default {
         this.preencheForm();
       }
     },
-    selected(pValue) {
-      console.log(pValue);
-    },
   },
   computed: {
     labelQuantidade() {
@@ -842,15 +839,11 @@ export default {
             await culturaDesenvolvidaService.UpdateCulturaEtapa(variables);
           });
           this.selected.forEach(async (selected) => {
-            console.log(selected);
             const insumoPrevisto = selected.insumoPrevisto;
             const insumoPrestado = selected.insumoReal;
             const servicoPrevisto = selected.servicoPrevisto;
             const servicoPrestado = selected.servicoPrestado;
-            console.log(insumoPrevisto);
-            console.log(insumoPrestado);
-            console.log(servicoPrevisto);
-            console.log(servicoPrestado);
+
             if (servicoPrestado.length > 0)
               servicoPrestado.forEach(async (item) => {
                 await insumoServicoService.DeleteServicoPrestado(item);
@@ -906,7 +899,6 @@ export default {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
     },
     formatMonthTable(value) {
-      console.log(value.substr(0, 7));
       return moment(value.substr(0, 7)).format("MM/YYYY");
     },
     showSnackBar(data) {
@@ -963,9 +955,8 @@ export default {
       this.clean();
     },
     editarInsumoServico(pValue, isServico, isPrevisto) {
-      console.log(pValue);
       this.culturaEtapaId = this.selected[0].id;
-      console.log(this.culturaEtapaId);
+
       this.formServicoInsumo = {
         datePrevista: pValue.Data,
         id: pValue.id,
@@ -981,7 +972,6 @@ export default {
       this.cadastrarEditarInsumoServico = true;
     },
     async optionInsumoServico(pValue) {
-      console.log(pValue);
       if (pValue === "nao") {
         this.showDeleteInsumoServicoDialog = false;
       } else {

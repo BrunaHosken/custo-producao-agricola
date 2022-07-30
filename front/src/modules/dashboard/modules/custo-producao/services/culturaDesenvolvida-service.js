@@ -185,7 +185,7 @@ const UpdateInsumoReal = async (variables) => {
     mutation: updateInsumoReal,
     variables,
   });
-  console.log(response);
+
   return response.data.updateInsumoReal;
 };
 const UpdateServicoPrevisto = async (variables) => {

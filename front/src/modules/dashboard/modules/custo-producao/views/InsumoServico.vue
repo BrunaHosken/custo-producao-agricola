@@ -277,7 +277,6 @@ export default {
   watch: {
     culturaEtapaId(pValue) {
       if (pValue) {
-        console.log(pValue);
         this.form.culturaEtapaId = pValue;
       }
     },
@@ -302,7 +301,6 @@ export default {
 
     servicoInsumo(pValue) {
       if (pValue) {
-        console.log(pValue);
         this.form = {
           datePrevista: pValue.Data,
           tipoEtapa: this.servico ? "Serviço" : "Insumo",
