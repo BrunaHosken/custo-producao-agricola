@@ -365,7 +365,7 @@
                         ><br />
 
                         <span>
-                          Dias Previstos:
+                          Dias Utilizados:
                           {{ servico.DiasHomem }} Homem/Dia
                         </span>
                         <br />

@@ -7,7 +7,7 @@ mutation UpdateServicoPrevisto(
   updateServicoPrevisto(
     where: { id: $id }
     data: {
-      Qtd: $quantidade
+      DiasHomem: $quantidade
       CulturaEtapa: { connect: { id: $culturaEtapaId } }
       Servico: { connect: { id: $servicoId } }
     }

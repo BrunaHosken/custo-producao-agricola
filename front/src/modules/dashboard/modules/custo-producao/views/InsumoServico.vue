@@ -289,10 +289,12 @@ export default {
     },
     "form.tipoUso"(pValue) {
       if (pValue === "Previsto") {
+        console.log("OI");
         this.isPrevisto = true;
         this.form.datePrevista = undefined;
         this.dateDialogValuePrevista = undefined;
       } else {
+        console.log("OI 2");
         this.isPrevisto = false;
         this.form.datePrevista = moment().format("YYYY-MM-DD");
         this.dateDialogValuePrevista = moment().format("YYYY-MM-DD");
@@ -301,8 +303,8 @@ export default {
 
     servicoInsumo(pValue) {
       if (pValue) {
+        console.log(pValue);
         this.form = {
-          datePrevista: pValue.Data,
           tipoEtapa: this.servico ? "Serviço" : "Insumo",
           tipoUso: this.previsto ? "Previsto" : "Real",
           quantidade: pValue.quantidade,
@@ -310,9 +312,12 @@ export default {
           insumo: pValue.insumo && pValue.insumo.id,
           id: pValue.id,
         };
-
-        this.form.datePrevista === undefined
-          ? this.dateDialogValuePrevista
+        this.form.datePrevista =
+          pValue.datePrevista !== undefined
+            ? moment(pValue.datePrevista.substr(0, 7)).format("YYYY-MM-DD")
+            : moment().format("YYYY-MM-DD");
+        this.form.datePrevista !== undefined
+          ? (this.dateDialogValuePrevista = this.form.datePrevista)
           : moment().format("YYYY-MM-DD");
         if (this.form.servico === undefined) {
           this.form.servico = this.itemsServico[0];
@@ -320,6 +325,7 @@ export default {
         if (this.form.insumo === undefined) {
           this.form.insumo = this.itemsInsumo[0];
         }
+        console.log(this.form);
       }
     },
   },
@@ -385,6 +391,7 @@ export default {
     },
     async salvar() {
       this.form.culturaEtapaId = this.culturaEtapaId;
+      console.log(this.form);
       try {
         if (!this.editou) {
           if (this.isServico && this.isPrevisto)
