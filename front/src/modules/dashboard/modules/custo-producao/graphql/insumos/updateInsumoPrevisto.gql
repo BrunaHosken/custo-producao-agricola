@@ -8,7 +8,7 @@ mutation UpdateUsoInsumoPrevisto(
     where: { id: $id }
     data: {
       Qtd: $quantidade
-      CulturaEtapaId: $culturaEtapaId
+      CulturaEtapa: { connect: { id: $culturaEtapaId } }
       Insumo: { connect: { id: $insumoId } }
     }
   ) {

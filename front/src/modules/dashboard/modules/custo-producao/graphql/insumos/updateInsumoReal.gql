@@ -10,7 +10,7 @@ mutation UpdateUsoInsumoReal(
     data: {
       Qtd: $quantidade
       Data: $datePrevista
-      CulturaEtapaId: $culturaEtapaId
+      CulturaEtapa: { connect: { id: $culturaEtapaId } }
       Insumo: { connect: { id: $insumoId } }
     }
   ) {

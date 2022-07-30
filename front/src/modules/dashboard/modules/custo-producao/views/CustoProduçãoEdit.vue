@@ -219,22 +219,20 @@
                   </v-btn>
                 </v-card-title>
 
+                <h1
+                  v-if="selected[0].insumoPrevisto.length > 0"
+                  class="headline justify-center ml-5 mt-5"
+                >
+                  Insumos Previstos Cadastrados
+                </h1>
                 <v-layout row wrap>
-                  <v-flex v-for="card in selected" pa-4 xs6 :key="card.id">
-                    <v-card-title
-                      v-if="card.insumoPrevisto.length > 0"
-                      class="headline justify-center"
-                      ml-5
-                    >
-                      Insumos Previstos Cadastrados
-                    </v-card-title>
-                    <v-card
-                      v-for="insumo in card.insumoPrevisto"
-                      :key="insumo.id"
-                      elevation="24"
-                      outlined
-                      class="hover-card"
-                    >
+                  <v-flex
+                    v-for="insumo in selected[0].insumoPrevisto"
+                    pa-4
+                    xs6
+                    :key="insumo.id"
+                  >
+                    <v-card elevation="24" outlined class="hover-card">
                       <v-card-title class="headline justify-center" ml-5>
                         Insumo: {{ insumo.Insumo.DescrInsumo }}
                       </v-card-title>
@@ -276,20 +274,23 @@
                         </v-btn>
                       </v-card-actions>
                     </v-card>
-                    <v-card-title
-                      v-if="card.insumoReal.length > 0"
-                      class="headline justify-center"
-                      ml-5
-                    >
-                      Insumos Prestados Cadastrados
-                    </v-card-title>
-                    <v-card
-                      v-for="insumo in card.insumoReal"
-                      :key="insumo.id"
-                      elevation="24"
-                      outlined
-                      class="hover-card"
-                    >
+                  </v-flex>
+                </v-layout>
+
+                <h1
+                  v-if="selected[0].insumoReal.length > 0"
+                  class="headline justify-center ml-5 mt-5"
+                >
+                  Insumos Prestados Cadastrados
+                </h1>
+                <v-layout row wrap>
+                  <v-flex
+                    v-for="insumo in selected[0].insumoReal"
+                    pa-4
+                    xs6
+                    :key="insumo.id"
+                  >
+                    <v-card elevation="24" outlined class="hover-card">
                       <v-card-title class="headline justify-center" ml-5>
                         Insumo: {{ insumo.Insumo.DescrInsumo }}
                       </v-card-title>
@@ -336,70 +337,23 @@
                         </v-btn>
                       </v-card-actions>
                     </v-card>
-                    <v-card-title
-                      v-if="card.servicoPrestado.length > 0"
-                      class="headline justify-center"
-                      ml-5
-                    >
-                      Serviços Previstos Cadastrados
-                    </v-card-title>
-                    <v-card
-                      v-for="servico in card.servicoPrestado"
-                      :key="servico.id"
-                      elevation="24"
-                      outlined
-                      class="hover-card"
-                    >
-                      <v-card-title class="headline justify-center" ml-5>
-                        Serviço: {{ servico.Servico.DescrServico }}
-                      </v-card-title>
-                      <v-card-subtitle class="headline text-center">
-                        <span>
-                          Preço do Serviço:
-                          {{ formatCurrency(servico.Servico.ValorDiaHomem) }}
-                          Homem/Dia</span
-                        ><br />
+                  </v-flex>
+                </v-layout>
 
-                        <span>
-                          Dias Previstos:
-                          {{ servico.DiasHomem }} Homem/Dia
-                        </span>
-                        <br />
-                      </v-card-subtitle>
-                      <v-card-actions class="mb-4">
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="warning"
-                          text
-                          class="mr-4 ma-2"
-                          @click="editarInsumoServico(servico, true, true)"
-                        >
-                          Editar Serviço
-                        </v-btn>
-                        <v-btn
-                          color="red"
-                          text
-                          class="mr-4 ma-2"
-                          @click="excluirInsumoServico(servico, true, true)"
-                        >
-                          Excluir Serviço
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                    <v-card-title
-                      v-if="card.servicoPrevisto.length > 0"
-                      class="headline justify-center"
-                      ml-5
-                    >
-                      Serviços Prestados Cadastrados
-                    </v-card-title>
-                    <v-card
-                      v-for="servico in card.servicoPrevisto"
-                      :key="servico.id"
-                      elevation="24"
-                      outlined
-                      class="hover-card"
-                    >
+                <h1
+                  v-if="selected[0].servicoPrestado.length > 0"
+                  class="headline justify-center ml-5 mt-5"
+                >
+                  Serviços Prestados Cadastrados
+                </h1>
+                <v-layout row wrap>
+                  <v-flex
+                    v-for="servico in selected[0].servicoPrestado"
+                    pa-4
+                    xs6
+                    :key="servico.id"
+                  >
+                    <v-card elevation="24" outlined class="hover-card">
                       <v-card-title class="headline justify-center" ml-5>
                         Serviço: {{ servico.Servico.DescrServico }}
                       </v-card-title>
@@ -435,6 +389,59 @@
                           text
                           class="mr-4 ma-2"
                           @click="excluirInsumoServico(servico, true, false)"
+                        >
+                          Excluir Serviço
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+
+                <h1
+                  v-if="selected[0].servicoPrevisto.length > 0"
+                  class="headline justify-center ml-5 mt-5"
+                >
+                  Serviços Previstos Cadastrados
+                </h1>
+                <v-layout row wrap>
+                  <v-flex
+                    v-for="servico in selected[0].servicoPrevisto"
+                    pa-4
+                    xs6
+                    :key="servico.id"
+                  >
+                    <v-card elevation="24" outlined class="hover-card">
+                      <v-card-title class="headline justify-center" ml-5>
+                        Serviço: {{ servico.Servico.DescrServico }}
+                      </v-card-title>
+                      <v-card-subtitle class="headline text-center">
+                        <span>
+                          Preço do Serviço:
+                          {{ formatCurrency(servico.Servico.ValorDiaHomem) }}
+                          Homem/Dia</span
+                        ><br />
+
+                        <span>
+                          Dias Previstos:
+                          {{ servico.DiasHomem }} Homem/Dia
+                        </span>
+                        <br />
+                      </v-card-subtitle>
+                      <v-card-actions class="mb-4">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="warning"
+                          text
+                          class="mr-4 ma-2"
+                          @click="editarInsumoServico(servico, true, true)"
+                        >
+                          Editar Serviço
+                        </v-btn>
+                        <v-btn
+                          color="red"
+                          text
+                          class="mr-4 ma-2"
+                          @click="excluirInsumoServico(servico, true, true)"
                         >
                           Excluir Serviço
                         </v-btn>
@@ -487,10 +494,13 @@
                   {{ item.NumEtapa }}º
                 </template>
                 <template v-slot:[`item.MesInicio`]="{ item }">
-                  {{ formatTable(item.MesInicio) }}
+                  {{ formatMonthTable(item.MesInicio) }}
                 </template>
-                <template v-slot:[`item.custoTotal`]="{ item }">
-                  {{ formatCurrency(item.custoTotal) }}
+                <template v-slot:[`item.MesFim`]="{ item }">
+                  {{ formatMonthTable(item.MesFim) }}
+                </template>
+                <template v-slot:[`item.total`]="{ item }">
+                  {{ formatCurrency(item.total) }}
                 </template>
               </v-data-table>
             </v-container>
@@ -529,6 +539,11 @@
         :showDialog="showDeleteDialog"
         @option="option"
       />
+      <Dialog
+        :message="messageInsumoServico"
+        :showDialog="showDeleteInsumoServicoDialog"
+        @option="optionInsumoServico"
+      />
       <Etapas
         :showDialog="cadastrarEditarEtapa"
         :etapa="formEtapa"
@@ -558,7 +573,7 @@ import culturaService from "./../../culturas/services/cultura-service.js";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import SnackBar from "./../../../components/SnackBar.vue";
 import culturaDesenvolvidaService from "./../services/culturaDesenvolvida-service.js";
-import insumoServicoService from "./../services/insumoServico-service";
+import insumoServicoService from "./../services/culturaDesenvolvida-service";
 import Etapas from "./Etapas.vue";
 import InsumoServico from "./InsumoServico.vue";
 import Dialog from "./../../../components/Dialog.vue";
@@ -588,7 +603,6 @@ export default {
       valid: false,
       message: "",
       showDeleteDialog: false,
-
       searchTable: null,
       headers: [
         {
@@ -597,9 +611,14 @@ export default {
           value: "NumEtapa",
         },
         {
-          text: "Data",
+          text: "Mês Início",
           align: "start",
           value: "MesInicio",
+        },
+        {
+          text: "Mês Final",
+          align: "start",
+          value: "MesFim",
         },
         {
           text: "Descrição",
@@ -609,7 +628,7 @@ export default {
         {
           text: "Custo Total",
           align: "start",
-          value: "custoTotal",
+          value: "total",
         },
       ],
       cultura: [],
@@ -677,6 +696,11 @@ export default {
       editou: false,
       etapasLength: 0,
       cadastrarEditarInsumoServico: false,
+      messageInsumoServico: "",
+      showDeleteInsumoServicoDialog: false,
+      excludedInsumoServico: null,
+      excludedServico: false,
+      excludedPrevisto: false,
     };
   },
   validations() {
@@ -747,9 +771,11 @@ export default {
     },
     formEditou(pValue) {
       if (pValue && pValue !== null) {
-        console.log(pValue);
         this.preencheForm();
       }
+    },
+    selected(pValue) {
+      console.log(pValue);
     },
   },
   computed: {
@@ -816,6 +842,31 @@ export default {
             await culturaDesenvolvidaService.UpdateCulturaEtapa(variables);
           });
           this.selected.forEach(async (selected) => {
+            console.log(selected);
+            const insumoPrevisto = selected.insumoPrevisto;
+            const insumoPrestado = selected.insumoReal;
+            const servicoPrevisto = selected.servicoPrevisto;
+            const servicoPrestado = selected.servicoPrestado;
+            console.log(insumoPrevisto);
+            console.log(insumoPrestado);
+            console.log(servicoPrevisto);
+            console.log(servicoPrestado);
+            if (servicoPrestado.length > 0)
+              servicoPrestado.forEach(async (item) => {
+                await insumoServicoService.DeleteServicoPrestado(item);
+              });
+            if (servicoPrevisto.length > 0)
+              servicoPrevisto.forEach(async (item) => {
+                await insumoServicoService.DeleteServicoPrevisto(item);
+              });
+            if (insumoPrestado.length > 0)
+              insumoPrestado.forEach(async (item) => {
+                await insumoServicoService.DeleteInsumoReal(item);
+              });
+            if (insumoPrevisto.length > 0)
+              insumoPrevisto.forEach(async (item) => {
+                await insumoServicoService.DeleteInsumoPrevisto(item);
+              });
             const variables = {};
             variables.id = selected.id;
             await culturaDesenvolvidaService.DeleteCulturaEtapa(variables);
@@ -853,6 +904,10 @@ export default {
     },
     formatTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
+    },
+    formatMonthTable(value) {
+      console.log(value.substr(0, 7));
+      return moment(value.substr(0, 7)).format("MM/YYYY");
     },
     showSnackBar(data) {
       this.createSnackBar = data;
@@ -903,42 +958,76 @@ export default {
     },
     cancelar() {
       this.editouCustoProducao = false;
+      this.selected = [];
       this.$emit("showDialogClose", this.editouCustoProducao);
       this.clean();
     },
     editarInsumoServico(pValue, isServico, isPrevisto) {
+      console.log(pValue);
       this.culturaEtapaId = this.selected[0].id;
       console.log(this.culturaEtapaId);
       this.formServicoInsumo = {
         datePrevista: pValue.Data,
-        quantidade: pValue.Qtd,
+        id: pValue.id,
         servico: pValue.Servico?.id,
         insumo: pValue.Insumo?.id,
       };
       this.isServico = isServico;
       this.isPrevisto = isPrevisto;
-
+      this.formServicoInsumo.quantidade = this.isServico
+        ? pValue.DiasHomem
+        : pValue.Qtd;
       this.editouServicoInsumo = true;
       this.cadastrarEditarInsumoServico = true;
     },
-    async excluirInsumoServico(pValue, isServico, isPrevisto) {
-      if (isServico) {
-        if (isPrevisto) {
-          await insumoServicoService.DeleteServicoPrevisto(pValue);
-        }
-        await insumoServicoService.DeleteServicoPrestado(pValue);
+    async optionInsumoServico(pValue) {
+      console.log(pValue);
+      if (pValue === "nao") {
+        this.showDeleteInsumoServicoDialog = false;
       } else {
-        if (isPrevisto) {
-          await insumoServicoService.DeleteInsumoPrevisto(pValue);
+        try {
+          if (this.excludedServico) {
+            if (this.excludedPrevisto) {
+              await insumoServicoService.DeleteServicoPrevisto(
+                this.excludedInsumoServico
+              );
+            } else {
+              await insumoServicoService.DeleteServicoPrestado(
+                this.excludedInsumoServico
+              );
+            }
+          } else {
+            if (this.excludedPrevisto) {
+              await insumoServicoService.DeleteInsumoPrevisto(
+                this.excludedInsumoServico
+              );
+            } else {
+              await insumoServicoService.DeleteInsumoReal(
+                this.excludedInsumoServico
+              );
+            }
+          }
+          this.mensagem = "Excluido com sucesso!";
+          this.showDeleteInsumoServicoDialog = false;
+        } catch (e) {
+          this.mensagem = e.message;
+          this.createSnackBar = true;
+          this.color = "red";
         }
-        await insumoServicoService.DeleteInsumoReal(pValue);
       }
     },
+    excluirInsumoServico(pValue, isServico, isPrevisto) {
+      this.showDeleteInsumoServicoDialog = true;
+      this.excludedInsumoServico = pValue;
+      this.excludedServico = isServico;
+      this.excludedPrevisto = isPrevisto;
+      isServico
+        ? (this.messageInsumoServico = `Deseja realmente excluir o serviço?`)
+        : (this.messageInsumoServico = `Deseja realmente excluir o insumo?`);
+    },
     criarInsumoServico(pValue) {
-      console.log(this.form);
-
       this.culturaEtapaId = this.selected[0].id;
-      console.log(this.culturaEtapaId);
+
       this.cadastrarEditarInsumoServico = true;
     },
     async save() {
@@ -959,9 +1048,6 @@ export default {
       return valor * quantidade;
     },
 
-    deleteItem(item) {
-      console.log(item);
-    },
     close() {
       this.showDialogProduto = false;
       this.showDialogEtapas = false;

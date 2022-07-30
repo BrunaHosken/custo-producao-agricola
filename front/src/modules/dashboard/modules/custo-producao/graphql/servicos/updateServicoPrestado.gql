@@ -10,7 +10,7 @@ mutation UpdateServicoPrestado(
     data: {
       Qtd: $quantidade
       Data: $datePrevista
-      CulturaEtapaId: $culturaEtapaId
+      CulturaEtapa: { connect: { id: $culturaEtapaId } }
       Servico: { connect: { id: $servicoId } }
     }
   ) {

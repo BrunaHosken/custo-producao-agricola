@@ -23,6 +23,7 @@
           Nenhuma Cultura Desenvolvida. <br />
         </v-card-title>
 
+        <!-- -->
         <v-container v-else fluid grid-list-md>
           <v-card-title>
             <v-icon size="50" color="warning" class="mr-2"
@@ -58,8 +59,7 @@
                 <v-card-text class="text-center">
                   <h3>
                     Total cultura desenvolvida:
-                    {{ totalCulturaDesenvolvida }}
-                    {{ formatCurrency(card.totalCulturaDesenvolvida || 0) }}
+                    {{ formatCurrency(card.total || 0) }}
                   </h3>
 
                   <h3>
@@ -69,7 +69,7 @@
                   </h3>
                   <h3>
                     Custo Unitário:
-                    {{ formatCurrency(card.custoUnitario || 0) }}
+                    {{ formatCurrency(custoUnitario(card) || 0) }}
                   </h3>
                 </v-card-text>
                 <v-card-actions>
@@ -129,23 +129,7 @@ export default {
     return {
       periodoAtual: "",
       currentDate: "",
-
-      cards: [
-        {
-          AreaTerrenoHectares: 0,
-          Cultura: {
-            DescrCultura: "",
-            QtdEstimadaPorHectare: 0,
-            id: 0,
-          },
-          DataColheita: "",
-          DataInicio: "",
-          QtdColhida: 0,
-          Unidade: "",
-          id: 0,
-          etapas: [],
-        },
-      ],
+      cards: [],
       message: "",
       showDeleteDialog: false,
       culturaDesenvolvida: null,
@@ -162,73 +146,20 @@ export default {
       this.createSnackBar = data;
     },
     async searchculturaDesenvolvida() {
+      this.cards = [];
       const variables = {
         periodSelected: this.periodoAtual,
         currentDate: this.currentDate,
       };
-      const variablesEtapa = {
-        id: 0,
-      };
-      const variablesTipoEtapa = {
-        id: 0,
-      };
-      this.cards = await culturaDesenvolvidaService.culturaDesenvolvida(
+
+      const response = await culturaDesenvolvidaService.culturaDesenvolvida(
         variables
       );
-      this.cards.forEach(async (data) => {
-        variablesEtapa.id = data.id;
-        data.etapas = await culturaDesenvolvidaService.culturaEtapa(
-          variablesEtapa
-        );
 
-        if (data.etapas.length > 0) {
-          console.log(data.etapas);
-          data.etapas.forEach(async (etapas) => {
-            console.log(etapas.id);
-            variablesTipoEtapa.id = etapas.id;
-            console.log(variablesTipoEtapa);
-            let total = 0;
-            let custoProducao = 0;
-            console.log(variablesTipoEtapa);
-            etapas.insumoPrevisto =
-              await culturaDesenvolvidaService.usoInsumoPrevisto(
-                variablesTipoEtapa
-              );
-            console.log("OI");
-            etapas.insumoPrevisto.forEach((response) => {
-              total += response.Qtd * response.Insumo.PrecoUnit;
-            });
-            console.log(variablesTipoEtapa);
-            etapas.insumoReal = await culturaDesenvolvidaService.usoInsumoReal(
-              variablesTipoEtapa
-            );
-            etapas.insumoReal.forEach((response) => {
-              total += response.Qtd * response.Insumo.PrecoUnit;
-            });
-            console.log(variablesTipoEtapa);
-            etapas.servicoPrevisto =
-              await culturaDesenvolvidaService.servicoPrevisto(
-                variablesTipoEtapa
-              );
-            etapas.servicoPrevisto.forEach((response) => {
-              total += response.DiasHomem * response.Servico.ValorDiaHomem;
-            });
-            console.log(variablesTipoEtapa);
-            etapas.servicoPrestado =
-              await culturaDesenvolvidaService.servicoPrestado(
-                variablesTipoEtapa
-              );
-            etapas.servicoPrestado.forEach((response) => {
-              total += response.DiasHomem * response.Servico.ValorDiaHomem;
-            });
-            etapas.custoTotal = total;
-            custoProducao = total / data.QtdColhida;
-            data.totalCulturaDesenvolvida = total;
-            data.custoUnitario = custoProducao;
-            console.log("fim");
-          });
-        }
-      });
+      this.cards =
+        await culturaDesenvolvidaService.culturaDesenvolvidaWithEtapas(
+          variables
+        );
     },
     formatDateTable(value) {
       return moment(value.substr(0, 10)).format("DD/MM/YYYY");
@@ -237,6 +168,11 @@ export default {
       this.editou = item;
       this.culturaDesenvolvida = null;
     },
+    custoUnitario(item) {
+      const custoUnitario = item.total / item.QtdColhida;
+      item.custoUnitario = custoUnitario;
+      return custoUnitario;
+    },
     editar(item) {
       this.culturaDesenvolvida = item;
       this.editou = true;
@@ -244,10 +180,31 @@ export default {
     async option(data) {
       if (data === "sim") {
         try {
+          this.selected.etapas.forEach(async (item) => {
+            console.log(item);
+            if (item.servicoPrestado.length > 0)
+              item.servicoPrestado.forEach(async (item) => {
+                await culturaDesenvolvidaService.DeleteServicoPrestado(item);
+              });
+            if (item.servicoPrevisto.length > 0)
+              item.servicoPrevisto.forEach(async (item) => {
+                await culturaDesenvolvidaService.DeleteServicoPrevisto(item);
+              });
+            if (item.insumoReal.length > 0)
+              item.insumoReal.forEach(async (item) => {
+                await culturaDesenvolvidaService.DeleteInsumoReal(item);
+              });
+            if (item.insumoPrevisto.length > 0)
+              item.insumoPrevisto.forEach(async (item) => {
+                await culturaDesenvolvidaService.DeleteInsumoPrevisto(item);
+              });
+            await culturaDesenvolvidaService.DeleteCulturaEtapa(item);
+          });
+
           await culturaDesenvolvidaService.DeleteCulturaDesenvolvida(
             this.selected
           );
-          this.mensagem = "Despesa deletada com sucesso!";
+          this.mensagem = "Custo de produção deletado com sucesso!";
           this.createSnackBar = true;
           this.showDeleteDialog = false;
         } catch (e) {

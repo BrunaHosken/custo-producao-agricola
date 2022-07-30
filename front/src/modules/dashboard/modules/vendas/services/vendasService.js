@@ -45,7 +45,6 @@ const deleteVendaItem = async (variables) => {
 };
 
 const updateVendaItem = async (variables) => {
-  console.log(variables);
   variables.quantidade = Number(variables.quantidade);
   variables.valor = Number(variables.valor);
   variables.culturaId = variables.culturaDescricao.id;

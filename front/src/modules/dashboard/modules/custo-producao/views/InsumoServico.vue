@@ -179,7 +179,7 @@
 <script>
 import { required, minValue } from "vuelidate/lib/validators";
 import SnackBar from "./../../../components/SnackBar.vue";
-import insumoServicoService from "./../services/insumoServico-service";
+import insumoServicoService from "./../services/culturaDesenvolvida-service";
 import InsumosEdit from "./../../insumos/views/InsumosEdit.vue";
 import ServicoEdit from "./../../servicos/views/ServicosEdit.vue";
 import servicoService from "./../../servicos/services/servicos-service.js";
@@ -228,6 +228,7 @@ export default {
         servico: "",
         insumo: "",
         culturaEtapaId: "",
+        id: "",
       },
       mensagem: "",
       createSnackBar: false,
@@ -275,8 +276,8 @@ export default {
   },
   watch: {
     culturaEtapaId(pValue) {
-      console.log(pValue);
       if (pValue) {
+        console.log(pValue);
         this.form.culturaEtapaId = pValue;
       }
     },
@@ -290,13 +291,18 @@ export default {
     "form.tipoUso"(pValue) {
       if (pValue === "Previsto") {
         this.isPrevisto = true;
+        this.form.datePrevista = undefined;
+        this.dateDialogValuePrevista = undefined;
       } else {
         this.isPrevisto = false;
+        this.form.datePrevista = moment().format("YYYY-MM-DD");
+        this.dateDialogValuePrevista = moment().format("YYYY-MM-DD");
       }
     },
 
     servicoInsumo(pValue) {
       if (pValue) {
+        console.log(pValue);
         this.form = {
           datePrevista: pValue.Data,
           tipoEtapa: this.servico ? "Serviço" : "Insumo",
@@ -304,6 +310,7 @@ export default {
           quantidade: pValue.quantidade,
           servico: pValue.servico && pValue.servico.id,
           insumo: pValue.insumo && pValue.insumo.id,
+          id: pValue.id,
         };
 
         this.form.datePrevista === undefined
@@ -379,6 +386,7 @@ export default {
       this.$emit("showDialogClose", this.editouEtapa);
     },
     async salvar() {
+      this.form.culturaEtapaId = this.culturaEtapaId;
       try {
         if (!this.editou) {
           if (this.isServico && this.isPrevisto)
@@ -391,14 +399,50 @@ export default {
             await insumoServicoService.CreateInsumoReal(this.form);
         }
         if (this.editou) {
-          if (this.isServico && this.isPrevisto)
-            await insumoServicoService.UpdateServicoPrevisto(this.form);
-          if (this.isServico && !this.isPrevisto)
-            await insumoServicoService.UpdateServicoPrestado(this.form);
-          if (!this.isServico && this.isPrevisto)
-            await insumoServicoService.UpdateInsumoPrevisto(this.form);
-          if (!this.isServico && !this.isPrevisto)
-            await insumoServicoService.UpdateInsumoReal(this.form);
+          if (this.previsto !== this.isPrevisto) {
+            if (this.servico) {
+              if (this.servico && this.previsto)
+                await insumoServicoService.DeleteServicoPrevisto(this.form);
+            } else {
+              if (!this.servico && !this.previsto)
+                await insumoServicoService.DeleteInsumoReal(this.form);
+            }
+
+            if (this.isServico && !this.isPrevisto)
+              await insumoServicoService.CreateServicoPrestado(this.form);
+            else if (!this.isServico && !this.isPrevisto)
+              await insumoServicoService.CreateInsumoReal(this.form);
+          }
+          if (this.servico !== this.isServico) {
+            if (this.previsto) {
+              if (this.servico && this.previsto)
+                await insumoServicoService.DeleteServicoPrevisto(this.form);
+              else if (!this.servico && this.previsto)
+                await insumoServicoService.DeleteInsumoPrevisto(this.form);
+            } else {
+              if (this.servico && !this.previsto)
+                await insumoServicoService.DeleteServicoPrestado(this.form);
+              else if (!this.servico && !this.previsto)
+                await insumoServicoService.DeleteInsumoReal(this.form);
+            }
+            if (this.isServico && this.isPrevisto)
+              await insumoServicoService.CreateServicoPrevisto(this.form);
+            else if (this.isServico && !this.isPrevisto)
+              await insumoServicoService.CreateServicoPrestado(this.form);
+            else if (!this.isServico && this.isPrevisto)
+              await insumoServicoService.CreateInsumoPrevisto(this.form);
+            else if (!this.isServico && !this.isPrevisto)
+              await insumoServicoService.CreateInsumoReal(this.form);
+          } else {
+            if (this.isServico && this.isPrevisto)
+              await insumoServicoService.UpdateServicoPrevisto(this.form);
+            else if (this.isServico && !this.isPrevisto)
+              await insumoServicoService.UpdateServicoPrestado(this.form);
+            else if (!this.isServico && this.isPrevisto)
+              await insumoServicoService.UpdateInsumoPrevisto(this.form);
+            else if (!this.isServico && !this.isPrevisto)
+              await insumoServicoService.UpdateInsumoReal(this.form);
+          }
         }
         this.mensagem = "Serviço/Insumo salvo com sucesso!";
         this.createSnackBar = true;
