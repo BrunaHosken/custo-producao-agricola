@@ -54,9 +54,9 @@ const culturaDesenvolvidaWithVendas = async (variables) => {
   });
   response.data.vendaItems.forEach(async (vendaItem) => {
     vendaItem.totalProduzidas = 0;
+    vendaItem.custoUnitario = 0;
     variables = {};
     variables.id = vendaItem.CulturaDesenvolvida.id;
-    vendaItem.flex = 6;
 
     vendaItem.culturaProducaoEtapas = await apollo.mutate({
       mutation: culturaDesenvolvidaQuery,
@@ -97,10 +97,12 @@ const culturaDesenvolvidaWithVendas = async (variables) => {
                 response.DiasHomem * response.Servico.ValorDiaHomem;
             });
             data.total += etapa.total;
+
+            vendaItem.custoUnitario = data.total / data.QtdColhida;
           });
         }
-        console.log(data);
         vendaItem.totalProduzidas += data.QtdColhida;
+        console.log(vendaItem.totalProduzidas);
       }
     );
   });

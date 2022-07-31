@@ -21,11 +21,9 @@
         >
         <v-container v-else fluid grid-list-md>
           <v-layout row wrap>
-            {{ this.cards }}
-            <v-flex v-for="card in cards" :key="card.id" pa-4 xs-6>
+            <v-flex v-for="card in cards" :key="card.index" pa-4 xs6>
               <v-card elevation="24" outlined class="hover-card">
-                {{ card }}
-                <!-- <v-card-title class="headline justify-center">
+                <v-card-title class="headline justify-center">
                   Cultura: {{ card.cultura }}
                 </v-card-title>
                 <v-card-subtitle class="headline text-center">
@@ -38,34 +36,32 @@
                     {{ card.unidade }}
                   </p>
                   <p>Valor vendido: {{ formatCurrency(card.valorVenda) }}</p>
-                  <p>Custo unitário: {{ formatCurrency(card.custo) }}</p>
                   <p>
-                    Receita Bruta:
-                    {{ formatCurrency(receitaBruta(card.item, card.index)) }}
+                    Custo unitário:
+                    {{ formatCurrency(card.custo || 0) }}
                   </p>
                   <p>
-                    Custo produção:
-                    {{ formatCurrency(custoProducao(card.item, card.index)) }}
+                    Receita Bruta:
+                    {{ formatCurrency(receitaBruta(card)) }}
+                  </p>
+
+                  <p>
+                    Custo da produção:
+                    {{ formatCurrency(custoProducao(card)) }}
                   </p>
                   <p v-if="periodoAtual === 'Semanal'">
                     Margem bruta semanal:
-                    {{
-                      formatCurrency(margemBrutaSemanal(card.item, card.index))
-                    }}
+                    {{ formatCurrency(margemBrutaSemanal(card)) }}
                   </p>
                   <p v-if="periodoAtual === 'Mensal'">
                     Margem bruta mensal:
-                    {{
-                      formatCurrency(margemBrutaMensal(card.item, card.index))
-                    }}
+                    {{ formatCurrency(margemBrutaMensal(card)) }}
                   </p>
                   <p v-if="periodoAtual === 'Anual'">
                     Margem bruta anual:
-                    {{
-                      formatCurrency(margemBrutaAnual(card.item, card.index))
-                    }}
+                    {{ formatCurrency(margemBrutaAnual(card)) }}
                   </p>
-                </v-card-text> -->
+                </v-card-text>
               </v-card>
             </v-flex>
           </v-layout>
@@ -80,6 +76,8 @@ import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import margemBrutaService from "./../services/margemBruta-service";
+import "core-js/actual/array/group-by-to-map";
+
 export default {
   name: "MargemBruta",
   mixins: [formatCurrentMixin],
@@ -95,15 +93,69 @@ export default {
     };
   },
   methods: {
+    groupBy(item) {
+      const produtos = [];
+
+      item.forEach((p) => {
+        produtos.push({
+          index: p.CulturaDesenvolvida.id,
+          day: moment(p.Venda.Data.substr(0, 10)).format("DD/MM/YYYY"),
+          cultura: p.CulturaDesenvolvida.Cultura.DescrCultura,
+          vendido: p.Qtd,
+          unidade: p.CulturaDesenvolvida.Cultura.Und,
+          valorVenda: p.total,
+          custo: 0,
+        });
+      });
+      const groupByCategory = produtos.groupByToMap((product) => {
+        return product.index;
+      });
+
+      const array = [];
+      groupByCategory.forEach((product) => {
+        if (product.length > 1) {
+          const valorVenda = (array.valorVenda = product.reduce((a, b) => {
+            return a + b.valorVenda;
+          }, 0));
+          const vendido = product.reduce((a, b) => {
+            return a + b.vendido;
+          }, 0);
+
+          this.cards.push({
+            index: product[0].index,
+            day: product[0].day,
+            cultura: product[0].cultura,
+            vendido,
+            unidade: product[0].unidade,
+            valorVenda,
+            custo: product[0].custo,
+          });
+        } else {
+          this.cards.push({
+            index: product[0].index,
+            day: product[0].day,
+            cultura: product[0].cultura,
+            vendido: product[0].vendido,
+            unidade: product[0].unidade,
+            valorVenda: product[0].valorVenda,
+            custo: product[0].custo,
+          });
+        }
+      });
+    },
+
     async searchMargemBruta() {
+      this.cards = [];
       const variables = {
         periodSelected: this.periodoAtual,
         currentDate: this.currentDate,
       };
-      this.cards = await margemBrutaService.culturaDesenvolvidaWithVendas(
+      const response = await margemBrutaService.culturaDesenvolvidaWithVendas(
         variables
       );
-      console.log(this.cards);
+      this.response = response;
+
+      this.groupBy(response);
     },
     date(pValue) {
       this.currentDate = pValue;
@@ -112,20 +164,27 @@ export default {
     period(pValue) {
       this.periodoAtual = pValue;
     },
-    receitaBruta(card, index) {
-      return this.cards[index].vendido * this.cards[index].valorVenda;
+    receitaBruta(card) {
+      return card.vendido * card.valorVenda;
     },
-    custoProducao(card, index) {
-      return this.cards[index].vendido * this.cards[index].custo;
+    custoProducao(card) {
+      let total = 0;
+      this.response.forEach((item) => {
+        if (card.index === item.CulturaDesenvolvida.id) {
+          total += item.custoUnitario;
+        }
+      });
+      card.custo = total;
+      return card.vendido * card.custo;
     },
-    margemBrutaSemanal(card, index) {
-      return this.receitaBruta(card, index) - this.custoProducao(card, index);
+    margemBrutaSemanal(card) {
+      return this.receitaBruta(card) - this.custoProducao(card);
     },
-    margemBrutaMensal(card, index) {
-      return this.margemBrutaSemanal(card, index) * 4;
+    margemBrutaMensal(card) {
+      return this.margemBrutaSemanal(card) * 4;
     },
-    margemBrutaAnual(card, index) {
-      return this.margemBrutaMensal(card, index) * 12;
+    margemBrutaAnual(card) {
+      return this.margemBrutaMensal(card) * 12;
     },
   },
 };
