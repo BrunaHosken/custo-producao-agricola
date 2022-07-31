@@ -402,23 +402,13 @@ export default {
             await insumoServicoService.CreateInsumoPrevisto(this.form);
           if (!this.isServico && !this.isPrevisto)
             await insumoServicoService.CreateInsumoReal(this.form);
-        }
-        if (this.editou) {
-          if (this.previsto !== this.isPrevisto) {
-            if (this.servico) {
-              if (this.servico && this.previsto)
-                await insumoServicoService.DeleteServicoPrevisto(this.form);
-            } else {
-              if (!this.servico && !this.previsto)
-                await insumoServicoService.DeleteInsumoReal(this.form);
-            }
-
-            if (this.isServico && !this.isPrevisto)
-              await insumoServicoService.CreateServicoPrestado(this.form);
-            else if (!this.isServico && !this.isPrevisto)
-              await insumoServicoService.CreateInsumoReal(this.form);
-          }
-          if (this.servico !== this.isServico) {
+        } else {
+          if (
+            this.servico !== this.isServico ||
+            this.previsto !== this.isPrevisto
+          ) {
+            console.log("OI");
+            console.log(this.previsto);
             if (this.previsto) {
               if (this.servico && this.previsto)
                 await insumoServicoService.DeleteServicoPrevisto(this.form);
@@ -436,8 +426,10 @@ export default {
               await insumoServicoService.CreateServicoPrestado(this.form);
             else if (!this.isServico && this.isPrevisto)
               await insumoServicoService.CreateInsumoPrevisto(this.form);
-            else if (!this.isServico && !this.isPrevisto)
+            else if (!this.isServico && !this.isPrevisto) {
+              console.log("OI");
               await insumoServicoService.CreateInsumoReal(this.form);
+            }
           } else {
             if (this.isServico && this.isPrevisto)
               await insumoServicoService.UpdateServicoPrevisto(this.form);
