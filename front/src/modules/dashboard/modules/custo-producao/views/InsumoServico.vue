@@ -289,12 +289,10 @@ export default {
     },
     "form.tipoUso"(pValue) {
       if (pValue === "Previsto") {
-        console.log("OI");
         this.isPrevisto = true;
         this.form.datePrevista = undefined;
         this.dateDialogValuePrevista = undefined;
       } else {
-        console.log("OI 2");
         this.isPrevisto = false;
         this.form.datePrevista = moment().format("YYYY-MM-DD");
         this.dateDialogValuePrevista = moment().format("YYYY-MM-DD");
@@ -303,7 +301,6 @@ export default {
 
     servicoInsumo(pValue) {
       if (pValue) {
-        console.log(pValue);
         this.form = {
           tipoEtapa: this.servico ? "Serviço" : "Insumo",
           tipoUso: this.previsto ? "Previsto" : "Real",
@@ -325,7 +322,6 @@ export default {
         if (this.form.insumo === undefined) {
           this.form.insumo = this.itemsInsumo[0];
         }
-        console.log(this.form);
       }
     },
   },
@@ -391,7 +387,7 @@ export default {
     },
     async salvar() {
       this.form.culturaEtapaId = this.culturaEtapaId;
-      console.log(this.form);
+
       try {
         if (!this.editou) {
           if (this.isServico && this.isPrevisto)
@@ -407,8 +403,6 @@ export default {
             this.servico !== this.isServico ||
             this.previsto !== this.isPrevisto
           ) {
-            console.log("OI");
-            console.log(this.previsto);
             if (this.previsto) {
               if (this.servico && this.previsto)
                 await insumoServicoService.DeleteServicoPrevisto(this.form);
@@ -427,7 +421,6 @@ export default {
             else if (!this.isServico && this.isPrevisto)
               await insumoServicoService.CreateInsumoPrevisto(this.form);
             else if (!this.isServico && !this.isPrevisto) {
-              console.log("OI");
               await insumoServicoService.CreateInsumoReal(this.form);
             }
           } else {

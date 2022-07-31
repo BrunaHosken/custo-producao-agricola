@@ -1,13 +1,5 @@
-query vendaItems(
-  $currentDate: String
-  $periodSelected: String
-  $culturaDesenvolvidaId: ID
-) {
-  vendaItems(
-    date: $currentDate
-    type: $periodSelected
-    culturaDesenvolvidaId: $culturaDesenvolvidaId
-  ) {
+query vendaItems($currentDate: String, $periodSelected: String) {
+  vendaItems(date: $currentDate, type: $periodSelected) {
     id
     Qtd
     Und

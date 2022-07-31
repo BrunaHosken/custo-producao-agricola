@@ -6,6 +6,7 @@
         format="MM-YYYY"
         month="02"
         @period="period"
+        @date="date"
       />
     </v-flex>
     <v-flex xs12>
@@ -20,14 +21,11 @@
         >
         <v-container v-else fluid grid-list-md>
           <v-layout row wrap>
-            <v-flex
-              v-for="card in cards"
-              :key="card.index"
-              v-bind="{ [`xs${card.flex}`]: true }"
-              pa-4
-            >
+            {{ this.cards }}
+            <v-flex v-for="card in cards" :key="card.id" pa-4 xs-6>
               <v-card elevation="24" outlined class="hover-card">
-                <v-card-title class="headline justify-center">
+                {{ card }}
+                <!-- <v-card-title class="headline justify-center">
                   Cultura: {{ card.cultura }}
                 </v-card-title>
                 <v-card-subtitle class="headline text-center">
@@ -67,7 +65,7 @@
                       formatCurrency(margemBrutaAnual(card.item, card.index))
                     }}
                   </p>
-                </v-card-text>
+                </v-card-text> -->
               </v-card>
             </v-flex>
           </v-layout>
@@ -78,12 +76,10 @@
 </template>
 
 <script>
-// import moment from "moment";
-
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
-
 import moment from "moment";
 import formatCurrentMixin from "./../../../../../mixins/format-currency";
+import margemBrutaService from "./../services/margemBruta-service";
 export default {
   name: "MargemBruta",
   mixins: [formatCurrentMixin],
@@ -92,22 +88,27 @@ export default {
   },
   data() {
     return {
-      periodoAtual: "Mensal",
-      cards: [
-        {
-          index: 0,
-          day: moment().format("DD/MM/YYYY"),
-          cultura: "Crisântemo",
-          vendido: 14000,
-          unidade: "maços",
-          flex: 6,
-          valorVenda: 7,
-          custo: 2.59,
-        },
-      ],
+      periodoAtual: "",
+      currentDate: "",
+      cards: [],
+      response: [],
     };
   },
   methods: {
+    async searchMargemBruta() {
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.cards = await margemBrutaService.culturaDesenvolvidaWithVendas(
+        variables
+      );
+      console.log(this.cards);
+    },
+    date(pValue) {
+      this.currentDate = pValue;
+      this.searchMargemBruta();
+    },
     period(pValue) {
       this.periodoAtual = pValue;
     },

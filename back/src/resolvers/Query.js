@@ -104,7 +104,12 @@ function despesaRealizadas(_, { date, type }, ctx, info) {
     info
   );
 }
-function culturaDesenvolvidas(_, { date, type }, ctx, info) {
+function culturaDesenvolvidas(
+  _,
+  { date, type, culturaDesenvolvidaId },
+  ctx,
+  info
+) {
   const agricultorId = getAgricultorId(ctx);
   let AND = [
     {
@@ -113,6 +118,15 @@ function culturaDesenvolvidas(_, { date, type }, ctx, info) {
       },
     },
   ];
+  console.log(culturaDesenvolvidaId);
+  if (culturaDesenvolvidaId) {
+    AND = [
+      ...AND,
+      {
+        id: culturaDesenvolvidaId,
+      },
+    ];
+  }
   if (date) {
     if (type === "Semanal") {
       const period = moment(date, "DD-MM-YYYY");
@@ -171,7 +185,7 @@ function insumoes(_, args, ctx, info) {
   );
 }
 
-function vendaItems(_, { date, type, culturaDesenvolvidaId }, ctx, info) {
+function vendaItems(_, { date, type }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
   let AND = [
     {
@@ -227,18 +241,6 @@ function vendaItems(_, { date, type, culturaDesenvolvidaId }, ctx, info) {
       ];
     }
   }
-  if (culturaDesenvolvidaId) {
-    AND = [
-      ...AND,
-      {
-        CulturaDesenvolvida: {
-          id: culturaDesenvolvidaId,
-        },
-      },
-    ];
-  }
-  console.log("OIS", culturaDesenvolvidaId);
-  console.log("OI", AND);
   return ctx.db.query.vendaItems(
     {
       where: { AND },

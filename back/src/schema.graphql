@@ -660,13 +660,13 @@ type Query {
   culturas: [Cultura!]!
   vendas: [Venda!]!
   despesaRealizadas(date: String, type: String): [DespesaRealizada!]!
-  culturaDesenvolvidas(date: String, type: String): [CulturaDesenvolvida!]!
-  insumoes: [Insumo!]!
-  vendaItems(
+  culturaDesenvolvidas(
     date: String
     type: String
     culturaDesenvolvidaId: ID
-  ): [VendaItem!]!
+  ): [CulturaDesenvolvida!]!
+  insumoes: [Insumo!]!
+  vendaItems(date: String, type: String): [VendaItem!]!
   culturaEtapas(id: ID): [CulturaEtapa!]!
   usoInsumoReals(id: ID): [UsoInsumoReal!]!
   usoInsumoPrevistoes(id: ID): [UsoInsumoPrevisto!]!

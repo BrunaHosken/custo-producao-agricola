@@ -1,5 +1,13 @@
-query culturaDesenvolvida($currentDate: String, $periodSelected: String) {
-  culturaDesenvolvidas(date: $currentDate, type: $periodSelected) {
+query culturaDesenvolvida(
+  $currentDate: String
+  $periodSelected: String
+  $id: ID
+) {
+  culturaDesenvolvidas(
+    date: $currentDate
+    type: $periodSelected
+    culturaDesenvolvidaId: $id
+  ) {
     id
     AreaTerrenoHectares
     DataInicio

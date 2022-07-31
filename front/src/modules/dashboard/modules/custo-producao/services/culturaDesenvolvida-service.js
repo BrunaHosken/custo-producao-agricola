@@ -281,56 +281,6 @@ const culturaDesenvolvidaWithEtapas = async (variables) => {
   return culturaDesenvolvida.data.culturaDesenvolvidas;
 };
 
-const culturaDesenvolvidaWithVendas = async (variables) => {
-  const culturaDesenvolvida = await apollo.mutate({
-    mutation: culturaDesenvolvidaQuery,
-    variables,
-  });
-
-  culturaDesenvolvida.data.culturaDesenvolvidas.forEach(async (data) => {
-    const variablesEtapas = {};
-    variablesEtapas.id = data.id;
-    data.total = 0;
-    data.custoUnitario = 0;
-    data.etapas = await culturaEtapa(variablesEtapas);
-    if (data.etapas.length > 0) {
-      data.etapas.forEach(async (etapa) => {
-        etapa.total = 0;
-
-        const variablesTipoEtapa = {};
-        variablesTipoEtapa.id = etapa.id;
-        etapa.insumoPrevisto = await usoInsumoPrevisto(variablesTipoEtapa);
-        etapa.insumoReal = await usoInsumoReal(variablesTipoEtapa);
-        etapa.servicoPrevisto = await servicoPrevisto(variablesTipoEtapa);
-        etapa.servicoPrestado = await servicoPrestado(variablesTipoEtapa);
-
-        etapa.insumoPrevisto.forEach((response) => {
-          etapa.total += response.Qtd * response.Insumo.PrecoUnit;
-        });
-        etapa.insumoReal.forEach((response) => {
-          etapa.total += response.Qtd * response.Insumo.PrecoUnit;
-        });
-        etapa.servicoPrevisto.forEach((response) => {
-          etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
-        });
-        etapa.servicoPrestado.forEach((response) => {
-          etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
-        });
-        data.total += etapa.total;
-      });
-    }
-
-    variables.culturaDesenvolvidaId = variablesEtapas.id;
-
-    data.vendas = await apollo.mutate({
-      mutation: vendas,
-      variables,
-    });
-  });
-
-  return culturaDesenvolvida.data.culturaDesenvolvidas;
-};
-
 export default {
   culturaDesenvolvida,
   culturaEtapa,
@@ -357,5 +307,4 @@ export default {
   UpdateServicoPrevisto,
   UpdateInsumoReal,
   culturaDesenvolvidaWithEtapas,
-  culturaDesenvolvidaWithVendas,
 };
