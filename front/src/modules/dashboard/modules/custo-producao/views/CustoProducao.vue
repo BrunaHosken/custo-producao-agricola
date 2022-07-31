@@ -152,10 +152,6 @@ export default {
         currentDate: this.currentDate,
       };
 
-      const response = await culturaDesenvolvidaService.culturaDesenvolvida(
-        variables
-      );
-
       this.cards =
         await culturaDesenvolvidaService.culturaDesenvolvidaWithEtapas(
           variables

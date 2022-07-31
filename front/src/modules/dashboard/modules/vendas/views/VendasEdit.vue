@@ -43,6 +43,7 @@
                     <v-date-picker
                       locale="pt-br"
                       scrollable
+                      :allowed-dates="allowedDates"
                       color="primary"
                       v-model="dateDialogValue"
                     >
@@ -236,6 +237,7 @@ export default {
       editouCultura: false,
       totalColhida: 0,
       initialVenda: 0,
+      dataMinima: "",
     };
   },
   validations() {
@@ -262,6 +264,8 @@ export default {
         return a + b.Qtd;
       }, 0);
       this.totalVendas = pValue.quantidade - totalVendas;
+      this.dataMinima = pValue.data;
+      this.allowedDates(pValue);
     },
 
     formEditou(pValue) {
@@ -279,6 +283,9 @@ export default {
           label: pValue[0].CulturaDesenvolvida.Cultura.DescrCultura,
           culturaId: pValue[0].CulturaDesenvolvida.Cultura.id,
           quantidade: pValue[0].CulturaDesenvolvida.QtdColhida,
+          data: moment(
+            pValue[0].CulturaDesenvolvida.DataColheita.substr(0, 10)
+          ).format("YYYY-MM-DD"),
           id: pValue[0].CulturaDesenvolvida.id,
         };
         this.form.cliente = {
@@ -341,12 +348,16 @@ export default {
         culturaId: item.Cultura.id,
         quantidade: item.QtdColhida,
         id: item.id,
+        data: moment(item.DataColheita.substr(0, 10)).format("YYYY-MM-DD"),
       });
     });
     this.vendasQuery = await vendasService.vendas();
     this.form.culturaDescricao = this.cultura[0];
   },
   methods: {
+    allowedDates(val) {
+      return val > this.dataMinima;
+    },
     showSnackBar(data) {
       this.createSnackBar = data;
     },

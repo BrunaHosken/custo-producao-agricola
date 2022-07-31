@@ -171,7 +171,7 @@ function insumoes(_, args, ctx, info) {
   );
 }
 
-function vendaItems(_, { date, type }, ctx, info) {
+function vendaItems(_, { date, type, culturaDesenvolvidaId }, ctx, info) {
   const agricultorId = getAgricultorId(ctx);
   let AND = [
     {
@@ -227,6 +227,18 @@ function vendaItems(_, { date, type }, ctx, info) {
       ];
     }
   }
+  if (culturaDesenvolvidaId) {
+    AND = [
+      ...AND,
+      {
+        CulturaDesenvolvida: {
+          id: culturaDesenvolvidaId,
+        },
+      },
+    ];
+  }
+  console.log("OIS", culturaDesenvolvidaId);
+  console.log("OI", AND);
   return ctx.db.query.vendaItems(
     {
       where: { AND },

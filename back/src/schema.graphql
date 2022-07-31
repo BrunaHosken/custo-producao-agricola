@@ -662,7 +662,11 @@ type Query {
   despesaRealizadas(date: String, type: String): [DespesaRealizada!]!
   culturaDesenvolvidas(date: String, type: String): [CulturaDesenvolvida!]!
   insumoes: [Insumo!]!
-  vendaItems(date: String, type: String): [VendaItem!]!
+  vendaItems(
+    date: String
+    type: String
+    culturaDesenvolvidaId: ID
+  ): [VendaItem!]!
   culturaEtapas(id: ID): [CulturaEtapa!]!
   usoInsumoReals(id: ID): [UsoInsumoReal!]!
   usoInsumoPrevistoes(id: ID): [UsoInsumoPrevisto!]!

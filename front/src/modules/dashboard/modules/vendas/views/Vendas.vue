@@ -163,7 +163,6 @@ export default {
     async deletouItens(item) {
       try {
         await vendasService.deleteVendaItem(this.selected);
-        this.$router.go(-1);
         this.createSnackBar = true;
         this.mensagem = "Despesa criada com sucesso!";
       } catch (e) {

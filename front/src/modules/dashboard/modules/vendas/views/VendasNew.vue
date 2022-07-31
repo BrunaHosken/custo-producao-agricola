@@ -40,6 +40,7 @@
 
                       <v-date-picker
                         locale="pt-br"
+                        :allowed-dates="allowedDates"
                         scrollable
                         color="primary"
                         v-model="dateDialogValue"
@@ -228,6 +229,7 @@ export default {
       createSnackBar: false,
       mensagem: "",
       color: "success",
+      dataMinima: "",
     };
   },
   validations() {
@@ -254,6 +256,8 @@ export default {
         return a + b.Qtd;
       }, 0);
       this.totalVendas = pValue.quantidade - totalVendas;
+      this.dataMinima = pValue.data;
+      this.allowedDates(pValue);
     },
   },
   computed: {
@@ -306,12 +310,17 @@ export default {
         culturaId: item.Cultura.id,
         quantidade: item.QtdColhida,
         id: item.id,
+        data: moment(item.DataColheita.substr(0, 10)).format("YYYY-MM-DD"),
       });
     });
+    this.allowedDates();
     this.vendasQuery = await vendasService.vendas();
     this.form.culturaDescricao = this.cultura[0];
   },
   methods: {
+    allowedDates(val) {
+      return val > this.dataMinima;
+    },
     showSnackBar(data) {
       this.createSnackBar = data;
     },
