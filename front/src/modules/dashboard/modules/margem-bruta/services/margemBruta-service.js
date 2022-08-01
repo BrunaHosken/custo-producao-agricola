@@ -102,7 +102,6 @@ const culturaDesenvolvidaWithVendas = async (variables) => {
           });
         }
         vendaItem.totalProduzidas += data.QtdColhida;
-        console.log(vendaItem.totalProduzidas);
       }
     );
   });

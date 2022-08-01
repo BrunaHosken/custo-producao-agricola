@@ -1,20 +1,6 @@
 <template>
   <v-layout>
-    <v-layout v-show="produtos.length === 0" row wrap>
-      <v-flex xs12>
-        <v-card>
-          <v-card-title>
-            <v-icon size="50" color="warning" class="mr-2"
-              >mdi-alert-circle</v-icon
-            >
-            Nenhum Relatório criado. <br />
-            Certifique-se de terem sido criados pelo menos um Cultura
-            Desenvolvida, uma Venda e uma Despesa!</v-card-title
-          >
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-layout v-show="produtos.length > 0" row wrap>
+    <v-layout row wrap>
       <v-flex xs12>
         <ToolbarByMonth
           class="mt-5 mb-3"
@@ -32,7 +18,7 @@
           </v-card-text>
         </v-card>
       </v-flex>
-      <v-flex xs12>
+      <v-flex xs6>
         <v-card elevation="24" outlined>
           <v-card-title>
             Margem Bruta e Despesas
@@ -55,17 +41,17 @@
             loading-text="Loading... Please wait"
             multi-sort
           >
+            <template v-slot:[`item.custo`]="{ item }">
+              {{ formatCurrency(custoProducao(item)) }}
+            </template>
+            <template v-slot:[`item.valorVenda`]="{ item }">
+              {{ formatCurrency(item.valorVenda) }}
+            </template>
             <template v-slot:[`item.lucro`]="{ item }">
-              {{ formatCurrency(item.lucro) }}
-            </template>
-            <template v-slot:[`item.custoProducao`]="{ item }">
-              {{ formatCurrency(item.custoProducao) }}
-            </template>
-            <template v-slot:[`item.venda`]="{ item }">
-              {{ formatCurrency(item.venda) }}
+              {{ formatCurrency(margemBruta(item)) }}
             </template>
             <template v-slot:[`item.lucroMaco`]="{ item }">
-              {{ formatCurrency(item.lucroMaco) }}
+              {{ formatCurrency(lucroTotal(item)) }}
             </template>
             <template v-slot:[`body.append`]>
               <tr>
@@ -94,7 +80,10 @@ import formatCurrentMixin from "./../../../../../mixins/format-currency";
 import ToolbarByMonth from "./../../components/ToolbarByMonth.vue";
 import despesasService from "./../../despesas/services/despesa-service";
 import vendasService from "./../../vendas/services/vendasService";
+import margemBrutaService from "./../../margem-bruta/services/margemBruta-service";
 import { generateChartConfigs } from "./../../../../../utils";
+import "core-js/actual/array/group-by-to-map";
+
 export default {
   name: "Relatorios",
   mixins: [formatCurrentMixin],
@@ -107,7 +96,6 @@ export default {
       { title: "Tipo de Consumo Fixo", refId: "chartFixesIncomes" },
       { title: "Tipo de Consumo Variável", refId: "chartVariablesIncomes" },
       { title: "Vendas por Cliente", refId: "chartClientsSales" },
-      { title: "Lucro por Cultura", refId: "chartIncomesCultures" },
     ],
     despesaChart: [],
     salesChart: [],
@@ -120,49 +108,62 @@ export default {
         value: "name",
       },
       {
-        text: "Lucro",
-        value: "lucro",
-      },
-      {
         text: "Cultura Desenvolvida",
-        value: "custoProducao",
+        value: "custo",
       },
       {
         text: "Valor Venda",
-        value: "venda",
+        value: "valorVenda",
+      },
+      {
+        text: "Lucro",
+        value: "lucro",
       },
       {
         text: "Lucro Maço",
         value: "lucroMaco",
       },
     ],
-    produtos: [
-      {
-        id: 0,
-        name: "Crisântemo",
-        lucro: 246960,
-        custoProducao: 2.59,
-        venda: 7,
-        lucroMaco: 88.2,
-      },
-      {
-        id: 1,
-        name: "Crisântemo",
-        lucro: 246960,
-        custoProducao: 2.59,
-        venda: 7,
-        lucroMaco: 88.2,
-      },
-    ],
-    despesas: 10000,
+    produtos: [],
+    lucroChart: [],
+    despesas: 0,
     total: 0,
   }),
   computed: {},
-  mounted() {
-    this.setChartsBar();
-  },
+  mounted() {},
   destroyed() {},
   methods: {
+    receitaBruta(card) {
+      return card.vendido * card.valorVenda;
+    },
+    custoProducao(card) {
+      let total = 0;
+      this.response.forEach((item) => {
+        if (card.index === item.CulturaDesenvolvida.id) {
+          total += item.custoUnitario;
+        }
+      });
+      card.custo = total;
+      return card.vendido * card.custo;
+    },
+    lucroTotal(card) {
+      const lucro = card.valorVenda - card.custo;
+      card.lucroMaco = lucro;
+      console.log(card);
+      return lucro;
+    },
+    margemBruta(card) {
+      let total = 0;
+      if (this.periodoAtual === "Mensal")
+        total = this.receitaBruta(card) - this.custoProducao(card);
+      if (this.periodoAtual === "Semanal")
+        total = (this.receitaBruta(card) - this.custoProducao(card)) * 4;
+      if (this.periodoAtual === "Anual")
+        total = (this.receitaBruta(card) - this.custoProducao(card)) * 12;
+      card.lucro = total;
+      return total;
+    },
+
     async searchDespesa() {
       const variables = {
         periodSelected: this.periodoAtual,
@@ -181,12 +182,93 @@ export default {
       this.periodoAtual = pValue;
     },
     async date(pValue) {
-      this.currentDate = pValue;
+      this.despesas = 0;
+      (this.total = 0), (this.currentDate = pValue);
       await this.searchDespesa();
       await this.searchSales();
+      this.salesDespesas();
+      this.searchMargemBruta();
       this.setCharts();
     },
+    async searchMargemBruta() {
+      this.produtos = [];
+      const variables = {
+        periodSelected: this.periodoAtual,
+        currentDate: this.currentDate,
+      };
+      this.response = await margemBrutaService.culturaDesenvolvidaWithVendas(
+        variables
+      );
+      this.groupBy(this.response);
+    },
 
+    groupBy(item) {
+      const produtos = [];
+
+      item.forEach((p) => {
+        produtos.push({
+          index: p.CulturaDesenvolvida.id,
+          cultura: p.CulturaDesenvolvida.Cultura.DescrCultura,
+          custo: 0,
+          valorVenda: p.total,
+          vendido: p.Qtd,
+          lucro: 0,
+          lucroMaco: 0,
+        });
+      });
+      const groupByCategory = produtos.groupByToMap((product) => {
+        return product.index;
+      });
+
+      const array = [];
+      groupByCategory.forEach((product) => {
+        if (product.length > 1) {
+          const valorVenda = (array.valorVenda = product.reduce((a, b) => {
+            return a + b.valorVenda;
+          }, 0));
+          const vendido = product.reduce((a, b) => {
+            return a + b.vendido;
+          }, 0);
+
+          this.produtos.push({
+            index: product[0].index,
+            name: product[0].cultura,
+            custo: Number(product[0].custo),
+            valorVenda,
+            vendido,
+            lucro: Number(product[0].lucro),
+            lucroMaco: Number(product[0].lucroMaco),
+          });
+        } else {
+          this.produtos.push({
+            index: product[0].index,
+            name: product[0].cultura,
+            custo: Number(product[0].custo),
+            valorVenda: Number(product[0].valorVenda),
+            vendido: Number(product[0].vendido),
+            lucro: Number(product[0].lucro),
+            lucroMaco: Number(product[0].lucroMaco),
+          });
+        }
+      });
+      this.lucroChart = this.produtos;
+      console.log(this.lucroChart);
+    },
+
+    salesDespesas() {
+      this.despesaChart.forEach((item) => {
+        if (item.TipoDespesa.DescrTipoDespesa === "Fixo") {
+          if (this.periodoAtual === "Mensal")
+            this.despesas += Number(item.Valor);
+          if (this.periodoAtual === "Semanal")
+            this.despesas += Number(item.Valor) * 4;
+          if (this.periodoAtual === "Anual")
+            this.despesas += Number(item.Valor) * 12;
+        } else {
+          this.despesas += Number(item.Valor);
+        }
+      });
+    },
     updateOrCreateChart(chartId, options) {
       if (this[chartId]) {
         this[chartId].data.datasets = options.data.datasets;
@@ -253,47 +335,6 @@ export default {
 
       if (total <= 0) return "error";
       else return "success";
-    },
-    setChartsBar() {
-      const ctx = this.$refs.chartIncomesCultures[0].getContext("2d");
-      const myChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          datasets: [
-            {
-              data: [246960],
-              label: "Crisântemo",
-              backgroundColor: [this.$vuetify.theme.themes.dark.error],
-            },
-            {
-              data: [240000],
-              label: "Rosa",
-              backgroundColor: [this.$vuetify.theme.themes.dark.info],
-            },
-            {
-              data: [270900],
-              label: "Gérbera",
-              backgroundColor: [this.$vuetify.theme.themes.dark.success],
-            },
-            {
-              data: [300000],
-              label: "Copo de Leite",
-              backgroundColor: [this.$vuetify.theme.themes.dark.accent],
-            },
-          ],
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        },
-      });
     },
   },
 };
