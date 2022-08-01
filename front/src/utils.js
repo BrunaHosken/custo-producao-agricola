@@ -93,7 +93,6 @@ const generateChartData = ({
   backgroundColors,
 }) => {
   const grouped = groupBy(items, keyToGroup, idx);
-  console.log(items, keyToGroup, idx);
   const response = {};
 
   for (let key in grouped) {
@@ -101,7 +100,6 @@ const generateChartData = ({
       (acc, item) => acc + item[keyOfValue],
       0
     );
-    console.log(response);
   }
 
   const labels = Object.keys(response);

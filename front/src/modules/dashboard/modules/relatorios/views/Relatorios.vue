@@ -10,7 +10,7 @@
           @date="date"
         />
       </v-flex>
-      <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
+      <v-flex v-for="chart in charts" :key="chart.title" xs12 sm4 md4 lg4 xl4>
         <v-card elevation="24" outlined>
           <v-card-text>
             <h2 class="font-weight-light mb-4">{{ chart.title }}</h2>
@@ -18,7 +18,7 @@
           </v-card-text>
         </v-card>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs12>
         <v-card elevation="24" outlined>
           <v-card-title>
             Margem Bruta e Despesas
@@ -58,8 +58,8 @@
                 <td class="font-weight-black">
                   Despesas: {{ formatCurrency(despesas) }}
                 </td>
-                <td colspan="3"></td>
-                <td colspan="4">
+                <td colspan="2"></td>
+                <td colspan="3">
                   Total do período:
                   <v-chip :color="getColor(total)" dark>
                     {{ formatCurrency(total) }}
@@ -125,7 +125,6 @@ export default {
       },
     ],
     produtos: [],
-    lucroChart: [],
     despesas: 0,
     total: 0,
   }),
@@ -149,7 +148,6 @@ export default {
     lucroTotal(card) {
       const lucro = card.valorVenda - card.custo;
       card.lucroMaco = lucro;
-      console.log(card);
       return lucro;
     },
     margemBruta(card) {
@@ -251,8 +249,6 @@ export default {
           });
         }
       });
-      this.lucroChart = this.produtos;
-      console.log(this.lucroChart);
     },
 
     salesDespesas() {

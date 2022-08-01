@@ -65,6 +65,7 @@
                     <v-date-picker
                       locale="pt-br"
                       scrollable
+                      :allowedDates="allowedDates"
                       color="primary"
                       v-model="dateDialogValueInitialEtapa"
                       type="month"
@@ -111,6 +112,7 @@
                     <v-date-picker
                       locale="pt-br"
                       scrollable
+                      :allowedDates="allowedDates"
                       color="primary"
                       v-model="dateDialogValueFinalEtapa"
                       type="month"
@@ -192,6 +194,10 @@ export default {
       type: Number,
       default: 0,
     },
+    dataMinima: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -236,7 +242,7 @@ export default {
       }
     },
     etapa(pValue) {
-      if (pValue) {
+      if (pValue && this.editou) {
         this.form = {
           mesInicio: moment(pValue.mesInicio.substr(0, 7)).format("YYYY-MM"),
           mesFinal: moment(pValue.mesFinal.substr(0, 7)).format("YYYY-MM"),
@@ -287,6 +293,9 @@ export default {
     },
   },
   methods: {
+    allowedDates(val) {
+      return val > this.dataMinima;
+    },
     cancelDateDialogInitialEtapa() {
       this.showDateDialogInitialEtapa = false;
       this.dateDialogValueInitialEtapa = this.form.mesInicio;

@@ -550,6 +550,7 @@
         :editou="editou"
         :culturaDesenvolvidaId="culturaDesenvolvidaId"
         :etapasLength="etapasLength"
+        :dataMinima="dataMinima"
         @showDialogClose="closeEtapaCadastrada"
       />
       <InsumoServico
@@ -701,6 +702,7 @@ export default {
       excludedInsumoServico: null,
       excludedServico: false,
       excludedPrevisto: false,
+      dataMinima: "",
     };
   },
   validations() {
@@ -877,6 +879,9 @@ export default {
       }
     },
     editarEtapaCadastrada(pValue) {
+      this.dataMinima = moment(
+        this.selected[0].CulturaDesenvolvida.DataInicio.substr(0, 7)
+      ).format("YYYY-MM");
       this.formEtapa = {
         mesInicio: moment(pValue[0].MesInicio.substr(0, 7)).format("YYYY-MM"),
         mesFinal: moment(pValue[0].MesFim.substr(0, 7)).format("YYYY-MM"),
@@ -884,11 +889,13 @@ export default {
         ordem: pValue[0].NumEtapa,
         id: pValue[0].id,
       };
+
       this.editou = true;
       this.cadastrarEditarEtapa = true;
     },
     closeEtapaCadastrada() {
       this.cadastrarEditarEtapa = false;
+      this.dataMinima = "";
     },
     closeServicoInsumo() {
       this.cadastrarEditarInsumoServico = false;
@@ -912,6 +919,9 @@ export default {
     adicionarNovaEtapaCultura() {
       this.editou = false;
       this.cadastrarEditarEtapa = true;
+      this.dataMinima = moment(this.formEditou.DataInicio.substr(0, 7)).format(
+        "YYYY-MM"
+      );
       this.culturaDesenvolvidaId = this.form.id;
       this.etapasLength = this.form.etapas.length;
     },
@@ -962,6 +972,9 @@ export default {
         id: pValue.id,
         servico: pValue.Servico?.id,
         insumo: pValue.Insumo?.id,
+        dataMinima: moment(
+          this.selected[0].CulturaDesenvolvida.DataInicio.substr(0, 10)
+        ).format("YYYY-MM-DD"),
       };
       this.isServico = isServico;
       this.isPrevisto = isPrevisto;

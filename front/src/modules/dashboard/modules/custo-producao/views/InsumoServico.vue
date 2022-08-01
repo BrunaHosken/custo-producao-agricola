@@ -64,6 +64,7 @@
                     <v-date-picker
                       locale="pt-br"
                       scrollable
+                      :allowedDates="allowedDates"
                       color="primary"
                       v-model="dateDialogValuePrevista"
                     >
@@ -244,6 +245,7 @@ export default {
       isPrevisto: false,
       showDialogServico: false,
       showDialogInsumo: false,
+      dataMinima: "",
     };
   },
   validations() {
@@ -309,6 +311,7 @@ export default {
           insumo: pValue.insumo && pValue.insumo.id,
           id: pValue.id,
         };
+        this.dataMinima = pValue.dataMinima;
         this.form.datePrevista =
           pValue.datePrevista !== undefined
             ? moment(pValue.datePrevista.substr(0, 7)).format("YYYY-MM-DD")
@@ -349,6 +352,9 @@ export default {
     },
   },
   methods: {
+    allowedDates(val) {
+      return val > this.dataMinima;
+    },
     close() {
       this.showDialogServico = false;
       this.showDialogInsumo = false;
