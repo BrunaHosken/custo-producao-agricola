@@ -45,13 +45,13 @@
               {{ formatCurrency(custoProducao(item)) }}
             </template>
             <template v-slot:[`item.valorVenda`]="{ item }">
-              {{ formatCurrency(item.valorVenda) }}
-            </template>
-            <template v-slot:[`item.lucro`]="{ item }">
-              {{ formatCurrency(margemBruta(item)) }}
+              {{ formatCurrency(item.precoUnit) }}
             </template>
             <template v-slot:[`item.lucroMaco`]="{ item }">
               {{ formatCurrency(lucroTotal(item)) }}
+            </template>
+            <template v-slot:[`item.lucro`]="{ item }">
+              {{ formatCurrency(margemBruta(item)) }}
             </template>
             <template v-slot:[`body.append`]>
               <tr>
@@ -116,12 +116,12 @@ export default {
         value: "valorVenda",
       },
       {
-        text: "Lucro",
-        value: "lucro",
-      },
-      {
         text: "Lucro Maço",
         value: "lucroMaco",
+      },
+      {
+        text: "Lucro",
+        value: "lucro",
       },
     ],
     produtos: [],
@@ -133,7 +133,7 @@ export default {
   destroyed() {},
   methods: {
     receitaBruta(card) {
-      return card.vendido * card.valorVenda;
+      return card.vendido * card.precoUnit;
     },
     custoProducao(card) {
       let total = 0;
@@ -143,21 +143,26 @@ export default {
         }
       });
       card.custo = total;
-      return card.vendido * card.custo;
+      return total;
     },
     lucroTotal(card) {
-      const lucro = card.valorVenda - card.custo;
+      const lucro = card.precoUnit - card.custo;
       card.lucroMaco = lucro;
       return lucro;
     },
     margemBruta(card) {
       let total = 0;
       if (this.periodoAtual === "Mensal")
-        total = this.receitaBruta(card) - this.custoProducao(card);
+        total =
+          this.receitaBruta(card) - this.custoProducao(card) * card.vendido;
       if (this.periodoAtual === "Semanal")
-        total = (this.receitaBruta(card) - this.custoProducao(card)) * 4;
+        total =
+          (this.receitaBruta(card) - this.custoProducao(card) * card.vendido) *
+          4;
       if (this.periodoAtual === "Anual")
-        total = (this.receitaBruta(card) - this.custoProducao(card)) * 12;
+        total =
+          (this.receitaBruta(card) - this.custoProducao(card) * card.vendido) *
+          12;
       card.lucro = total;
       return total;
     },
@@ -202,13 +207,13 @@ export default {
 
     groupBy(item) {
       const produtos = [];
-
       item.forEach((p) => {
         produtos.push({
           index: p.CulturaDesenvolvida.id,
           cultura: p.CulturaDesenvolvida.Cultura.DescrCultura,
           custo: 0,
           valorVenda: p.total,
+          precoUnit: p.PrecoUnit,
           vendido: p.Qtd,
           lucro: 0,
           lucroMaco: 0,
@@ -234,6 +239,7 @@ export default {
             custo: Number(product[0].custo),
             valorVenda,
             vendido,
+            precoUnit: product[0].precoUnit,
             lucro: Number(product[0].lucro),
             lucroMaco: Number(product[0].lucroMaco),
           });
@@ -241,6 +247,7 @@ export default {
           this.produtos.push({
             index: product[0].index,
             name: product[0].cultura,
+            precoUnit: product[0].precoUnit,
             custo: Number(product[0].custo),
             valorVenda: Number(product[0].valorVenda),
             vendido: Number(product[0].vendido),

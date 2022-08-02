@@ -35,20 +35,20 @@
                     Total vendido: {{ card.vendido.toLocaleString() }}
                     {{ card.unidade }}
                   </p>
-                  <p>Valor vendido: {{ formatCurrency(card.valorVenda) }}</p>
+                  <p>Valor vendido: {{ formatCurrency(card.precoUnit) }}</p>
                   <p>
                     Custo unitário:
                     {{ formatCurrency(card.custo || 0) }}
                   </p>
                   <p>
-                    Receita Bruta:
-                    {{ formatCurrency(receitaBruta(card)) }}
-                  </p>
-
-                  <p>
                     Custo da produção:
                     {{ formatCurrency(custoProducao(card)) }}
                   </p>
+                  <p>
+                    Receita Bruta:
+                    {{ formatCurrency(card.valorVenda) }}
+                  </p>
+
                   <p v-if="periodoAtual === 'Semanal'">
                     Margem bruta semanal:
                     {{ formatCurrency(margemBrutaSemanal(card)) }}
@@ -104,6 +104,7 @@ export default {
           vendido: p.Qtd,
           unidade: p.CulturaDesenvolvida.Cultura.Und,
           valorVenda: p.total,
+          precoUnit: p.PrecoUnit,
           custo: 0,
         });
       });
@@ -128,6 +129,7 @@ export default {
             vendido,
             unidade: product[0].unidade,
             valorVenda,
+            precoUnit: product[0].precoUnit,
             custo: product[0].custo,
           });
         } else {
@@ -137,6 +139,7 @@ export default {
             cultura: product[0].cultura,
             vendido: product[0].vendido,
             unidade: product[0].unidade,
+            precoUnit: product[0].precoUnit,
             valorVenda: product[0].valorVenda,
             custo: product[0].custo,
           });
@@ -178,7 +181,7 @@ export default {
       return card.vendido * card.custo;
     },
     margemBrutaSemanal(card) {
-      return this.receitaBruta(card) - this.custoProducao(card);
+      return card.valorVenda - this.custoProducao(card);
     },
     margemBrutaMensal(card) {
       return this.margemBrutaSemanal(card) * 4;

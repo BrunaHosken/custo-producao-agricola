@@ -21,7 +21,7 @@ const insumos = async (options = {}) => {
 };
 const CreateInsumo = async (variables) => {
   variables.valor = parseFloat(variables.valor);
-  variables.tipo = variables.tipo.id;
+  variables.tipoId = variables.tipo.id;
   const response = await apollo.mutate({
     mutation: createInsumo,
     variables,

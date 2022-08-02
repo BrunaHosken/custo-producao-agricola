@@ -34,6 +34,7 @@
                       :items="items"
                       item-text="label"
                       item-value="id"
+                      return-object
                       label="Tipo de Insumo"
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined

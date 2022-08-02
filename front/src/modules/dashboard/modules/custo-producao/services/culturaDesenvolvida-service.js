@@ -260,19 +260,26 @@ const culturaDesenvolvidaWithEtapas = async (variables) => {
         etapa.insumoReal = await usoInsumoReal(variablesTipoEtapa);
         etapa.servicoPrevisto = await servicoPrevisto(variablesTipoEtapa);
         etapa.servicoPrestado = await servicoPrestado(variablesTipoEtapa);
-
-        etapa.insumoPrevisto.forEach((response) => {
-          etapa.total += response.Qtd * response.Insumo.PrecoUnit;
-        });
-        etapa.insumoReal.forEach((response) => {
-          etapa.total += response.Qtd * response.Insumo.PrecoUnit;
-        });
-        etapa.servicoPrevisto.forEach((response) => {
-          etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
-        });
-        etapa.servicoPrestado.forEach((response) => {
-          etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
-        });
+        if (etapa.insumoPrevisto.length > 0) {
+          etapa.insumoPrevisto.forEach((response) => {
+            etapa.total += response.Qtd * response.Insumo.PrecoUnit;
+          });
+        }
+        if (etapa.insumoReal.length > 0) {
+          etapa.insumoReal.forEach((response) => {
+            etapa.total += response.Qtd * response.Insumo.PrecoUnit;
+          });
+        }
+        if (etapa.servicoPrevisto.length > 0) {
+          etapa.servicoPrevisto.forEach((response) => {
+            etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
+          });
+        }
+        if (etapa.servicoPrestado.length > 0) {
+          etapa.servicoPrestado.forEach((response) => {
+            etapa.total += response.DiasHomem * response.Servico.ValorDiaHomem;
+          });
+        }
         data.total += etapa.total;
       });
     }

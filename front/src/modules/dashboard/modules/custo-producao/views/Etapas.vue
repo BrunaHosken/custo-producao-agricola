@@ -294,7 +294,7 @@ export default {
   },
   methods: {
     allowedDates(val) {
-      return val > this.dataMinima;
+      return val >= this.dataMinima;
     },
     cancelDateDialogInitialEtapa() {
       this.showDateDialogInitialEtapa = false;
