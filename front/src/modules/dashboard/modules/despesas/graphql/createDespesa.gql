@@ -2,13 +2,13 @@ mutation CreateDespesaRealizada(
   $date: DateTime!
   $descricao: String!
   $valor: Float!
-  $tipo: ID!
+  $tipoId: ID!
 ) {
   createDespesaRealizada(
     DescrDetalhada: $descricao
     Data: $date
     Valor: $valor
-    TipoDespesaId: $tipo
+    TipoDespesaId: $tipoId
   ) {
     id
     DescrDetalhada

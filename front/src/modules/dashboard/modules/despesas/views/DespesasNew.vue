@@ -63,6 +63,7 @@
                       item-text="label"
                       item-value="id"
                       label="Tipo de Despesa"
+                      return-object
                       prepend-inner-icon="mdi-format-list-bulleted-type"
                       outlined
                     ></v-select>
