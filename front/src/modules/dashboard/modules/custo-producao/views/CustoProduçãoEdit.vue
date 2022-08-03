@@ -220,7 +220,9 @@
                 </v-card-title>
 
                 <h1
-                  v-if="selected[0].insumoPrevisto.length > 0"
+                  v-if="
+                    selected.length > 0 && selected[0].insumoPrevisto.length > 0
+                  "
                   class="headline justify-center ml-5 mt-5"
                 >
                   Insumos Previstos Cadastrados
@@ -278,7 +280,9 @@
                 </v-layout>
 
                 <h1
-                  v-if="selected[0].insumoReal.length > 0"
+                  v-if="
+                    selected.length > 0 && selected[0].insumoReal.length > 0
+                  "
                   class="headline justify-center ml-5 mt-5"
                 >
                   Insumos Prestados Cadastrados
@@ -341,7 +345,10 @@
                 </v-layout>
 
                 <h1
-                  v-if="selected[0].servicoPrestado.length > 0"
+                  v-if="
+                    selected.length > 0 &&
+                    selected[0].servicoPrestado.length > 0
+                  "
                   class="headline justify-center ml-5 mt-5"
                 >
                   Serviços Prestados Cadastrados
@@ -398,7 +405,10 @@
                 </v-layout>
 
                 <h1
-                  v-if="selected[0].servicoPrevisto.length > 0"
+                  v-if="
+                    selected.length > 0 &&
+                    selected[0].servicoPrevisto.length > 0
+                  "
                   class="headline justify-center ml-5 mt-5"
                 >
                   Serviços Previstos Cadastrados
