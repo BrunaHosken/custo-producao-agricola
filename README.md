@@ -38,6 +38,8 @@ Trabalho de Conclusão de Curso para o Instituto Politécnico de Nova Friburgo (
 - GraphQL Yoga
 - Autenticação JWT
 - Moment JS
+- Dockerfile
+- PostgreSQL
 
 # FrontEnd
 
