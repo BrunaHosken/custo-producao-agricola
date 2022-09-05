@@ -198,6 +198,6 @@ export default {
   background: linear-gradient(rgba(85, 85, 85, 0.7), rgba(85, 85, 85, 0.7));
 }
 .hover-card {
-  filter: brightness(1.5);
+  filter: brightness(1.3);
 }
 </style>
