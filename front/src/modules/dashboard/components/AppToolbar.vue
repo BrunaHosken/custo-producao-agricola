@@ -1,7 +1,7 @@
 <template>
   <v-app-bar fixed color="primary" app>
     <v-app-bar-nav-icon @click.stop="$emit('hide', !show)"></v-app-bar-nav-icon>
-    <v-toolbar-title>{{ titleCases || "Dashboard" }}</v-toolbar-title>
+    <v-toolbar-title>{{ titleCases || "Boas Vindas" }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn icon @click="showLogoutDialog = true" title="Sair">
@@ -83,7 +83,7 @@ export default {
           return "Contatos";
 
         default:
-          return "Dashboard";
+          return "Boas Vindas";
       }
     },
   },
